@@ -1,0 +1,56 @@
+# LaTeX build files
+*.aux
+*.bbl
+*.blg
+*.brf
+*.fls
+*.fdb_latexmk
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.synctex.gz
+*.nav
+*.snm
+*.vrb
+*.xdv
+
+# bibliography
+*.bcf
+*.run.xml
+
+# latexmk
+latexmkrc
+
+# generated index files
+*.idx
+*.ilg
+*.ind
+
+# glossary
+*.acn
+*.acr
+*.alg
+*.glg
+*.glo
+*.gls
+
+# temporary files
+*.tmp
+*.bak
+
+# editor files
+*~
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+
+# VSCode
+.vscode/
+
+# build folders
+build/
+out/
