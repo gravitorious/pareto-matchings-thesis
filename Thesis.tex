@@ -17,7 +17,7 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{fontspec}
-\usepackage{indentfirst}
+%\usepackage{indentfirst}
 \usepackage{fancyhdr}
 \usepackage{makeidx}
 \setlength{\parindent}{2em}
@@ -138,6 +138,7 @@ backgroundcolor=\color{gray!10!white},
 \DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
 %$T(n) = T(\ceil*{\frac{n}{2}} + O(1))$
 %\cite{schrijver2003} 
+%\coloneqq :=
 \begin{document}
 
 %\input{frontmatter/frontmatter}
@@ -158,16 +159,35 @@ backgroundcolor=\color{gray!10!white},
 
 \chapter{Introduction}
 
-\chapter{Matching Theory}
+\chapter{Matching Problems and Algorithms}
 
-\section{Basic Definitions}
+\section{Definitions}
 
-\subsection{Matchings in Graphs}
+	
 
-\subsection{Augmenting Paths}
+	Let $G = (V,E)$ be an undirected graph with $|V| = n$ vertices and $|E| = m$ edges. We call $G$ bipartite if we can partition its vertex set into two sets $V_{1}, V_{2}$ such that for each edge ${u,v} \in E$, $u \in V_{1}$ and $v \in V_{2}$. If every vertex of $V_{1}$ is adjacent to every vertex of $V_{2}$ and $|V_{1}| = n_{1}, |V_{2}| = n_{2}$, then we call $G$ a complete bipartite graph and denote it by $K_{n_{1},n_{2}}$. By a path, we will always mean a simple path, i.e., a path in which no vertex is repeated. The length of a path is the number of edges it contains.
 
-\section{Fundamental Theorems}
+	From set theory, we recall that the symmetric difference of two sets $A$ and $B$, denoted by $A\bigtriangleup B$, is the set of elements that belong to $A$ or $B$ but not both. Thus, $A\bigtriangleup B = (A \setminus B) \cup (B \setminus A) = (A \cup B) \setminus (A \cap B)$. Also, if we want to add an element $x$ to set $A$, we will use the shorthand $A + x \coloneqq A \cup \{x\}$, and if we want to remove it $A - x \coloneqq A \setminus \{x\}$.
 
+	A matching of a graph $G = (V,E)$ is a subset of $E$ such that each vertex is incident to at most one edge of the subset. The cardinality of a matching is the number of edges it contains. A vertex is called matched if it is incident to an edge of $M$. Otherwise, it is called unmatched or free. A matching is called maximal if no edge can be added without violating the matching property. A matching is maximum if no other matching has more edges. Clearly, every maximum matching is maximal (the converse is not always true). The following two definitions are fundamental in the study of matchings.
+	
+	\begin{ddef}
+		A path $P$ in G with respect to a matching $M$ is called alternating if its edges are alternatingly out of and in $M$.
+	\end{ddef}
+	
+	\begin{ddef}
+		A path $P$ in G with respect to a matching $M$ is called augmenting if it is alternating and its endpoints are free.
+	\end{ddef}
+	
+	It is easy to see that every augmenting path has odd length. We will use the term M-augmenting whenever we want to emphasize the matching $M$.
+	
+\section{Maximum Bipartite Matching}
+
+\section{Gale–Shapley Algorithm}
+
+\section{Further Matching Models}
+
+\chapter{Polyhedral Approaches to Matching Problems}
 
 \clearpage
 \bibliographystyle{plain}
