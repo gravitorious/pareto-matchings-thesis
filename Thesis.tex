@@ -137,7 +137,6 @@ backgroundcolor=\color{gray!10!white},
 \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
 \DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
 %$T(n) = T(\ceil*{\frac{n}{2}} + O(1))$
-%\cite{schrijver2003} 
 %\coloneqq :=
 \begin{document}
 
@@ -169,6 +168,8 @@ backgroundcolor=\color{gray!10!white},
 
 	From set theory, we recall that the symmetric difference of two sets $A$ and $B$, denoted by $A\bigtriangleup B$, is the set of elements that belong to $A$ or $B$ but not both. Thus, $A\bigtriangleup B = (A \setminus B) \cup (B \setminus A) = (A \cup B) \setminus (A \cap B)$. Also, if we want to add an element $x$ to set $A$, we will use the shorthand $A + x \coloneqq A \cup \{x\}$, and if we want to remove it $A - x \coloneqq A \setminus \{x\}$.
 
+	We write $T(n) = O(f(n))$ if and only if there exist positive constants $c$ and $n_{0}$ such that $T(n) \leq c f(n)$ for all $n \geq n_{0}$. Most of the time, $T(n)$ will denote a bound on the worst-case running time of an algorithm defined on the positive integers. Similarly, we say that $T(n) = \Omega(f(n))$ if and only if there exist positive constants $c$ and $n_{0}$ such that $T(n) \geq cf(n)$ for all $n \geq n_{0}$. Finally, we say that $T(n) = \Theta(f(n))$ if and only if $T(n) = O(f(n))$ and $T(n) = \Omega(f(n))$.
+
 	A matching of a graph $G = (V,E)$ is a subset of $E$ such that each vertex is incident to at most one edge of the subset. The cardinality of a matching is the number of edges it contains. A vertex is called matched if it is incident to an edge of $M$. Otherwise, it is called unmatched or free. A matching is called maximal if no edge can be added without violating the matching property. A matching is maximum if no other matching has more edges. Clearly, every maximum matching is maximal (the converse is not always true). The following two definitions are fundamental in the study of matchings.
 	
 	\begin{ddef}
@@ -182,6 +183,21 @@ backgroundcolor=\color{gray!10!white},
 	It is easy to see that every augmenting path has odd length. We will use the term M-augmenting whenever we want to emphasize the matching $M$.
 	
 \section{Maximum Bipartite Matching}
+
+	In this section, we present two famous algorithms for finding a maximum bipartite matching and prove their correctness.
+
+	The first algorithm is directly application of the following theorem proved by Berge in 1957 \cite{berge1957} (although it was already observed by Petersen in 1891 \cite{petersen1891theorie}).
+
+	\begin{ttheorem}
+		Let $G = (V,E)$ be a graph and let $M$ be a matching in $G$. Then $M$ is maximum if and only if there is no M-augmenting path in $G$.
+	\end{ttheorem}
+	\begin{proof}
+		Suppose that $M$ is maximum. For the sake of contradiction, assume that there exists an M-augmenting path $P$ with $u$ and $v$ as its endpoints in $G$. Then we can see that the matching $M^{'} = M \bigtriangleup E(P)$ is a valid matching in $G$ and satisfies $|M^{'}| = |M| + 1$. Indeed, if we remove all edges of $P$ that belong to $M$ and add the remaining ones to $M$, we add one more edge to $M$ in total (because $P$ has odd length). The new matching is valid because $u$ and $v$ were free, and they were not incident with any matching edge, and every internal vertex of $P$ remains incident to exactly one edge. All vertices outside $P$ are unaffected. As a result, the new matching $M^{'}$ is valid and its cardinality is greater than that of $M$. This is a contradiction.
+		
+		Now suppose that $G$ doesn't contain any M-augmenting path and matching $M^{'}$ exists in $G$ such that $|M^{'}| > |M|$.
+		
+	\end{proof}
+
 
 \section{Gale–Shapley Algorithm}
 
