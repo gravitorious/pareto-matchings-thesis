@@ -20,6 +20,7 @@
 %\usepackage{indentfirst}
 \usepackage{fancyhdr}
 \usepackage{makeidx}
+\usepackage{float}
 \setlength{\parindent}{2em}
 \setmainfont{CMU Serif}
 
@@ -136,6 +137,8 @@ backgroundcolor=\color{gray!10!white},
 
 \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
 \DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\numberwithin{algorithm}{chapter}
+\algrenewcommand\textproc{\normalfont} %for fuction name
 %$T(n) = T(\ceil*{\frac{n}{2}} + O(1))$
 %\coloneqq :=
 \begin{document}
@@ -186,22 +189,137 @@ backgroundcolor=\color{gray!10!white},
 
 	In this section, we present two famous algorithms for finding a maximum bipartite matching and prove their correctness.
 
-	The first algorithm is directly application of the following theorem proved by Berge in 1957 \cite{berge1957} (although it was already observed by Petersen in 1891 \cite{petersen1891theorie}).
+	The first algorithm is a direct application of the following theorem proved by Berge in 1957 \cite{berge1957} (although it was already observed by Petersen in 1891 \cite{petersen1891theorie}).
 
 	\begin{ttheorem}
 		Let $G = (V,E)$ be a graph and let $M$ be a matching in $G$. Then $M$ is maximum if and only if there is no M-augmenting path in $G$.
 	\end{ttheorem}
 	\begin{proof}
-		Suppose that $M$ is maximum. For the sake of contradiction, assume that there exists an M-augmenting path $P$ with $u$ and $v$ as its endpoints in $G$. Then we can see that the matching $M^{'} = M \bigtriangleup E(P)$ is a valid matching in $G$ and satisfies $|M^{'}| = |M| + 1$. Indeed, if we remove all edges of $P$ that belong to $M$ and add the remaining ones to $M$, we add one more edge to $M$ in total (because $P$ has odd length). The new matching is valid because $u$ and $v$ were free, and they were not incident with any matching edge, and every internal vertex of $P$ remains incident to exactly one edge. All vertices outside $P$ are unaffected. As a result, the new matching $M^{'}$ is valid and its cardinality is greater than that of $M$. This is a contradiction.
-		
-		Now suppose that $G$ doesn't contain any M-augmenting path and matching $M^{'}$ exists in $G$ such that $|M^{'}| > |M|$.
-		
+		Suppose that $M$ is maximum. For the sake of contradiction, assume that there exists an M-augmenting path $P$ with $u$ and $v$ as its endpoints in $G$. Then we can see that the matching $M^{'} = M \bigtriangleup E(P)$ is a valid matching in $G$ and satisfies $|M^{'}| = |M| + 1$. Indeed, if we remove all edges of $P$ that belong to $M$ and add the remaining ones to $M$, we add one more edge to $M$ in total (because $P$ has odd length). The new matching is valid because $u$ and $v$ were free, and they were not incident to any matching edge, and every internal vertex of $P$ remains incident to exactly one edge. All vertices outside $P$ are unaffected. As a result, the new matching $M^{'}$ is valid and its cardinality is greater than that of $M$. This is a contradiction.
+
+		Now suppose that $G$ does not contain any M-augmenting path and that a matching $M^{'}$ exists in $G$ such that $|M^{'}| > |M|$. Consider the graph $M_{0} = M \bigtriangleup M^{'}$. Each vertex in $M_{0}$ may be matched in both matchings or in either one. So, every vertex has degree at most $2$. Hence, every component of $M_{0}$ is either a path or a cycle of even length (otherwise, there would exist a vertex that is incident to two edges in the same matching). Because $M_{0}$ has more edges of $M^{'}$ than of $M$, this also means that there exists a path $P$ with more edges of $M^{'}$ than of $M$, and because the edges are alternating, $P$ is an M-augmenting path, which contradicts our assumption that $G$ does not contain any M-augmenting path.
 	\end{proof}
 
+%	 $N^{+}(v)$ and $N^{-}(v)$ (which correspond to the vertices that $v$ points to and the vertices that point to $v$, respectively)
+	
+	\paragraph{Augmenting-Path Algorithm.}
 
+	Based on the theorem above, we can write an algorithm that will try to find an augmenting path, alternate its edges (this will increase the size of the current matching by one), and repeat the whole process until we can't find any augmenting path. $N(v)$ represents all the vertices $u$ such that $\{v, u\} \in E(G)$. 
+
+	\begin{algorithm}[H]
+	\caption{Augmenting Path Algorithm}
+	\begin{algorithmic}[1]
+	\Require Graph $G=(V,E)$, vertex $v$
+	\Ensure Array matched that corresponds to the edges of the maximum matching
+	\Function{DfsAugmentingPath}{int $v$, bool visited[], int matched[]}	
+		\If{visited[$v$]}
+			\State \Return False;
+		\EndIf
+		\State visited[$v$] \gets True;
+		\ForAll{$u$ in $N(v)$}
+		    \If{$matched[u] = \emptyset$ or DfsAugmentingPath(matched[$u$], visited, matched)}
+				\State $matched[u] \gets v$;
+		        \State \Return True;
+		    \EndIf
+		\EndFor
+		\State \Return False;
+	\EndFunction
+	\end{algorithmic}
+	\end{algorithm}
+	
+	Algorithm $2.1$ is getting called from all vertices in the left part of bipartite graph (let's call it $V_{1}$). We will use an extra array called visited to track the vertices from $V_{1}$ that we have already visited across the path and we have to reset it to be false for all these vertices before the initial call. Array matched marks the matched vertices only from the right part of the bipartite graph (let's call it $V_{2}$).  To get the edges of the matching, we simply take all the edges $\{v, matched[v]\}$ such that $matched[v]$ is not empty and store them to the matching set. 
+
+	\begin{algorithm}[H]
+	\caption{Maximum Bipartite Matching in $O(nm + n^{2})$}
+	\begin{algorithmic}[1]
+	\Require Graph $G=(V,E)$, vertex sets $V_{1}, V_{2} \subseteq V$
+	\Ensure Array matched that corresponds to the edges of the maximum matching
+	\Function{MainAugmentingPath}{int $v$, bool visited[]}
+		\ForAll{$v \in V_{2}$}
+			\State $matched[v] \gets \emptyset$;
+		\EndFor
+		\ForAll{$v$ in $V_{1}$}
+			\ForAll{$u$ in $V_{1}$}
+				\State $visited[u] \gets False$;
+			\EndFor
+		    \State DfsAugmentingPath(v, visited, matched);
+		\EndFor
+		\State $matching \gets \emptyset$;
+		\ForAll{$v$ in $V_{2}$}
+			\If{$matched[v] \neq \emptyset$}
+				\State $matching \gets matching \cup \{\{matched[v], v\}\}$;
+			\EndIf
+		\EndFor
+	\EndFunction
+	\end{algorithmic}
+	\end{algorithm}
+
+	The idea of the algorithm is that if the initial call is from a free vertex, say $v$, and we cannot find another free vertex $u$ such that the edge $\{v, u\}$ exists, then we simply try to find a path $(v,x,y)$ such that $\{v,x\}$ is not in the matching, but $\{x, y\}$ is, so we can start trying again from the vertex $y$, until we find a free vertex and then recursively alternate the path. 
+	
+	\begin{llemma}
+    	If we call DfsAugmentingPath from a free vertex $v$ and augmenting path with endpoint $v$ exists, the algorithm $2.1$ will return True and alternate its edges.
+	\end{llemma}
+
+	\begin{proof}
+		Suppose that a free vertex $u \in V_{2}$ exists such that $\{v,u\} \in E(G)$. Then from line $7$ the algorithm successfully finds an augmenting path. Now suppose that such a vertex doesn't exist and $P=(v,v_{1},v_{2},...,u)$ any augmenting path with endpoint the vertex $v$. Since $P$ is alternating, the edge $\{v, v_{1}\}$ does not belong to the matching, while $\{v_{1}, v_{2}\}$ does. Because the algorithm checks all neighbors of $v$ (line $6$), it will eventually examine $v_{1}$ (assuming that all the other neighbors - if they exist - return false), and line $7$ does a recursive call for $matched[v_{1}] = v_{2}$ (note that $v_{2}$ is impossible to be visited, otherwise an alternative path $(v,...,v_{2})$ exists and the algorithm would have already found another augmenting path from that recursive call to $u$ or to another free vertex). Repeating the same argument along $P$, the algorithm eventually reaches the free vertex $u \in V_{2}$, where line $7$ is true since $matched[u] = \emptyset$. The recursive calls then return True and update the array matched accordingly, thus alternating the edges of $P$.
+	\end{proof}
+
+	From this, we get the following remark.
+	\begin{rremark}
+   	 	After an initial call of DfsAugmentingPath from a free vertex $v \in V_{1}$, the only vertices that can become matched are $v$ and one free vertex of $V_{2}$. If no augmenting path is found, then the matching remains unchanged.
+	\end{rremark}
+
+	Then, we can prove the following lemma.
+	
+	\begin{llemma}
+    	Every initial call to DfsAugmentingPath takes a free vertex as parameter.	
+	\end{llemma}
+	\begin{proof}
+		This is obviously true in the first iteration. Assume that we are at iteration $i$, and that the statement holds for all previous iterations. Let $v$ be the vertex from which we are about to initially call DfsAugmentingPath. If $v$ is free, then we are done. If it is not, $v$ must have become matched during some previous iteration. However, by Remark 2.2.3, in each iteration the only vertex of $V_1$ that can become matched is the vertex from which DfsAugmentingPath was initially called. Since \textsc{DfsAugmentingPath} has never been initially called from $v$ before iteration $i$, the vertex $v$ could not have become matched earlier.
+	\end{proof}
+	
+	The output of the algorithm (set $matching$) is always a valid matching. Since the algorithm initializes with an empty matching and only updates it by alternating edges along valid augmenting paths starting from free vertices (Lemma 2.2.4), the maintained set of edges is always a valid matching. Now we have to prove that it is maximum.
+
+	\begin{ttheorem}
+		Algorithm 2.2 returns a maximum matching.
+	\end{ttheorem}
+
+	\begin{proof}
+		Let $v_{1},v_{2},\dots,v_{k}$ be the vertices of $V_{1}$ in the order in which Algorithm 2.2 processes them. For each $i \in \{0,1,\dots,k\}$, let $M_{i}$ be the matching after the first $i$ iterations of the algorithm, with $M_{0} = \emptyset$. Also, let $G_{i}$ be the subgraph of $G$ induced by the vertex set
+		\[
+		\{v_{1},v_{2},\dots,v_{i}\} \cup V_{2}.
+		\]
+		We will prove by induction on $i$ that $M_{i}$ is a maximum matching of $G_{i}$.
+	
+		For $i=0$, the graph $G_{0}$ has no vertices in $V_{1}$, so the empty matching $M_{0}$ is trivially maximum.
+	
+		Now assume that $M_{i}$ is a maximum matching of $G_{i}$, and consider iteration $i+1$, where the algorithm processes the vertex $v_{i+1}$. By Lemma 2.2.4, the initial call to DfsAugmentingPath is made from a free vertex. We consider two cases.
+	
+		\medskip
+		\noindent\textbf{Case 1:} DfsAugmentingPath$(v_{i+1})$ returns True. Then, by Lemma 2.2.2, the algorithm finds an augmenting path in $G_{i+1}$ with endpoint $v_{i+1}$ and alternates its edges. Therefore,
+		\[
+		|M_{i+1}| = |M_{i}| + 1.
+		\]
+		On the other hand, any matching of $G_{i+1}$ can use at most one edge incident to the new vertex $v_{i+1}$. Hence, by removing that edge if it exists, we obtain a matching of $G_{i}$, and therefore every matching of $G_{i+1}$ has size at most $|M_{i}| + 1$. Since $M_{i}$ is maximum in $G_{i}$, it follows that $M_{i+1}$ is a maximum matching of $G_{i+1}$.
+	
+		\medskip
+		\noindent\textbf{Case 2:} DfsAugmentingPath$(v_{i+1})$ returns False. Then, again by Lemma 2.2.2, there is no $M_{i}$-augmenting path in $G_{i+1}$ with endpoint $v_{i+1}$. Since $M_{i}$ is maximum in $G_{i}$, Theorem 2.2.1 implies that there is no $M_{i}$-augmenting path contained entirely in $G_{i}$. Thus, there is no $M_{i}$-augmenting path in $G_{i+1}$ at all, because any augmenting path in $G_{i+1}$ that is not contained in $G_{i}$ must involve the only new vertex of $V_{1}$, namely $v_{i+1}$. Therefore, by Theorem 2.2.1, $M_{i}$ is already a maximum matching of $G_{i+1}$. Since the matching does not change in this case, we have
+		\[
+		M_{i+1} = M_{i},
+		\]
+		and so $M_{i+1}$ is a maximum matching of $G_{i+1}$.
+	
+		\medskip
+		In both cases, $M_{i+1}$ is a maximum matching of $G_{i+1}$. This completes the induction.
+	\end{proof}
+
+	Before each search, initializing the visited array takes $O(n)$ time. We run Algorithm $2.1$ for each vertex $v \in V_{1}$ searching for an augmenting path. To find an augmenting path, we will visit each vertex and each edge at most once, so the total complexity is $O(nm + n^{2})$.
+	
+
+\clearpage 
 \section{Gale–Shapley Algorithm}
 
-\section{Further Matching Models}
+\section{Applications and Further Matching Models}
 
 \chapter{Polyhedral Approaches to Matching Problems}
 
