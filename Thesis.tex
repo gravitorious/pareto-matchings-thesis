@@ -21,6 +21,7 @@
 \usepackage{fancyhdr}
 \usepackage{makeidx}
 \usepackage{float}
+\usepackage{cleveref}
 \setlength{\parindent}{2em}
 \setmainfont{CMU Serif}
 
@@ -138,9 +139,17 @@ backgroundcolor=\color{gray!10!white},
 \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
 \DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
 \numberwithin{algorithm}{chapter}
-\algrenewcommand\textproc{\normalfont} %for fuction name
+\algrenewcommand\textproc[1]{\textit{#1}} %for fuction name
+\newcommand{\True}{\textsc{true}}
+\newcommand{\False}{\textsc{false}}
 %$T(n) = T(\ceil*{\frac{n}{2}} + O(1))$
 %\coloneqq :=
+%for reference \begin{lemma}[lemma "name" only if you want]\label{dfs} %\Cref{berge} if you want to refer it. You call function in the same way
+%use \text{} inside equations for words
+
+
+
+
 \begin{document}
 
 %\input{frontmatter/frontmatter}
@@ -167,9 +176,9 @@ backgroundcolor=\color{gray!10!white},
 
 	
 
-	Let $G = (V,E)$ be an undirected graph with $|V| = n$ vertices and $|E| = m$ edges. We call $G$ bipartite if we can partition its vertex set into two sets $V_{1}, V_{2}$ such that for each edge ${u,v} \in E$, $u \in V_{1}$ and $v \in V_{2}$. If every vertex of $V_{1}$ is adjacent to every vertex of $V_{2}$ and $|V_{1}| = n_{1}, |V_{2}| = n_{2}$, then we call $G$ a complete bipartite graph and denote it by $K_{n_{1},n_{2}}$. By a path, we will always mean a simple path, i.e., a path in which no vertex is repeated. The length of a path is the number of edges it contains.
+	Let $G = (V,E)$ be an undirected graph with $|V| = n$ vertices and $|E| = m$ edges. We call $G$ bipartite if we can partition its vertex set into two sets $V_{1}, V_{2}$ such that for each edge ${u,v} \in E$, $u \in V_{1}$ and $v \in V_{2}$. If every vertex of $V_{1}$ is adjacent to every vertex of $V_{2}$ and $|V_{1}| = n_{1}, |V_{2}| = n_{2}$, then we call $G$ a complete bipartite graph and denote it by $K_{n_{1},n_{2}}$. By a path, we mean a simple path, i.e., a path in which no vertex is repeated. The length of a path is the number of edges it contains.
 
-	From set theory, we recall that the symmetric difference of two sets $A$ and $B$, denoted by $A\bigtriangleup B$, is the set of elements that belong to $A$ or $B$ but not both. Thus, $A\bigtriangleup B = (A \setminus B) \cup (B \setminus A) = (A \cup B) \setminus (A \cap B)$. Also, if we want to add an element $x$ to set $A$, we will use the shorthand $A + x \coloneqq A \cup \{x\}$, and if we want to remove it $A - x \coloneqq A \setminus \{x\}$.
+	From set theory, we recall that the symmetric difference of two sets $A$ and $B$, denoted by $A\bigtriangleup B$, is the set of elements that belong to $A$ or $B$ but not both. Thus, $A\bigtriangleup B = (A \setminus B) \cup (B \setminus A) = (A \cup B) \setminus (A \cap B)$. Also, if we want to add an element $x$ to set $A$, we shall use the shorthand $A + x \coloneqq A \cup \{x\}$, and if we want to remove it $A - x \coloneqq A \setminus \{x\}$.
 
 	We write $T(n) = O(f(n))$ if and only if there exist positive constants $c$ and $n_{0}$ such that $T(n) \leq c f(n)$ for all $n \geq n_{0}$. Most of the time, $T(n)$ will denote a bound on the worst-case running time of an algorithm defined on the positive integers. Similarly, we say that $T(n) = \Omega(f(n))$ if and only if there exist positive constants $c$ and $n_{0}$ such that $T(n) \geq cf(n)$ for all $n \geq n_{0}$. Finally, we say that $T(n) = \Theta(f(n))$ if and only if $T(n) = O(f(n))$ and $T(n) = \Omega(f(n))$.
 
@@ -183,16 +192,16 @@ backgroundcolor=\color{gray!10!white},
 		A path $P$ in G with respect to a matching $M$ is called augmenting if it is alternating and its endpoints are free.
 	\end{ddef}
 	
-	It is easy to see that every augmenting path has odd length. We will use the term M-augmenting whenever we want to emphasize the matching $M$.
+	It is straightforward to see that every augmenting path has odd length. We will use the term $M$-augmenting whenever we want to emphasize the matching $M$.
 	
 \section{Maximum Bipartite Matching}
 
 	In this section, we present two famous algorithms for finding a maximum bipartite matching and prove their correctness.
 
-	The first algorithm is a direct application of the following theorem proved by Berge in 1957 \cite{berge1957} (although it was already observed by Petersen in 1891 \cite{petersen1891theorie}).
+	The first algorithm is derived from a theorem of Berge \cite{berge1957}, previously observed by Petersen \cite{petersen1891theorie}.
 
-	\begin{ttheorem}
-		Let $G = (V,E)$ be a graph and let $M$ be a matching in $G$. Then $M$ is maximum if and only if there is no M-augmenting path in $G$.
+	\begin{ttheorem}\label{BergeTheorem}
+		Let $G = (V,E)$ be a graph and let $M$ be a matching in $G$. Then $M$ is maximum if and only if there is no $M$-augmenting path in $G$.
 	\end{ttheorem}
 	\begin{proof}
 		Suppose that $M$ is maximum. For the sake of contradiction, assume that there exists an M-augmenting path $P$ with $u$ and $v$ as its endpoints in $G$. Then we can see that the matching $M^{'} = M \bigtriangleup E(P)$ is a valid matching in $G$ and satisfies $|M^{'}| = |M| + 1$. Indeed, if we remove all edges of $P$ that belong to $M$ and add the remaining ones to $M$, we add one more edge to $M$ in total (because $P$ has odd length). The new matching is valid because $u$ and $v$ were free, and they were not incident to any matching edge, and every internal vertex of $P$ remains incident to exactly one edge. All vertices outside $P$ are unaffected. As a result, the new matching $M^{'}$ is valid and its cardinality is greater than that of $M$. This is a contradiction.
@@ -208,84 +217,87 @@ backgroundcolor=\color{gray!10!white},
 
 	\begin{algorithm}[H]
 	\caption{Augmenting Path Algorithm}
+	\label{DfsAugmentingPath}
 	\begin{algorithmic}[1]
 	\Require Graph $G=(V,E)$, vertex $v$
-	\Ensure Array matched that corresponds to the edges of the maximum matching
-	\Function{DfsAugmentingPath}{int $v$, bool visited[], int matched[]}	
-		\If{visited[$v$]}
-			\State \Return False;
+	\Ensure Array matched such that $\mathit{matched}[u] = v$ and $u \in V_{2}$ and $v \in V_{1}$ if and only if $\{u, v\} \in E(G)$ belongs to the matching
+	\Function{DfsAugmentingPath}{\texttt{int} $v$, \texttt{bool} $\mathit{visited}[]$, \texttt{int} $\mathit{matched}[]$}	
+		\If{$\mathit{visited}[v]$}
+			\State \Return \False;
 		\EndIf
-		\State visited[$v$] \gets True;
-		\ForAll{$u$ in $N(v)$}
-		    \If{$matched[u] = \emptyset$ or DfsAugmentingPath(matched[$u$], visited, matched)}
+		\State $\mathit{visited}[v]$ \gets \True;
+		\ForAll{$u \in N(v)$}
+		   \If{$\mathit{matched}[u] = \emptyset \textbf{ or } \Call{DfsAugmentingPath}{\mathit{matched}[u], \mathit{visited}, \mathit{matched}}$}
 				\State $matched[u] \gets v$;
-		        \State \Return True;
+		        \State \Return \True;
 		    \EndIf
 		\EndFor
-		\State \Return False;
+		\State \Return \False;
 	\EndFunction
 	\end{algorithmic}
 	\end{algorithm}
 	
-	Algorithm $2.1$ is getting called from all vertices in the left part of bipartite graph (let's call it $V_{1}$). We will use an extra array called visited to track the vertices from $V_{1}$ that we have already visited across the path and we have to reset it to be false for all these vertices before the initial call. Array matched marks the matched vertices only from the right part of the bipartite graph (let's call it $V_{2}$).  To get the edges of the matching, we simply take all the edges $\{v, matched[v]\}$ such that $matched[v]$ is not empty and store them to the matching set. 
+	\Cref{DfsAugmentingPath} is getting called from all vertices in the left part of bipartite graph (let's call it $V_{1}$). We will use an extra array called visited to track the vertices from $V_{1}$ that we have already visited across the path and we have to reset it to be false for all these vertices before the initial call. Array matched marks the matched vertices only from the right part of the bipartite graph (let's call it $V_{2}$).  To get the edges of the matching, we simply take all the edges $\{v, \mathit{matched[v]}\}$ such that $\mathit{matched[v]}$ is not empty and store them to set $\mathit{matching}$.
 
 	\begin{algorithm}[H]
-	\caption{Maximum Bipartite Matching in $O(nm + n^{2})$}
+	\caption{Maximum Bipartite Matching in $O(nm)$}
+	\label{max-bm1}
 	\begin{algorithmic}[1]
-	\Require Graph $G=(V,E)$, vertex sets $V_{1}, V_{2} \subseteq V$
-	\Ensure Array matched that corresponds to the edges of the maximum matching
-	\Function{MainAugmentingPath}{int $v$, bool visited[]}
+	\Require Bipartite graph $G=(V_1 \cup V_2,E)$
+	\Ensure Array $\mathit{matching}$ that corresponds to the edges of the maximum matching
+	\Function{MainAugmentingPath}{\texttt{int} $v$, \texttt{bool} $\mathit{visited}[]$, \texttt{set} $\mathit{matching}$}
 		\ForAll{$v \in V_{2}$}
-			\State $matched[v] \gets \emptyset$;
+			\State $\mathit{matched}[v] \gets \emptyset$;
 		\EndFor
-		\ForAll{$v$ in $V_{1}$}
-			\ForAll{$u$ in $V_{1}$}
-				\State $visited[u] \gets False$;
+		\ForAll{$v \in V_{1}$}
+			\ForAll{$u \in V_{1}$}
+				\State $\mathit{dist}[i] \gets \False$;
 			\EndFor
-		    \State DfsAugmentingPath(v, visited, matched);
+			\State \Call{DfsAugmentingPath}{$v$, $\mathit{visited}$, $\mathit{matched}$};
 		\EndFor
-		\State $matching \gets \emptyset$;
-		\ForAll{$v$ in $V_{2}$}
-			\If{$matched[v] \neq \emptyset$}
-				\State $matching \gets matching \cup \{\{matched[v], v\}\}$;
+		\State $\mathit{matching} \gets \emptyset$;
+		\ForAll{$v \in V_{2}$}
+			\If{$\mathit{matched}[v] \neq \emptyset$}
+				\State $\mathit{matching} \gets \mathit{matching} \cup \{\{\mathit{matched}[v], v\}\}$;
 			\EndIf
 		\EndFor
+		\State \Return $\mathit{matching}$;
 	\EndFunction
 	\end{algorithmic}
 	\end{algorithm}
 
-	The idea of the algorithm is that if the initial call is from a free vertex, say $v$, and we cannot find another free vertex $u$ such that the edge $\{v, u\}$ exists, then we simply try to find a path $(v,x,y)$ such that $\{v,x\}$ is not in the matching, but $\{x, y\}$ is, so we can start trying again from the vertex $y$, until we find a free vertex and then recursively alternate the path. 
+	The idea is that if the initial call is from a free vertex, say $v$, and we cannot find another free vertex $u$ such that the edge $\{v, u\}$ exists, then we simply try to find a path $(v,x,y)$ such that $\{v,x\}$ is not in the matching, but $\{x, y\}$ is, so we can start trying again from the vertex $y$, until we find a free vertex and then recursively alternate the path. 
 	
-	\begin{llemma}
-    	If we call DfsAugmentingPath from a free vertex $v$ and augmenting path with endpoint $v$ exists, the algorithm $2.1$ will return True and alternate its edges.
+	\begin{llemma} \label{callaugmdfs}
+    	If we call \Cref{DfsAugmentingPath} from a free vertex $v$ and augmenting path with endpoint $v$ exists, then it will return $\True$ and alternate its edges.
 	\end{llemma}
 
 	\begin{proof}
-		Suppose that a free vertex $u \in V_{2}$ exists such that $\{v,u\} \in E(G)$. Then from line $7$ the algorithm successfully finds an augmenting path. Now suppose that such a vertex doesn't exist and $P=(v,v_{1},v_{2},...,u)$ any augmenting path with endpoint the vertex $v$. Since $P$ is alternating, the edge $\{v, v_{1}\}$ does not belong to the matching, while $\{v_{1}, v_{2}\}$ does. Because the algorithm checks all neighbors of $v$ (line $6$), it will eventually examine $v_{1}$ (assuming that all the other neighbors - if they exist - return false), and line $7$ does a recursive call for $matched[v_{1}] = v_{2}$ (note that $v_{2}$ is impossible to be visited, otherwise an alternative path $(v,...,v_{2})$ exists and the algorithm would have already found another augmenting path from that recursive call to $u$ or to another free vertex). Repeating the same argument along $P$, the algorithm eventually reaches the free vertex $u \in V_{2}$, where line $7$ is true since $matched[u] = \emptyset$. The recursive calls then return True and update the array matched accordingly, thus alternating the edges of $P$.
+		Suppose that a free vertex $u \in V_{2}$ exists such that $\{v,u\} \in E(G)$. Then from line $7$ the algorithm successfully finds an augmenting path. Now suppose that such a vertex doesn't exist and $P=(v,v_{1},v_{2},...,u)$ any augmenting path with endpoint the vertex $v$. Since $P$ is alternating, the edge $\{v, v_{1}\}$ does not belong to the matching, while $\{v_{1}, v_{2}\}$ does. Because the algorithm checks all neighbors of $v$ (line $6$), it will eventually examine $v_{1}$ (assuming that all the other neighbors - if they exist - return false), and line $7$ does a recursive call for $\mathit{matched[v_{1}]} = v_{2}$ (note that $v_{2}$ is impossible to be visited, otherwise an alternative path $(v,...,v_{2})$ exists and the algorithm would have already found another augmenting path from that recursive call to $u$ or to another free vertex). Repeating the same argument along $P$, the algorithm eventually reaches the free vertex $u \in V_{2}$, where line $7$ is true since $\mathit{matched[u]} = \emptyset$. The recursive calls then return $\True$ and update the array matched accordingly, thus alternating the edges of $P$.
 	\end{proof}
 
 	From this, we get the following remark.
-	\begin{rremark}
-   	 	After an initial call of DfsAugmentingPath from a free vertex $v \in V_{1}$, the only vertices that can become matched are $v$ and one free vertex of $V_{2}$. If no augmenting path is found, then the matching remains unchanged.
+	\begin{rremark} \label{remarkaugm}
+   	 	After an initial call of \Cref{DfsAugmentingPath} from a free vertex $v \in V_{1}$, the only vertices that can become matched are $v$ and one free vertex of $V_{2}$. If no augmenting path is found, then the matching remains unchanged.
 	\end{rremark}
 
 	Then, we can prove the following lemma.
 	
-	\begin{llemma}
-    	Every initial call to DfsAugmentingPath takes a free vertex as parameter.	
+	\begin{llemma}\label{initial-call-dfs-augm}
+    	Every initial call to \Cref{DfsAugmentingPath} from \Cref{max-bm1} takes a free vertex as parameter.	
 	\end{llemma}
 	\begin{proof}
-		This is obviously true in the first iteration. Assume that we are at iteration $i$, and that the statement holds for all previous iterations. Let $v$ be the vertex from which we are about to initially call DfsAugmentingPath. If $v$ is free, then we are done. If it is not, $v$ must have become matched during some previous iteration. However, by Remark 2.2.3, in each iteration the only vertex of $V_1$ that can become matched is the vertex from which DfsAugmentingPath was initially called. Since \textsc{DfsAugmentingPath} has never been initially called from $v$ before iteration $i$, the vertex $v$ could not have become matched earlier.
+		This is obviously true in the first iteration. Assume that we are at iteration $i$, and that the statement holds for all previous iterations. Let $v$ be the vertex from which we are about to initially call \Cref{DfsAugmentingPath}. If $v$ is free, then we are done. If it is not, $v$ must have become matched during some previous iteration. However, by \Cref{remarkaugm}, in each iteration the only vertex of $V_1$ that can become matched is the vertex from which \Cref{DfsAugmentingPath} was initially called. Since \Cref{DfsAugmentingPath} has never been initially called from $v$ before iteration $i$, the vertex $v$ could not have become matched earlier.
 	\end{proof}
 	
-	The output of the algorithm (set $matching$) is always a valid matching. Since the algorithm initializes with an empty matching and only updates it by alternating edges along valid augmenting paths starting from free vertices (Lemma 2.2.4), the maintained set of edges is always a valid matching. Now we have to prove that it is maximum.
+	The output of the \Cref{max-bm1} (set matching) is always a valid matching. Since the algorithm initializes with an empty matching and only updates it by alternating edges along valid augmenting paths starting from free vertices (\Cref{callaugmdfs}), the maintained set of edges is always a valid matching. Now we have to prove that it is maximum.
 
 	\begin{ttheorem}
-		Algorithm 2.2 returns a maximum matching.
+		\Cref{max-bm1} returns a maximum matching.
 	\end{ttheorem}
 
 	\begin{proof}
-		Let $v_{1},v_{2},\dots,v_{k}$ be the vertices of $V_{1}$ in the order in which Algorithm 2.2 processes them. For each $i \in \{0,1,\dots,k\}$, let $M_{i}$ be the matching after the first $i$ iterations of the algorithm, with $M_{0} = \emptyset$. Also, let $G_{i}$ be the subgraph of $G$ induced by the vertex set
+		Let $v_{1},v_{2},\dots,v_{k}$ be the vertices of $V_{1}$ in the order in which \Cref{max-bm1} processes them. For each $i \in \{0,1,\dots,k\}$, let $M_{i}$ be the matching after the first $i$ iterations of the algorithm, with $M_{0} = \emptyset$. Also, let $G_{i}$ be the subgraph of $G$ induced by the vertex set
 		\[
 		\{v_{1},v_{2},\dots,v_{i}\} \cup V_{2}.
 		\]
@@ -293,17 +305,17 @@ backgroundcolor=\color{gray!10!white},
 	
 		For $i=0$, the graph $G_{0}$ has no vertices in $V_{1}$, so the empty matching $M_{0}$ is trivially maximum.
 	
-		Now assume that $M_{i}$ is a maximum matching of $G_{i}$, and consider iteration $i+1$, where the algorithm processes the vertex $v_{i+1}$. By Lemma 2.2.4, the initial call to DfsAugmentingPath is made from a free vertex. We consider two cases.
+		Now assume that $M_{i}$ is a maximum matching of $G_{i}$, and consider iteration $i+1$, where the algorithm processes the vertex $v_{i+1}$. By \Cref{initial-call-dfs-augm}, the initial call to \Cref{DfsAugmentingPath} is made from a free vertex. We consider two cases.
 	
 		\medskip
-		\noindent\textbf{Case 1:} DfsAugmentingPath$(v_{i+1})$ returns True. Then, by Lemma 2.2.2, the algorithm finds an augmenting path in $G_{i+1}$ with endpoint $v_{i+1}$ and alternates its edges. Therefore,
+		\noindent\textbf{Case 1:} $\Call{DfsAugmentingPath}{v_{i+1}}$ (\Cref{DfsAugmentingPath} with parameter the vertex $v_{i+1}$) returns $\True$. Then, by \Cref{callaugmdfs}, the algorithm finds an augmenting path in $G_{i+1}$ with endpoint $v_{i+1}$ and alternates its edges. Therefore,
 		\[
 		|M_{i+1}| = |M_{i}| + 1.
 		\]
 		On the other hand, any matching of $G_{i+1}$ can use at most one edge incident to the new vertex $v_{i+1}$. Hence, by removing that edge if it exists, we obtain a matching of $G_{i}$, and therefore every matching of $G_{i+1}$ has size at most $|M_{i}| + 1$. Since $M_{i}$ is maximum in $G_{i}$, it follows that $M_{i+1}$ is a maximum matching of $G_{i+1}$.
 	
 		\medskip
-		\noindent\textbf{Case 2:} DfsAugmentingPath$(v_{i+1})$ returns False. Then, again by Lemma 2.2.2, there is no $M_{i}$-augmenting path in $G_{i+1}$ with endpoint $v_{i+1}$. Since $M_{i}$ is maximum in $G_{i}$, Theorem 2.2.1 implies that there is no $M_{i}$-augmenting path contained entirely in $G_{i}$. Thus, there is no $M_{i}$-augmenting path in $G_{i+1}$ at all, because any augmenting path in $G_{i+1}$ that is not contained in $G_{i}$ must involve the only new vertex of $V_{1}$, namely $v_{i+1}$. Therefore, by Theorem 2.2.1, $M_{i}$ is already a maximum matching of $G_{i+1}$. Since the matching does not change in this case, we have
+		\noindent\textbf{Case 2:} $\Call{DfsAugmentingPath}{v_{i+1}}$ returns $\False$. Then, again by \Cref{callaugmdfs}, there is no $M_{i}$-augmenting path in $G_{i+1}$ with endpoint $v_{i+1}$. Since $M_{i}$ is maximum in $G_{i}$, \Cref{BergeTheorem} implies that there is no $M_{i}$-augmenting path contained entirely in $G_{i}$. Thus, there is no $M_{i}$-augmenting path in $G_{i+1}$ at all, because any augmenting path in $G_{i+1}$ that is not contained in $G_{i}$ must involve the only new vertex of $V_{1}$, namely $v_{i+1}$. Therefore, by \Cref{BergeTheorem}, $M_{i}$ is already a maximum matching of $G_{i+1}$. Since the matching does not change in this case, we have
 		\[
 		M_{i+1} = M_{i},
 		\]
@@ -313,8 +325,215 @@ backgroundcolor=\color{gray!10!white},
 		In both cases, $M_{i+1}$ is a maximum matching of $G_{i+1}$. This completes the induction.
 	\end{proof}
 
-	Before each search, initializing the visited array takes $O(n)$ time. We run Algorithm $2.1$ for each vertex $v \in V_{1}$ searching for an augmenting path. To find an augmenting path, we will visit each vertex and each edge at most once, so the total complexity is $O(nm + n^{2})$.
+	Before each search, we initialize the visited array which takes $O(n)$ time. We call $\Call{DfsAugmentingPath}{}$ for each vertex $v \in V_{1}$ searching for an augmenting path. To find an augmenting path, we will visit each vertex and each edge at most once, so the total complexity is $O(nm)$ when $m = \Omega(n)$.
+
+	\paragraph{Hopcroft-Karp Algorithm} Hopcroft and Karp \cite{hopcroft1973n} provided a faster algorithm, again based on finding augmenting paths, but in a smarter way. The algorithm runs in phases. In each phase, we find a maximal set of vertex-disjoint shortest $M$-augmenting paths and take the symmetric difference of the current matching $M$ with the union of these paths. The process stops when no augmenting path can be found. 
+
+	Our implementation is based on the version of Shimon Even and Alon Itai, who made significant modifications to Dinic's algorithm for the maximum flow problem \cite{dinitz1970,dinitz2006}. As we will see at the end of this section, maximum flow and maximum bipartite matching are closely connected problems.
+
+	The key idea of the algorithm is to efficiently find these paths and alternate their edges. To do that, we construct a new graph called the layered network. We describe this graph with an array called level, defined on the vertices of $V_{1}$. Initially, every free vertex of $V_{1}$ gets level $1$. Then, if a vertex $u \in V_{1}$ has level $i$, every vertex of $V_{1}$ that can be reached from $u$ by first taking an unmatched edge to a vertex of $V_{2}$ and then a matched edge back to $V_{1}$ gets level $i+1$, provided it has not already received a level. The vertices are visited in Breadth-First Search (BFS) order, starting from all free vertices of $V_{1}$. In this way, $\mathit{level}[v]$ represents the minimum alternating distance of $v \in V_{1}$ from the set of free vertices of $V_{1}$ in the current phase. If all edges in the layered network are directed from a source vertex in $V_{1}$ to a destination vertex in $V_{2}$, it is clear that the resulting graph is a dag (directed acyclic graph). It is important to emphasize that two
+
+	\begin{algorithm}[H]
+	\caption{BFS Layered Network Construction}
+	\label{layeredNetwork}
+	\begin{algorithmic}[1]
+	\Require Bipartite graph $G=(V_1 \cup V_2,E)$, arrays $\mathit{next}$, $\mathit{prev}$ represent the current matching
+	\Ensure Array $\mathit{level}$ for the vertices of $V_{1}$ describes the layered network
+	\Function{BfsLayeredNetwork}{\texttt{int} $\mathit{next}[]$, \texttt{int} $\mathit{prev}[]$, \texttt{int} $\mathit{level}[]$}
+		\State $\mathit{treeDepth} \gets 0$;
+		\State initialize empty queue $Q$;
+		\ForAll{$u \in V_{1}$}
+			\If{$\mathit{next}[u] = \emptyset$}
+				\State $\mathit{level}[u] \gets 1$;
+				\State $Q$.push($u$);
+			\EndIf
+		\EndFor
+		\While{not $Q$.isEmpty()}
+			\State $u \gets$ $Q$.pop();
+			\ForAll{$x \in N(u)$}
+				\If{$\mathit{prev}[x] = \emptyset$}
+					\State $\mathit{treeDepth} \gets \mathit{level}[u]$;
+					\State \textbf{continue};
+				\EndIf
+				\If{$\mathit{prev}[x] = u$}
+					\State \textbf{continue};
+				\EndIf
+				\If{$\mathit{level}[\mathit{prev}[x]] = 0$}
+					\State $\mathit{level}[\mathit{prev}[x]] \gets \mathit{level}[u] + 1$;
+					\State $Q$.push($\mathit{prev}[x]$);
+				\EndIf
+			\EndFor
+			\If{$\mathit{treeDepth} \neq 0$}
+				\State \textbf{break};
+			\EndIf
+		\EndWhile
+		\ForAll{$u \in V_{1}$}
+			\If{$\mathit{level}[u] > \mathit{treeDepth}$}
+				\State $\mathit{level}[u] \gets 0$;
+			\EndIf
+		\EndFor
+		\State \Return $(\mathit{treeDepth} \neq 0)$;
+	\EndFunction
+	\end{algorithmic}
+	\end{algorithm}
+
+	The first time we encounter a free vertex in $V_{2}$, we determine the last useful level in the current phase and we store it in the variable $\mathit{treeDepth}$. From that, we can also determine the length of a shortest augmenting path in the current phase (which is $2\cdot \mathit{treeDepth} - 1$). We do not need to continue the BFS deeper than that level and the vertices that remain in the queue belong either to the same level or to the next one. The vertices of the same level may still be used in the searching step to find other shortest augmenting paths, since we have already assigned their correct level. On the other hand, vertices that have already been assigned level $\mathit{treeDepth} + 1$ correspond to longer paths, so we reset their level to $0$. 
+
+	We define an array $\mathit{next}$ for every $v \in V_{1}$, such that $\mathit{next}[v] = u$ if and only if the edge $\{v,u\}$ belongs to the current matching; otherwise, $\mathit{next}[v] = \emptyset$. Similarly, for every $u \in V_{2}$, we define $\mathit{prev}[u] = v$ if and only if the edge $\{u,v\}$ belongs to the current matching; otherwise, $\mathit{prev}[u] = \emptyset$. Thus, the arrays $\mathit{next}$ and $\mathit{prev}$ represent the current matching and are updated whenever we find an augmenting path and alternate its edges.
+
+	\begin{ttheorem}
+		\Cref{layeredNetwork} correctly computes the array $\mathit{level}$ of the layered network of the current matching $M$. More precisely, if it returns $\False$, then no $M$-augmenting path exists in $G$. Otherwise, for every vertex $v \in V_{1}$, we have $\mathit{level}[v] \neq 0$ if and only if there exists an $M$-alternating path from a free vertex of $V_{1}$ to $v$. Moreover, if $\mathit{level}[v] \neq 0$, then the length of a shortest such path is $2 \cdot \mathit{level}[v] - 2$.
+	\end{ttheorem}
+	\begin{proof}
+		For every free vertex $v \in V_{1}$, the algorithm sets $\mathit{level}[v] = 1$, and the corresponding alternating path has length $0$. Now suppose that a vertex $u \in V_{1}$ is popped from the queue and that the statement already holds for $u$. Let $x \in V_{2}$ be a neighbor of $u$.
 	
+		If $\mathit{prev}[x] = \emptyset$, then extending a shortest alternating path to $u$ by the edge $\{u,x\}$ gives an $M$-augmenting path of length $2 \cdot \mathit{level}[u] - 1$. If $\mathit{prev}[x] = u$, then $\{u,x\}$ is a matched edge and cannot be used to continue an alternating path. Otherwise, if $\mathit{prev}[x] = w \neq u$ and $\mathit{level}[w] = 0$, then by appending the unmatched edge $\{u,x\}$ and the matched edge $\{x,w\}$ to a shortest alternating path ending at $u$, we obtain an alternating path from a free vertex of $V_{1}$ to $w$ of length
+		$(2 \cdot \mathit{level}[u] - 2) + 2 = 2 \cdot (\mathit{level}[u] + 1) - 2$.
+		Hence, the algorithm correctly sets $\mathit{level}[w] = \mathit{level}[u] + 1$. Since vertices are processed in BFS order, this is the minimum possible alternating distance to $w$.
+	
+		Therefore, for every vertex $v \in V_{1}$ with $\mathit{level}[v] \neq 0$, the value $\mathit{level}[v]$ is exactly the level of $v$ in the layered network, and the length of a shortest alternating path from a free vertex of $V_{1}$ to $v$ is $2 \cdot \mathit{level}[v] - 2$.
+	
+		Finally, if the algorithm returns $\False$, then no free vertex of $V_{2}$ is reached during the BFS. Therefore, there is no $M$-augmenting path in $G$. Indeed, if such a path existed, then the vertex just before its free endpoint on a shortest such path would lie in the layered network, and the free vertex in $V_{2}$ would also be reached.
+	\end{proof}
+	
+	\begin{ccor}
+		If \Cref{layeredNetwork} returns $\True$, then the length of a shortest $M$-augmenting path is $2 \cdot \mathit{treeDepth} - 1$.
+	\end{ccor}
+
+	The searching step, \Cref{DfsHK}, is almost the same as \Cref{DfsAugmentingPath}, so we will omit the proof. This time, we move across the layered network based on the $\mathit{level}$ array. We also use an array $\mathit{ptr}$ for all vertices in $V_{1}$. This array, holds for each vertex a counter that indicates the first neighbor that has not been checked yet. Hence, if we return to the same vertex in the same phase, we do not examine again the neighbors that have already returned $\False$. In particular, if $\mathit{ptr}[u]$ reaches the end of the adjacency list of $u$, then no augmenting path can be found through $u$ in the current phase. 
+
+	We could of course combine the two $\mathit{if}$ statements into one.
+
+	\begin{algorithm}[H]
+	\caption{DFS Phase of Hopcroft-Karp}
+	\label{DfsHK}
+	\begin{algorithmic}[1]
+	\Require Bipartite graph $G=(V_1 \cup V_2,E)$, vertex $u \in V_1$, arrays $\mathit{next}$, $\mathit{prev}$, $\mathit{level}$, $\mathit{ptr}$
+	\Ensure Returns \True\ if a shortest augmenting path is found from $u$
+	\Function{DfsHopcroftKarp}{\texttt{int} $u$, \texttt{int} $\mathit{next}[]$, \texttt{int} $\mathit{prev}[]$, \texttt{int} $\mathit{level}[]$, \texttt{int} $\mathit{ptr}[]$}
+		\For{$\mathit{ptr}[u]$ \textbf{to} $|N(u)|-1$}
+			\State $x \gets$ the $\mathit{ptr}[u]$-th neighbor of $u$;
+			\If{$\mathit{prev}[x] = \emptyset$}
+				\State $\mathit{prev}[x] \gets u$;
+				\State $\mathit{next}[u] \gets x$;
+				\State $\mathit{ptr}[u] \gets |N(u)|$;
+				\State \Return \True;
+			\EndIf
+			\If{$\mathit{level}[\mathit{prev}[x]] = \mathit{level}[u] + 1$ \textbf{and} \Call{DfsHopcroftKarp}{$\mathit{prev}[x]$, $\mathit{next}$, $\mathit{prev}$, $\mathit{level}$, $\mathit{ptr}$}}
+				\State $\mathit{prev}[x] \gets u$;
+				\State $\mathit{next}[u] \gets x$;
+				\State $\mathit{ptr}[u] \gets |N(u)|$;
+				\State \Return \True;
+			\EndIf
+		\EndFor
+		\State \Return \False;
+	\EndFunction
+	\end{algorithmic}
+	\end{algorithm}
+
+	\Cref{mainHK} and lines $9$-$21$ run the phases of the algorithm. In each phase, we call \Cref{layeredNetwork} (line $9$) to construct the layered network, find all augmenting paths of this graph by calling \Cref{DfsHK} for each free vertex of $V_{1}$ (lines $13$-$17$), and repeat the whole process. Note that we have to initialize the $\mathit{ptr}$ array to $0$ before starting the search, because all vertices will check their first neighbor first. We also have to initialize the $\mathit{level}$ array to zero before building the layered network. The set $\mathit{matching}$ contains the edges of the maximum matching.
+	
+
+	\begin{algorithm}[H]
+	\caption{Hopcroft--Karp Algorithm}
+	\label{mainHK}
+	\begin{algorithmic}[1]
+	\Require Bipartite graph $G=(V_1 \cup V_2,E)$
+	\Ensure Array $\mathit{matching}$ contains the edges of the maximum matching
+	\Function{HopcroftKarp}{\space}
+		\ForAll{$u \in V_{1}$}
+			\State $\mathit{next}[u] \gets \emptyset$;
+			\State $\mathit{level}[u] \gets 0$;
+		\EndFor
+		\ForAll{$x \in V_{2}$}
+			\State $\mathit{prev}[x] \gets \emptyset$;
+		\EndFor
+		\While{\Call{BfsLayeredNetwork}{$\mathit{next}$, $\mathit{prev}$, $\mathit{level}$}}
+			\ForAll{$u \in V_{1}$}
+				\State $\mathit{ptr}[u] \gets 0$;
+			\EndFor
+			\ForAll{$u \in V_{1}$}
+				\If{$\mathit{next}[u] = \emptyset$}
+					\State \Call{DfsHopcroftKarp}{$u$, $\mathit{next}$, $\mathit{prev}$, $\mathit{level}$, $\mathit{ptr}$};
+				\EndIf
+			\EndFor
+			\ForAll{$u \in V_{1}$}
+				\State $\mathit{level}[u] \gets 0$;
+			\EndFor
+		\EndWhile
+		\State $\mathit{matching} \gets \emptyset$;
+		\ForAll{$u \in V_{1}$}
+			\If{$\mathit{next}[u] \neq \emptyset$}
+				\State $\mathit{matching} \gets \mathit{matching} \cup \{\{u,\mathit{next}[u]\}\}$;
+			\EndIf
+		\EndFor
+		\State \Return $\mathit{matching}$;
+	\EndFunction
+	\end{algorithmic}
+	\end{algorithm}
+
+	It is evident that constructing the layered network takes no more than $O(n + m)$. Moreover, lines $13$-$17$ take no more than $O(n + m)$ as each edge is examined at most once (with the help of $\mathit{ptr}$ array) and as a result when vertex returns $\False$, we are not going to process it again  in the current phase.
+
+	\begin{llemma} \label{phaseHKComplexity}
+		Each phase, that is calculating the maximal set of vertex-disjoint shortest $M$-augmenting paths and take the symmetric difference with current matching $M$ takes no more than $O(n + m)$ time.
+	\end{llemma}
+	
+	We shall show that we need at most $O(\sqrt{n})$ phases, but before that, we have to prove some important lemmas.
+	\begin{llemma}\label{generalAPlemma}
+			Let $M$ and $M^{'}$ be two matchings of a graph $G$, with $|M^{'}|>|M|$. Then the graph
+			$M \bigtriangleup M^{'}$ contains at least $|M^{'}|-|M|$ vertex-disjoint $M$-augmenting paths.
+	\end{llemma}
+	\begin{proof}
+		We follow the same logic as in \Cref{BergeTheorem}. We consider the graph $M^{*} = M \bigtriangleup M^{'}$. We can see that the graph contains components, each of which is an alternating path or an even-length cycle. Cycles have the same number of edges from $M$ and $M^{'}$, and the same holds for alternating paths of even length. Each component that represents an augmenting path has one more edge from one matching than from the other. In fact, every $M$-augmenting path has one more edge from $M^{'}$ than $M$. From $|M^{'}| > |M|$, we can see that we have more $M$-augmenting paths than $M^{'}$-augmenting paths, and there must be at least $|M^{'}| - |M|$ such paths. This completes the proof.
+	\end{proof}
+
+	The following is a special case of \Cref{generalAPlemma}.
+	
+	\begin{llemma} \label{specialCaseAPLemma}
+		Given a matching $M$ and a maximum matching $M^{*}$, the graph contains $|M^{*}| - |M|$ vertex-disjoint $M$-augmenting paths.
+	\end{llemma}
+
+	\begin{llemma} \label{setRfromHKAlg}
+		Let $P = \{P_{1}, P_{2}, \cdots, P_{t}\}$ be a maximal set of vertex-disjoint shortest $M$-augmenting paths with length $x$ that \Cref{mainHK} calculates in one phase and $M^{'} = M \bigtriangleup (P_{1} \cup P_{2} \cup \cdots \cup P_{t}) = M \bigtriangleup P_{1} \bigtriangleup P_{2} \bigtriangleup \cdots \bigtriangleup P_{t}$ with $Q$ be an $M^{'}$-augmenting path. The set $R = (P_{1} \cup P_{2} \cup \cdots \cup P_{t}) \bigtriangleup Q$ has at least $x(t + 1)$ edges.
+	\end{llemma}
+	\begin{proof}
+		From $M^{'} = M \bigtriangleup (P_{1} \cup P_{2} \cup \cdots \cup P_{t})$, we have
+		\[
+			P_{1} \cup P_{2} \cup \cdots \cup P_{t} = M \bigtriangleup M^{'}
+		\]
+		That is,
+		\[
+			R= (M \bigtriangleup M^{'}) \bigtriangleup Q = M \bigtriangleup (M^{'} \bigtriangleup Q)
+		\]
+		As $Q$ is an $M^{'}$-augmented path, $M^{'} \bigtriangleup Q$ has size of $|M^{'}| + 1 = |M| + t + 1$ (plus $t + 1$ because it will get $t + 1$ more edges from alternating the paths of $P$ and the path $Q$). By \Cref{generalAPlemma}, there is at least $|M^{'} \bigtriangleup Q| - |M| = t + 1$ $M$-augmenting paths. Because every $M$-augmenting path has length at least $x$, it follows that $R$ has at least $x(t + 1)$ edges.
+	\end{proof}
+
+	\begin{llemma} \label{lengthAugmInHK}
+		The length of the shortest augmenting path increases in every phase.
+	\end{llemma}
+	\begin{proof}
+		Let’s assume that the current matching is $M$ and that we calculate a maximal set of vertex-disjoint shortest $M$-augmenting paths $P = \{P_{1}, P_{2}, \cdots, P_{t}\}$ of length $x$ in one phase of \Cref{mainHK}. Moreover, suppose that we take $M^{'} = M \bigtriangleup (P_{1} \cup P_{2} \cup \cdots \cup P_{t})$ (the matching that we get at the end of phase) and let $Q$ be an $M^{'}$-augmenting path. Obviously, $Q$ has a common vertex $v$ with at least one path from $P$, otherwise, it would mean that $Q$ is also in $M$ and either $|Q| > x$ (in this case we are done) or it would contradict the maximality of the set. Let $R = (P_{1} \cup P_{2} \cup \cdots \cup P_{t}) \bigtriangleup Q$. From \Cref{setRfromHKAlg}, $R$ has at least $x(t+1)$ edges. Let $P_{i} \in P$ such that $v \in P_{i}$. We observe that $v$ is incident with a matched edge in $M^{'}$ because at the end of the phase we alternate the edges of each path in $P$. The endpoints of $Q$ do not belong to $M^{'}$ because they are free, so it is guaranteed that $v$ is an internal vertex of $Q$ and therefore it is also incident with a matched edge in $M^{'}$. Obviously, it's impossible for $v$ to be incident with two different matched edges from $M^{'}$, so $P_{i}$ and $Q$ have at least one edge from $M^{'}$ in common. It follows that
+		\[
+			xt + x \leq |R| \leq |P_{1} \cup P_{2} \cup \cdots \cup P_{t} \cup Q| \leq xt + |Q| - 1
+		\]
+		and hence $x + 1 \leq |Q|$.
+	\end{proof}
+	
+	\begin{llemma} \label{HKTotalPhases}
+		\Cref{mainHK} performs at most $O(\sqrt{n})$ phases.
+	\end{llemma}
+	\begin{proof}
+		Assume that we have already performed $\sqrt{n}$ phases and the current matching is $M$. From \Cref{specialCaseAPLemma}, we know that there exist exactly $|M^{*}| - |M|$ vertex-disjoint $M$-augmenting paths for a maximum matching $M^{*}$.
+		From \Cref{lengthAugmInHK} all these augmenting paths will have length at least $\sqrt{n}$, so there cannot be more than $\sqrt{n}$ (we would need more than $n$ vertices) of them, which means that, $|M^{*}| - |M| \leq \sqrt{n}$. It follows from this that we can't perform more than $\sqrt{n}$ phases from that point. Overall, the total phases can't be more than $2\sqrt{n} = O(\sqrt{n})$.
+	\end{proof}
+	
+	From \Cref{phaseHKComplexity} and \Cref{HKTotalPhases} we get the complexity of Hopctroft-Karp algorithm.
+	
+	\begin{ttheorem}
+		\Cref{mainHK} returns a maximum matching in $O((n+m)\sqrt{n})$ time.
+	\end{ttheorem}
+		
+	\paragraph{Maximum Bipartite Matching from Max-Flows}
 
 \clearpage 
 \section{Gale–Shapley Algorithm}
@@ -324,7 +543,8 @@ backgroundcolor=\color{gray!10!white},
 \chapter{Polyhedral Approaches to Matching Problems}
 
 \clearpage
-\bibliographystyle{plain}
-\bibliography{bib/references} 
+\renewcommand{\bibname}{References}
+\bibliographystyle{alpha}
+\bibliography{bib/references}
 	
 \end{document}
