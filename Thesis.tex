@@ -10,7 +10,14 @@
 \usepackage{mathtools}
 \usepackage{mathrsfs}
 \usepackage{tikz-cd}
-\usepackage{hyperref, mathabx}
+\usepackage{xcolor}
+\usepackage[
+    colorlinks=true,
+    linkcolor=red,
+    citecolor=red,
+    urlcolor=red
+]{hyperref}
+\usepackage{mathabx}
 \usepackage{listings}
 \usepackage[greek,english]{babel}
 \usepackage{subfig}
@@ -21,7 +28,7 @@
 \usepackage{fancyhdr}
 \usepackage{makeidx}
 \usepackage{float}
-\usepackage{cleveref}
+\usepackage[nameinlink]{cleveref}
 \setlength{\parindent}{2em}
 \setmainfont{CMU Serif}
 
@@ -537,6 +544,10 @@ backgroundcolor=\color{gray!10!white},
 	We can reduce the bipartite maximum matching problem to the maximum flow problem by adding two extra nodes to the initial graph. The first vertex is called the source and will point to all vertices in $V_{1}$ with directed edges, and the second vertex is called the sink, such that all vertices from $V_{2}$ point to it. Moreover, all the edges of the initial graph will turn into directed edges, pointing to $V_{2}$ from a vertex of $V_{1}$. Assuming capacities of one for each edge (so there exists an integral maximum flow, that is every edge will have flow of $0$ or $1$), the maximum flow from source to sink is equal to the maximum bipartite matching. Actually, it is easy to see this because all paths that carry flow from source to sink should be edge-disjoint, and each path will have exactly one edge from $V_{1}$ to $V_{2}$, so no other path can use this edge again. We can get a maximum flow in the resulting graph from a maximum matching in the initial graph by just taking all the edges of matching and picking the edge from source to the $V_{1}$ vertex, and the edge from $V_{2}$ to the sink.
 	
 	Consequently, someone could make the above reduction and use a famous flow algorithm, like Dinic \cite{dinitz1970} to solve the maximum bipartite problem with $O(n^{2}m)$. It turns out, that using some kind of the arguments we talked before, that Dinic's algorithm will perform with the same complexity as Hopcroft-Karp algorithm.
+
+	\paragraph{Recent Research}
+	
+	Maximum flow is one of the most well-known problems in computer science and has been studied extensively over the years. Finding faster algorithms for the maximum flow problem, and and especially for the minimum-cost flow problem (to which maximum flow can be reduced), could lead to breakthroughs in many areas. For a long time, algorithms based primarily on combinatorial methods were far from the almost-linear-time bounds achieved by more recent continuous techniques. In 2023, a deterministic $m^{1+o(1)}$-time algorithm for exact maximum flow and minimum-cost flow was discovered \cite{brand2023deterministic}. This line of work also implies an $m^{1+o(1)}$-time algorithm for the maximum bipartite matching problem. On the other hand, randomized combinatorial algorithms were later obtained independently for exact maximum flow \cite{maxFlowBernstein} and for maximum bipartite matching \cite{MBMChuzhoy}.
 	
 
 \clearpage 
