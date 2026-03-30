@@ -178,7 +178,7 @@ backgroundcolor=\color{gray!10!white},
 
 	Let $G = (V,E)$ be an undirected graph with $|V| = n$ vertices and $|E| = m$ edges. We call $G$ bipartite if we can partition its vertex set into two sets $V_{1}, V_{2}$ such that for each edge ${u,v} \in E$, $u \in V_{1}$ and $v \in V_{2}$. If every vertex of $V_{1}$ is adjacent to every vertex of $V_{2}$ and $|V_{1}| = n_{1}, |V_{2}| = n_{2}$, then we call $G$ a complete bipartite graph and denote it by $K_{n_{1},n_{2}}$. By a path, we mean a simple path, i.e., a path in which no vertex is repeated. The length of a path is the number of edges it contains.
 
-	From set theory, we recall that the symmetric difference of two sets $A$ and $B$, denoted by $A\bigtriangleup B$, is the set of elements that belong to $A$ or $B$ but not both. Thus, $A\bigtriangleup B = (A \setminus B) \cup (B \setminus A) = (A \cup B) \setminus (A \cap B)$. Also, if we want to add an element $x$ to set $A$, we shall use the shorthand $A + x \coloneqq A \cup \{x\}$, and if we want to remove it $A - x \coloneqq A \setminus \{x\}$.
+	From set theory, we recall that the symmetric difference of two sets $A$ and $B$, denoted by $A\bigtriangleup B$, is the set of elements that belong to $A$ or $B$ but not both. Thus, $A\bigtriangleup B = (A \setminus B) \cup (B \setminus A) = (A \cup B) \setminus (A \cap B)$. Also, if we want to add an element $x$ to set $A$, we shall use the shorthand $A + x \coloneqq A \cup \{x\}$, and if we  to remove it $A - x \coloneqq A \setminus \{x\}$.
 
 	We write $T(n) = O(f(n))$ if and only if there exist positive constants $c$ and $n_{0}$ such that $T(n) \leq c f(n)$ for all $n \geq n_{0}$. Most of the time, $T(n)$ will denote a bound on the worst-case running time of an algorithm defined on the positive integers. Similarly, we say that $T(n) = \Omega(f(n))$ if and only if there exist positive constants $c$ and $n_{0}$ such that $T(n) \geq cf(n)$ for all $n \geq n_{0}$. Finally, we say that $T(n) = \Theta(f(n))$ if and only if $T(n) = O(f(n))$ and $T(n) = \Omega(f(n))$.
 
@@ -512,7 +512,7 @@ backgroundcolor=\color{gray!10!white},
 		The length of the shortest augmenting path increases in every phase.
 	\end{llemma}
 	\begin{proof}
-		Let’s assume that the current matching is $M$ and that we calculate a maximal set of vertex-disjoint shortest $M$-augmenting paths $P = \{P_{1}, P_{2}, \cdots, P_{t}\}$ of length $x$ in one phase of \Cref{mainHK}. Moreover, suppose that we take $M^{'} = M \bigtriangleup (P_{1} \cup P_{2} \cup \cdots \cup P_{t})$ (the matching that we get at the end of phase) and let $Q$ be an $M^{'}$-augmenting path. Obviously, $Q$ has a common vertex $v$ with at least one path from $P$, otherwise, it would mean that $Q$ is also in $M$ and either $|Q| > x$ (in this case we are done) or it would contradict the maximality of the set. Let $R = (P_{1} \cup P_{2} \cup \cdots \cup P_{t}) \bigtriangleup Q$. From \Cref{setRfromHKAlg}, $R$ has at least $x(t+1)$ edges. Let $P_{i} \in P$ such that $v \in P_{i}$. We observe that $v$ is incident with a matched edge in $M^{'}$ because at the end of the phase we alternate the edges of each path in $P$. The endpoints of $Q$ do not belong to $M^{'}$ because they are free, so it is guaranteed that $v$ is an internal vertex of $Q$ and therefore it is also incident with a matched edge in $M^{'}$. Obviously, it's impossible for $v$ to be incident with two different matched edges from $M^{'}$, so $P_{i}$ and $Q$ have at least one edge from $M^{'}$ in common. It follows that
+		Let’s assume that the current matching is $M$ and denote by $P = \{P_{1}, P_{2}, \cdots, P_{t}\}$ the maximal set of vertex-disjoint shortest $M$-augmenting paths  of length $x$ in one phase of \Cref{mainHK}. Moreover, suppose that we take $M^{'} = M \bigtriangleup (P_{1} \cup P_{2} \cup \cdots \cup P_{t})$ (the matching that we get at the end of phase) and let $Q$ be an $M^{'}$-augmenting path. Obviously, $Q$ has a common vertex $v$ with at least one path from $P$, otherwise, it would mean that $Q$ is also in $M$ and either $|Q| > x$ (in this case we are done) or it would contradict the maximality of the set. Let $R = (P_{1} \cup P_{2} \cup \cdots \cup P_{t}) \bigtriangleup Q$. From \Cref{setRfromHKAlg}, $R$ has at least $x(t+1)$ edges. Let $P_{i} \in P$ such that $v \in P_{i}$. We observe that $v$ is incident with a matched edge in $M^{'}$ because at the end of the phase we alternate the edges of each path in $P$. The endpoints of $Q$ do not belong to $M^{'}$ because they are free, so it is guaranteed that $v$ is an internal vertex of $Q$ and therefore it is also incident with a matched edge in $M^{'}$. Obviously, it's impossible for $v$ to be incident with two different matched edges from $M^{'}$, so $P_{i}$ and $Q$ have at least one edge from $M^{'}$ in common. It follows that
 		\[
 			xt + x \leq |R| \leq |P_{1} \cup P_{2} \cup \cdots \cup P_{t} \cup Q| \leq xt + |Q| - 1
 		\]
@@ -524,16 +524,20 @@ backgroundcolor=\color{gray!10!white},
 	\end{llemma}
 	\begin{proof}
 		Assume that we have already performed $\sqrt{n}$ phases and the current matching is $M$. From \Cref{specialCaseAPLemma}, we know that there exist exactly $|M^{*}| - |M|$ vertex-disjoint $M$-augmenting paths for a maximum matching $M^{*}$.
-		From \Cref{lengthAugmInHK} all these augmenting paths will have length at least $\sqrt{n}$, so there cannot be more than $\sqrt{n}$ (we would need more than $n$ vertices) of them, which means that, $|M^{*}| - |M| \leq \sqrt{n}$. It follows from this that we can't perform more than $\sqrt{n}$ phases from that point. Overall, the total phases can't be more than $2\sqrt{n} = O(\sqrt{n})$.
+		From \Cref{lengthAugmInHK} all these augmenting paths will have length at least $\sqrt{n}$, so there cannot be more than $\sqrt{n}$ (we would need more than $n$ vertices) of them, which means that, $|M^{*}| - |M| \leq \sqrt{n}$. It follows from this that we can't perform more than $\sqrt{n}$ phases from that point. We conclude that the total phases can't be more than $2\sqrt{n} = O(\sqrt{n})$.
 	\end{proof}
 	
-	From \Cref{phaseHKComplexity} and \Cref{HKTotalPhases} we get the complexity of Hopctroft-Karp algorithm.
+	From \Cref{phaseHKComplexity} and \Cref{HKTotalPhases} we get the complexity of Hopcroft-Karp algorithm.
 	
 	\begin{ttheorem}
 		\Cref{mainHK} returns a maximum matching in $O((n+m)\sqrt{n})$ time.
 	\end{ttheorem}
-		
-	\paragraph{Maximum Bipartite Matching from Max-Flows}
+
+	\paragraph{Maximum Bipartite Matching from Max-Flows} 
+	We can reduce the bipartite maximum matching problem to the maximum flow problem by adding two extra nodes to the initial graph. The first vertex is called the source and will point to all vertices in $V_{1}$ with directed edges, and the second vertex is called the sink, such that all vertices from $V_{2}$ point to it. Moreover, all the edges of the initial graph will turn into directed edges, pointing to $V_{2}$ from a vertex of $V_{1}$. Assuming capacities of one for each edge (so there exists an integral maximum flow, that is every edge will have flow of $0$ or $1$), the maximum flow from source to sink is equal to the maximum bipartite matching. Actually, it is easy to see this because all paths that carry flow from source to sink should be edge-disjoint, and each path will have exactly one edge from $V_{1}$ to $V_{2}$, so no other path can use this edge again. We can get a maximum flow in the resulting graph from a maximum matching in the initial graph by just taking all the edges of matching and picking the edge from source to the $V_{1}$ vertex, and the edge from $V_{2}$ to the sink.
+	
+	Consequently, someone could make the above reduction and use a famous flow algorithm, like Dinic \cite{dinitz1970} to solve the maximum bipartite problem with $O(n^{2}m)$. It turns out, that using some kind of the arguments we talked before, that Dinic's algorithm will perform with the same complexity as Hopcroft-Karp algorithm.
+	
 
 \clearpage 
 \section{Gale–Shapley Algorithm}
