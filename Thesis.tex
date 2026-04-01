@@ -333,13 +333,13 @@ backgroundcolor=\color{gray!10!white},
 		In both cases, $M_{i+1}$ is a maximum matching of $G_{i+1}$. This completes the induction.
 	\end{proof}
 
-	Before each search, we initialize the visited array which takes $O(n)$ time. We call $\Call{DfsAugmentingPath}{}$ for each vertex $v \in V_{1}$ searching for an augmenting path. To find an augmenting path, we will visit each vertex and each edge at most once, so the total complexity is $O(nm)$ when $m = \Omega(n)$.
+	Before each search, we initialize the visited array which takes $O(n)$ time. We call $\Call{DfsAugmentingPath}{}$ for each vertex $v \in V_{1}$ searching for an augmenting path. To find an augmenting path, we will visit each vertex and each edge at most once (similar to the classic DFS), so the total complexity is $O(nm)$ when $m = \Omega(n)$.
 
 	\paragraph{Hopcroft-Karp Algorithm} Hopcroft and Karp \cite{hopcroft1973n} provided a faster algorithm, again based on finding augmenting paths, but in a smarter way. The algorithm runs in phases. In each phase, we find a maximal set of vertex-disjoint shortest $M$-augmenting paths and take the symmetric difference of the current matching $M$ with the union of these paths. The process stops when no augmenting path can be found. 
 
 	Our implementation is based on the version of Shimon Even and Alon Itai, who made significant modifications to Dinic's algorithm for the maximum flow problem \cite{dinitz1970,dinitz2006}. As we will see at the end of this section, maximum flow and maximum bipartite matching are closely connected problems.
 
-	The key idea of the algorithm is to efficiently find these paths and alternate their edges. To do that, we construct a new graph called the layered network. We describe this graph with an array called level, defined on the vertices of $V_{1}$. Initially, every free vertex of $V_{1}$ gets level $1$. Then, if a vertex $u \in V_{1}$ has level $i$, every vertex of $V_{1}$ that can be reached from $u$ by first taking an unmatched edge to a vertex of $V_{2}$ and then a matched edge back to $V_{1}$ gets level $i+1$, provided it has not already received a level. The vertices are visited in Breadth-First Search (BFS) order, starting from all free vertices of $V_{1}$. In this way, $\mathit{level}[v]$ represents the minimum alternating distance of $v \in V_{1}$ from the set of free vertices of $V_{1}$ in the current phase. If all edges in the layered network are directed from a source vertex in $V_{1}$ to a destination vertex in $V_{2}$, it is clear that the resulting graph is a dag (directed acyclic graph). It is important to emphasize that two
+	The key idea of the algorithm is to efficiently find these paths and alternate their edges. To do that, we construct a new graph called the layered network. We describe this graph with an array called level, defined on the vertices of $V_{1}$. Initially, every free vertex of $V_{1}$ gets level $1$. Then, if a vertex $u \in V_{1}$ has level $i$, every vertex of $V_{1}$ that can be reached from $u$ by first taking an unmatched edge to a vertex of $V_{2}$ and then a matched edge back to  $V_{1}$ gets level $i+1$, provided it has not already received a level. The vertices are visited in Breadth-First Search (BFS) order, starting from all free vertices of $V_{1}$. In this way, $\mathit{level}[v]$ represents the minimum alternating distance of $v \in V_{1}$ from the set of free vertices of $V_{1}$ in the current phase. If all edges in the layered network are directed from a source vertex in $V_{1}$ to a destination vertex in $V_{2}$, it is clear that the resulting graph is a dag (directed acyclic graph).
 
 	\begin{algorithm}[H]
 	\caption{BFS Layered Network Construction}
@@ -387,7 +387,7 @@ backgroundcolor=\color{gray!10!white},
 
 	The first time we encounter a free vertex in $V_{2}$, we determine the last useful level in the current phase and we store it in the variable $\mathit{treeDepth}$. From that, we can also determine the length of a shortest augmenting path in the current phase (which is $2\cdot \mathit{treeDepth} - 1$). We do not need to continue the BFS deeper than that level and the vertices that remain in the queue belong either to the same level or to the next one. The vertices of the same level may still be used in the searching step to find other shortest augmenting paths, since we have already assigned their correct level. On the other hand, vertices that have already been assigned level $\mathit{treeDepth} + 1$ correspond to longer paths, so we reset their level to $0$. 
 
-	We define an array $\mathit{next}$ for every $v \in V_{1}$, such that $\mathit{next}[v] = u$ if and only if the edge $\{v,u\}$ belongs to the current matching; otherwise, $\mathit{next}[v] = \emptyset$. Similarly, for every $u \in V_{2}$, we define $\mathit{prev}[u] = v$ if and only if the edge $\{u,v\}$ belongs to the current matching; otherwise, $\mathit{prev}[u] = \emptyset$. Thus, the arrays $\mathit{next}$ and $\mathit{prev}$ represent the current matching and are updated whenever we find an augmenting path and alternate its edges.
+	We define an array $\mathit{next}$ for every $v \in V_{1}$ such that $\mathit{next}[v] = u$ if and only if the edge $\{v,u\}$ belongs to the current matching; otherwise, $\mathit{next}[v] = \emptyset$. Similarly, for every $u \in V_{2}$, we define $\mathit{prev}[u] = v$ if and only if the edge $\{u,v\}$ belongs to the current matching; otherwise, $\mathit{prev}[u] = \emptyset$. Thus, the arrays $\mathit{next}$ and $\mathit{prev}$ represent the current matching and are updated whenever we find an augmenting path and alternate its edges.
 
 	\begin{ttheorem}
 		\Cref{layeredNetwork} correctly computes the array $\mathit{level}$ of the layered network of the current matching $M$. More precisely, if it returns $\False$, then no $M$-augmenting path exists in $G$. Otherwise, for every vertex $v \in V_{1}$, we have $\mathit{level}[v] \neq 0$ if and only if there exists an $M$-alternating path from a free vertex of $V_{1}$ to $v$. Moreover, if $\mathit{level}[v] \neq 0$, then the length of a shortest such path is $2 \cdot \mathit{level}[v] - 2$.
@@ -502,7 +502,7 @@ backgroundcolor=\color{gray!10!white},
 	\end{llemma}
 
 	\begin{llemma} \label{setRfromHKAlg}
-		Let $P = \{P_{1}, P_{2}, \cdots, P_{t}\}$ be a maximal set of vertex-disjoint shortest $M$-augmenting paths with length $x$ that \Cref{mainHK} calculates in one phase and $M^{'} = M \bigtriangleup (P_{1} \cup P_{2} \cup \cdots \cup P_{t}) = M \bigtriangleup P_{1} \bigtriangleup P_{2} \bigtriangleup \cdots \bigtriangleup P_{t}$ with $Q$ be an $M^{'}$-augmenting path. The set $R = (P_{1} \cup P_{2} \cup \cdots \cup P_{t}) \bigtriangleup Q$ has at least $x(t + 1)$ edges.
+		Let $P = \{P_{1}, P_{2}, \cdots, P_{t}\}$ be a maximal set of vertex-disjoint shortest $M$-augmenting paths with length $x$ obtained during a single phase of \Cref{mainHK} and $M^{'} = M \bigtriangleup (P_{1} \cup P_{2} \cup \cdots \cup P_{t}) = M \bigtriangleup P_{1} \bigtriangleup P_{2} \bigtriangleup \cdots \bigtriangleup P_{t}$ with $Q$ be an $M^{'}$-augmenting path. The set $R = (P_{1} \cup P_{2} \cup \cdots \cup P_{t}) \bigtriangleup Q$ has at least $x(t + 1)$ edges.
 	\end{llemma}
 	\begin{proof}
 		From $M^{'} = M \bigtriangleup (P_{1} \cup P_{2} \cup \cdots \cup P_{t})$, we have
@@ -542,7 +542,7 @@ backgroundcolor=\color{gray!10!white},
 	\end{ttheorem}
 
 	\paragraph{Maximum Bipartite Matching from Max-Flows} 
-	We can reduce the bipartite maximum matching problem to the maximum flow problem by adding two extra nodes to the initial graph. The first vertex is called the source and will point to all vertices in $V_{1}$ with directed edges, and the second vertex is called the sink, such that all vertices from $V_{2}$ point to it. Moreover, all the edges of the initial graph will turn into directed edges, pointing to $V_{2}$ from a vertex of $V_{1}$. Assuming capacities of one for each edge (so there exists an integral maximum flow, that is every edge will have flow of $0$ or $1$), the maximum flow from source to sink is equal to the maximum bipartite matching. Actually, it is easy to see this because all paths that carry flow from source to sink should be edge-disjoint, and each path will have exactly one edge from $V_{1}$ to $V_{2}$, so no other path can use this edge again. We can get a maximum flow in the resulting graph from a maximum matching in the initial graph by just taking all the edges of matching and picking the edge from source to the $V_{1}$ vertex, and the edge from $V_{2}$ to the sink.
+	We can reduce the bipartite maximum matching problem to the maximum flow problem by adding two extra nodes to the initial graph. The first vertex is called the source and will point to all vertices in $V_{1}$ with directed edges, and the second vertex is called the sink, with all vertices from $V_{2}$ pointing to it. Moreover, all the edges of the initial graph will turn into directed edges, pointing to $V_{2}$ from a vertex of $V_{1}$. Assuming capacities of one for each edge (so there exists an integral maximum flow, that is every edge will have flow of $0$ or $1$), the maximum flow from source to sink is equal to the maximum bipartite matching. Actually, it is easy to see this because all paths that carry flow from source to sink should be edge-disjoint, and each path will have exactly one edge from $V_{1}$ to $V_{2}$, so no other path can use this edge again. We can get a maximum flow in the resulting graph from a maximum matching in the initial graph by just taking all the edges of matching and picking the edge from source to the $V_{1}$ vertex, and the edge from $V_{2}$ to the sink.
 	
 	Consequently, someone could make the above reduction and use a famous flow algorithm, like Dinic \cite{dinitz1970} to solve the maximum bipartite problem with $O(n^{2}m)$. It turns out, that using some kind of the arguments we talked before, that Dinic's algorithm will perform with the same complexity as Hopcroft-Karp algorithm.
 
@@ -550,14 +550,213 @@ backgroundcolor=\color{gray!10!white},
 	
 	Maximum flow is one of the most well-known problems in computer science and has been studied extensively over the years. Finding faster algorithms for the maximum flow problem, and and especially for the minimum-cost flow problem (to which maximum flow can be reduced), could lead to breakthroughs in many areas. For a long time, algorithms based primarily on combinatorial methods were far from the almost-linear-time bounds achieved by more recent continuous techniques. In 2023, a deterministic $m^{1+o(1)}$-time algorithm for exact maximum flow and minimum-cost flow was discovered \cite{brand2023deterministic}. This line of work also implies an $m^{1+o(1)}$-time algorithm for the maximum bipartite matching problem. On the other hand, randomized combinatorial algorithms were later obtained independently for exact maximum flow \cite{maxFlowBernstein} and for maximum bipartite matching \cite{MBMChuzhoy}.
 	
-	
 
 \clearpage 
-\section{Gale–Shapley Algorithm}
+\newpage
+	
+\section{The Stable Marriage Problem}
 
-\section{Applications and Further Matching Models}
+	Assume that we are given a set of $n$ men $\{m_{1}, m_{2}, \dots, m_{n}\}$ and $n$ women $\{w_{1}, w_{2}, \dots, w_{n}\}$, where each man has a strict preference ranking over all $n$ women, and each woman also has a strict preference ranking over all $n$ men. We say that a $\mathit{matching}$ is a set of unordered pairs consisting of a man and a woman (similarly to the previous section, where we considered the undirected edges of a bipartite graph) and each of them appears at most once. A $\mathit{marriage}$ is a perfect matching between men and women, meaning that every man and every woman is matched exactly once. A marriage is $\mathit{unstable}$ if there exists a pair $\{m_{i}, w_{j}\}$ that does not belong to the matching such that $m_{i}$ prefers $w_{j}$ over his actual partner, and $w_{j}$ prefers $m_{i}$ over her actual partner. We call such a pair a $\mathit{blocking}$ $\mathit{pair}$. Otherwise, we say that it is $\mathit{stable}$.
 
-\chapter{Polyhedral Approaches to Matching Problems}
+	The following example shows a stable marriage.
+	\begin{eexample}
+		Consider an instance of four men
+		\[
+		\{m_1,m_2,m_3,m_4\}
+		\]
+		and four women
+		\[
+		\{w_1,w_2,w_3,w_4\}.
+		\]
+		
+		The preference lists of the men are given by
+		\[
+		\begin{array}{c|cccc}
+		\text{man} & 1^{\text{st}} & 2^{\text{nd}} & 3^{\text{rd}} & 4^{\text{th}} \\ \hline
+		m_1 & w_1 & w_2 & w_3 & w_4 \\
+		m_2 & w_2 & w_1 & w_3 & w_4 \\
+		m_3 & w_3 & w_4 & w_1 & w_2 \\
+		m_4 & w_4 & w_3 & w_1 & w_2
+		\end{array}
+		\]
+		and the preference lists of the women are
+		\[
+		\begin{array}{c|cccc}
+		\text{woman} & 1^{\text{st}} & 2^{\text{nd}} & 3^{\text{rd}} & 4^{\text{th}} \\ \hline
+		w_1 & m_2 & m_1 & m_3 & m_4 \\
+		w_2 & m_1 & m_2 & m_3 & m_4 \\
+		w_3 & m_4 & m_3 & m_1 & m_2 \\
+		w_4 & m_3 & m_4 & m_1 & m_2
+		\end{array}
+		\]
+		
+		Now consider the matching
+		\[
+		M=\{\{m_1,w_2\},\{m_2,w_1\},\{m_3,w_4\},\{m_4,w_3\}\}.
+		\]
+		
+		We can see that \(M\) is stable. Indeed, each woman is matched to her first choice:
+		\[
+		w_1 \text{ is matched with } m_2,\quad
+		w_2 \text{ is matched with } m_1,\quad
+		w_3 \text{ is matched with } m_4,\quad
+		w_4 \text{ is matched with } m_3.
+		\]
+		Hence, no woman prefers any other man to her assigned partner. Therefore, no blocking pair can exist, since a blocking pair would require both agents to prefer each other over their current partners. Consequently, \(M\) is a stable matching.
+		Moreover, this stable matching is not unique, since
+		\[
+		M'=\{\{m_1,w_1\},\{m_2,w_2\},\{m_3,w_3\},\{m_4,w_4\}\}
+		\]
+	is also stable.
+	\end{eexample}
+		
+	\clearpage
+	\newpage 
+	\begin{eexample}
+		Consider an instance of four men
+		\[
+		\{m_1,m_2,m_3,m_4\}
+		\]
+		and four women
+		\[
+		\{w_1,w_2,w_3,w_4\}.
+		\]
+		
+		The preference lists of the men are given by
+		\[
+		\begin{array}{c|cccc}
+		\text{man} & 1^{\text{st}} & 2^{\text{nd}} & 3^{\text{rd}} & 4^{\text{th}} \\ \hline
+		m_1 & w_1 & w_2 & w_3 & w_4 \\
+		m_2 & w_2 & w_3 & w_1 & w_4 \\
+		m_3 & w_2 & w_1 & w_4 & w_3 \\
+		m_4 & w_3 & w_4 & w_1 & w_2
+		\end{array}
+		\]
+		and the preference lists of the women are
+		\[
+		\begin{array}{c|cccc}
+		\text{woman} & 1^{\text{st}} & 2^{\text{nd}} & 3^{\text{rd}} & 4^{\text{th}} \\ \hline
+		w_1 & m_3 & m_1 & m_2 & m_4 \\
+		w_2 & m_1 & m_2 & m_3 & m_4 \\
+		w_3 & m_2 & m_4 & m_1 & m_3 \\
+		w_4 & m_4 & m_3 & m_1 & m_2
+		\end{array}
+		\]
+		
+		Now consider the matching
+		\[
+		M=\{\{m_1,w_1\},\{m_2,w_2\},\{m_3,w_4\},\{m_4,w_3\}\}.
+		\]
+		
+		We claim that \(M\) is not stable. Indeed, the pair $\{m_{3}, w_{1}\}$ is a blocking pair, since
+		$ m_3 \text{ prefers } w_1 \text{ to } w_4, $
+		while
+		$ w_1 \text{ prefers } m_3 \text{ to } m_1.$
+		Thus, both \(m_3\) and \(w_1\) prefer each other to their assigned partners under \(M\). Hence, \(M\) admits a blocking pair and therefore it is not a stable matching.
+	\end{eexample}
+
+	Gale and Shapley \cite{Gale01011962} provided an algorithm that always outputs a stable marriage. The algorithm is quite simple. In each iteration of the algorithm, we try to match a man who is not matched to any woman by proposing to the woman he currently prefers most, and the woman accepts the best proposal she receives. If a man is matched with a woman and she later receives a better proposal, then she will leave her current partner and accept that proposal. The man will become unmatched again, and we will try to match him again in a later iteration, starting from the next woman in his preference list.
+
+	\begin{algorithm}[H]
+	\caption{Gale--Shapley Algorithm}
+	\label{stableMarriageAlgorithm}
+	\begin{algorithmic}[1]
+		\Require Preference arrays $\mathit{men}$, $\mathit{women}$ and their size $n$
+		\Ensure Array $\mathit{manPartner}$ contains a stable matching
+		\Function{StableMarriage}{\texttt{int} $n$, \texttt{int} $\mathit{men}[][]$, \texttt{int} $\mathit{women}[][]$}
+		    \State initialize empty queue $Q$;
+			\For{$i \gets 0$ \textbf{to} $n - 1$}
+				\State $\mathit{ptr}[i] \gets 0$;
+		        \State $\mathit{womanPartner}[i] \gets \emptyset$;
+		        \State $\mathit{manPartner}[i] \gets \emptyset$;
+		        \State $Q$.push($i$);
+			\EndFor
+			\For{$i \gets 0$ \textbf{to} $n-1$}
+			    \For{$j \gets 0$ \textbf{to} $n-1$}
+			        \State $\mathit{rank}[i][\mathit{women}[i][j]] \gets j$;
+			    \EndFor
+			\EndFor
+		    \While{not $Q$.isEmpty()}
+		        \State $m \gets$ $Q$.pop();
+		        \While{$\mathit{manPartner}[m] = \emptyset$}
+		            \State $w \gets \mathit{men}[m][\mathit{ptr}[m]]$;
+		            \State $\mathit{ptr}[m]++$;
+		            \If{$\mathit{womanPartner}[w] = \emptyset$}
+		                \State $\mathit{womanPartner}[w] \gets m$;
+		                \State $\mathit{manPartner}[m] \gets w$;
+		            \Else
+		                \If{$\mathit{rank}[w][m] < \mathit{rank}[w][\mathit{womanPartner}[w]]$}
+		                    \State $\mathit{manPartner}[m] \gets w$;
+		                    \State $Q$.push($\mathit{womanPartner}[w]$);
+		                    \State $\mathit{manPartner}[\mathit{womanPartner}[w]] \gets \emptyset$;
+		                    \State $\mathit{womanPartner}[w] \gets m$;
+		                \EndIf
+		            \EndIf
+		        \EndWhile
+		    \EndWhile
+		    \State \Return $\mathit{manPartner}$;
+		\EndFunction
+	\end{algorithmic}
+	\end{algorithm}
+
+	The input of the algorithm is the size $n$ and the preference lists $\mathit{women}$ and $\mathit{men}$. $\mathit{women}[i]$ is the preference list of woman $i$ and $\mathit{men}[j]$ is the preference list of man $j$. Arrays $\mathit{womanPartner}$ and $\mathit{manPartner}$ represent the current matching. We will use two extra arrays that will help us see if a proposal can be made and whether it benefits us. Array $\mathit{ptr}$ will store, for a man $i$, the most highly preferred woman that he has not proposed to yet. With this array, we will be able to know the answer immediately. Array $\mathit{rank}$ will help us determine, for a woman, whether she prefers the current matched man or the proposing one in $O(1)$. Specifically, for a woman $i$, we store at $\mathit{rank}[i][j]$ the position of the man $j$ in her preference list. This (lines $9$-$13$), requires $O(n^{2})$ preprocessing. In lines $14-31$ we perform the proposals. 
+	
+	See that if a woman receives a proposal, then she will either accept it or stay with her current matching. This leads to the following lemma.
+	\begin{llemma} \label{GaleWomanMatching}
+		After a woman receives a match, she never becomes unmatched again.
+	\end{llemma}
+
+	Note that it is not necessary to check whether $\mathit{ptr}[m]$ becomes greater than $n - 1$, which would mean that we popped a man who is unmatched, but all the women are already matched.
+
+	\begin{llemma}\label{GaleHaltsAndMarriage}
+		\Cref{stableMarriageAlgorithm} always halts and produces a marriage.
+	\end{llemma}
+	\begin{proof}
+		Assume that a man gets popped in line $15$, which means that he is unmatched, but has already proposed to all women. Then every woman has rejected him for some other man and, by \Cref{GaleWomanMatching}, all women are matched. This is a contradiction, because this would mean that a man appears in more than one match, so necessarily an unmatched woman exists. Consequently, every time we pop a man from the queue, there will always exist a woman who is unmatched. Since each man proposes to each woman at most once, there exist at most $n^{2}$ proposals, so the algorithm halts. Finally, when the algorithm halts, no man is unmatched, hence the output is a marriage.
+	\end{proof}
+
+	Now are going to prove the output of the algorithm is stable.
+
+	\begin{llemma}
+	\Cref{stableMarriageAlgorithm} produces a stable marriage.
+	\end{llemma}
+	\begin{proof}
+		By \Cref{GaleHaltsAndMarriage}, we know that it produces a marriage. Assume, to the contrary, that the output is not stable, which means that a blocking pair $(m_{i}, w_{j})$ exists. Because $(m_{i}, w_{j})$ does not belong to the matching, two cases are possible.
+	
+		In the first case, the man $m_{i}$ proposed to $w_{j}$ and she rejected him (immediately or accepted him temporarily and later left him for a better proposal). This means that $w_{j}$ prefers the man from the matching. A contradiction.
+	
+		In the second case, the man $m_{i}$ never proposed to $w_{j}$, which means that he matched with a woman who is higher on his preference list. Also a contradiction.
+	\end{proof}
+
+	As we perform at most $O(n^{2})$ proposals and we can decide whether to accept a proposal or not in $O(1)$ (using $O(n^{2})$ preprocessing), the total complexity is $O(n^{2})$.
+
+	\begin{ttheorem}
+		\Cref{stableMarriageAlgorithm} computes a stable marriage in $O(n^{2})$.
+	\end{ttheorem}
+
+	\begin{ddef}
+		\Cref{stableMarriageAlgorithm} operates as a men-proposing algorithm since a man first proposes to his most preferred woman, leaving the woman to accept the best proposal available to her.
+	\end{ddef}
+
+	\begin{ttheorem}\label{stableMarriage-man-optimal}
+		The men-proposing \Cref{stableMarriageAlgorithm} is man-optimal, as every man is matched to the best partner he could possibly obtain in any stable marriage.
+	\end{ttheorem}
+	\begin{proof}
+		Suppose, for the sake of contradiction, that it is not man-optimal, and that the output of \Cref{stableMarriageAlgorithm} is a marriage $M$. This means that there exist some rejections in our algorithm such that the corresponding pairs are matched in another stable marriage $M^{'}$. From those rejections, fix the first one. That is, a man $m_{i}$ got rejected by woman $w_{j}$ because $w_{j}$ prefers $m_{z}$ to $m_{i}$, and another stable marriage $M^{'}$ exists, where $m_{i}$ is matched with $w_{j}$, i.e., $\{m_{i}, w_{j}\} \in M^{'}$, and $m_{z}$ is matched with $w_{k}$, i.e., $\{m_{z}, w_{k}\} \in M^{'}$. If $m_{z}$ prefers $w_{j}$ to $w_{k}$, then $\{m_{z}, w_{j}\}$ is a blocking pair in $M^{'}$, which leads to a contradiction. If $m_{z}$ prefers $w_{k}$ to $w_{j}$, then it would be impossible for the first rejection to be that of $m_{i}$ by $w_{j}$, because it would mean that $w_{j}$ is already matched with $m_{z}$, implying that $m_{z}$ was rejected by $w_{k}$ in some previous iteration. This also leads to a contradiction.
+	\end{proof}
+	
+	Although the output of the algorithm is man-optimal, it is the worst matching for women.	
+
+	\begin{ttheorem}
+		The men-proposing \Cref{stableMarriageAlgorithm} is female-pessimal, meaning every woman is matched with the least preferred valid partner she could have in any stable matching.
+	\end{ttheorem}
+	\begin{proof}
+		Similar to the previous proof, assume to the contrary that woman $w_{j}$ is matched with man $m_{i}$ in the marriage output $M$ of \Cref{stableMarriageAlgorithm} and that there exists another stable marriage $M^{'}$ such that $w_{j}$ is matched with a man $m_{z}$ whom she prefers less than $m_{i}$ and $m_{i}$ is matched with a woman $w_{k}$. Because $M$ is man-optimal by \Cref{stableMarriage-man-optimal}, $m_{i}$ prefers $w_{j}$ to $w_{k}$. The pair $\{m_{i}, w_{j}\}$ is a blocking pair for $M^{'}$. This is a contradiction, since $M^{'}$ is stable.
+	\end{proof}
+
+	\paragraph{Further Variants of the Model} Up to this point, we have focused on a one-to-one matching model, which dictates that every individual is paired with exactly one counterpart. The classical framework, however, can be extended to accommodate more complex scenarios, including many-to-one assignments, incomplete lists, and preferences with ties. Additionally, stability is just one of many criteria used to evaluate the quality of a matching. In a later chapter, we will study some of these extended scenarios.
+
+\chapter{Polyhedral Approaches to Matching Problems} 
 
 \clearpage
 \renewcommand{\bibname}{References}
