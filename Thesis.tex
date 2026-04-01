@@ -754,7 +754,8 @@ backgroundcolor=\color{gray!10!white},
 		Similar to the previous proof, assume to the contrary that woman $w_{j}$ is matched with man $m_{i}$ in the marriage output $M$ of \Cref{stableMarriageAlgorithm} and that there exists another stable marriage $M^{'}$ such that $w_{j}$ is matched with a man $m_{z}$ whom she prefers less than $m_{i}$ and $m_{i}$ is matched with a woman $w_{k}$. Because $M$ is man-optimal by \Cref{stableMarriage-man-optimal}, $m_{i}$ prefers $w_{j}$ to $w_{k}$. The pair $\{m_{i}, w_{j}\}$ is a blocking pair for $M^{'}$. This is a contradiction, since $M^{'}$ is stable.
 	\end{proof}
 
-	\paragraph{Further Variants of the Model} Up to this point, we have focused on a one-to-one matching model, which dictates that every individual is paired with exactly one counterpart. The classical framework, however, can be extended to accommodate more complex scenarios, including many-to-one assignments, incomplete lists, and preferences with ties. Additionally, stability is just one of many criteria used to evaluate the quality of a matching. In a later chapter, we will study some of these extended scenarios.
+	\paragraph{Further Variants of the Model} The Gale and Shapley algorithm focuses on a one-to-one matching model, which means that each element from one set can be matched to exactly one element from the other set. Also, the sizes of the sets and the preference lists are the same. These assumptions are actually rare. In real-life scenarios, we may have many-to-one or even many-to-many assignments, incomplete lists, and preferences with ties. Additionally, stability is just one of many criteria used to evaluate the quality of a matching. In a later chapter, we will study some of these extended scenarios.
+
 
 \chapter{Polyhedral Approaches to Matching Problems} 
 
