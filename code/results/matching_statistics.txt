@@ -1,0 +1,5 @@
+STATS
+Number of unique matchings: 14
+Minimum matching size: 3 (matchings: 1)
+Maximum matching size: 5 (matchings: 6, 13, 14)
+X31 is never equal to 1 in any matching.
