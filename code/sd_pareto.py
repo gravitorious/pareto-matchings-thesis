@@ -1,4 +1,5 @@
 #serial dictatorship
+#complexity: O(n!)
 import csv
 import itertools
 
@@ -75,10 +76,10 @@ def write_matching_vectors(unique_matchings, preferences, filename="results/matc
             col.append((applicant, house))
     with open(filename, "w", newline="") as vectorcsv:
         writer = csv.writer(vectorcsv)
-        # header
+        #header
         header = [f"X{applicant}{house}" for applicant, house in col]
         writer.writerow(header)
-        # rows
+        #rows
         for matching in unique_matchings:
             row = []
             for applicant, house in col:
@@ -125,6 +126,19 @@ def compute_matching_statistics(unique_matchings, preferences):
             if not used:
                 not_used.append((applicant, house))
     stats["not_used"] = not_used
+    #variables Xij that are equal to 1 in every unique matching
+    always_used = []
+    for applicant in sorted(preferences.keys()):
+        for house in sorted(set(preferences[applicant])):
+            used_in_all = True
+            for matching in unique_matchings:
+                if matching[applicant - 1] != house:
+                    used_in_all = False
+                    break
+            if used_in_all:
+                always_used.append((applicant, house))
+    stats["always_used"] = always_used
+
     return stats
 
 def write_matching_statistics_txt(stats, filename="results/matching_statistics.txt"):
@@ -141,6 +155,8 @@ def write_matching_statistics_txt(stats, filename="results/matching_statistics.t
         )
         for applicant, house in stats["not_used"]:
             stattxt.write(f"X{applicant}{house} is never equal to 1 in any matching.\n")
+        for applicant, house in stats["always_used"]:
+            stattxt.write(f"X{applicant}{house} is equal to 1 in every matching.\n")
 
 def main():
     preferences = read_preferences()
