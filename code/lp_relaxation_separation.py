@@ -1,4 +1,5 @@
 import random as pyrandom
+import csv
 from sage.all import *
 from fractions import Fraction
 
@@ -135,15 +136,24 @@ def find_fractional_vertex(A, H, P):
             continue
     print("No fractional vertex was found after 1000 trials.")
 
-#input
-A_input = ['a1', 'a2', 'a3', 'a4', 'a5']
-H_input = ['h1', 'h2', 'h3', 'h4', 'h5']
-P_input = {
-    'a1': ['h1', 'h2', 'h4'],
-    'a2': ['h1', 'h3', 'h2'],
-    'a3': ['h3', 'h5', 'h1', 'h4'],
-    'a4': ['h3', 'h2', 'h5'],
-    'a5': ['h2', 'h1']
-}
+def read_preferences(filename="data/applicant_preferences.csv"):
+    P = {}
+    houses = set()
+    with open(filename, newline="") as prefcsv:
+        reader = csv.DictReader(prefcsv)
+        for row in reader:
+            applicant = int(row["applicant"])
+            prefs = []
+            for key, value in row.items():
+                if key.startswith("pref") and value != "":
+                    house = int(value)
+                    prefs.append(house)
+                    houses.add(house)
+            P[applicant] = prefs
+    A = sorted(P.keys())
+    H = sorted(houses)
+    return A, H, P
 
-find_fractional_vertex(A_input, H_input, P_input)
+if __name__ == '__main__':
+    A, H, P = read_preferences()
+    find_fractional_vertex(A, H, P)
