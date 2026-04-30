@@ -136,7 +136,7 @@ def find_fractional_vertex(A, H, P):
             continue
     print("No fractional vertex was found after 1000 trials.")
 
-def read_preferences(filename="data/applicant_preferences.csv"):
+def read_preferences(filename="../data/applicant_preferences.csv"):
     P = {}
     houses = set()
     with open(filename, newline="") as prefcsv:

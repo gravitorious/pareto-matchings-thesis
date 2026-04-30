@@ -2,8 +2,9 @@
 #complexity: O(n!)
 import csv
 import itertools
+from pathlib import Path
 
-def read_preferences(filename = "data/applicant_preferences.csv"):
+def read_preferences(filename):
     preferences = {}
     with open(filename, newline="") as prefcsv:
         reader = csv.DictReader(prefcsv)
@@ -39,9 +40,11 @@ def serial_dictatorship(preferences):
         matchings[perm] = matching
     return matchings
 
-def all_solutions(matchings):
+def all_solutions(matchings, instance):
     n = len(next(iter(matchings.values())))  #applicants
-    with open("results/sd_pareto_matchings.csv", "w", newline="") as sdcsv:
+    path = Path("../results/" + instance + "/" + instance + "_sd_pareto_matchings.csv")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", newline="") as sdcsv:
         writer = csv.writer(sdcsv)
         writer.writerow(["order", "matching"])
         for perm, matching in matchings.items():
@@ -59,22 +62,26 @@ def get_unique_matchings(matchings, m):
         unique.add(alloc_tuple)
     return sorted(unique)
 
-def write_unique_matchings(matchings, m, filename="results/unique_pareto_matchings.csv"):
+def write_unique_matchings(matchings, m, instance):
+    path = Path("../results/" + instance + "/" + instance + "_unique_pareto_matchings.csv")
+    path.parent.mkdir(parents=True, exist_ok=True)
     unique = get_unique_matchings(matchings, m)
-    with open(filename, "w", newline="") as uniquecsv:
+    with open(path, "w", newline="") as uniquecsv:
         writer = csv.writer(uniquecsv)
         writer.writerow([f"A{i}" for i in range(1, m + 1)])
         for alloc in sorted(unique):
             writer.writerow(alloc)
     return unique
 
-def write_matching_vectors(unique_matchings, preferences, filename="results/matching_vectors.csv"):
+def write_matching_vectors(unique_matchings, preferences, instance):
     col = []
     #create Xij columns
     for applicant in sorted(preferences.keys()):
         for house in sorted(set(preferences[applicant])):
             col.append((applicant, house))
-    with open(filename, "w", newline="") as vectorcsv:
+    path = Path("../results/" + instance + "/" + instance + "_matching_vectors.csv")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", newline="") as vectorcsv:
         writer = csv.writer(vectorcsv)
         #header
         header = [f"X{applicant}{house}" for applicant, house in col]
@@ -138,11 +145,12 @@ def compute_matching_statistics(unique_matchings, preferences):
             if used_in_all:
                 always_used.append((applicant, house))
     stats["always_used"] = always_used
-
     return stats
 
-def write_matching_statistics_txt(stats, filename="results/matching_statistics.txt"):
-    with open(filename, "w", encoding="utf-8") as stattxt:
+def write_matching_statistics_txt(stats, instance):
+    path = Path("../results/" + instance + "/" + instance + "_matching_statistics.txt")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", encoding="utf-8") as stattxt:
         stattxt.write("STATS\n")
         stattxt.write(f"Number of unique matchings: {stats['num_matchings']}\n")
         stattxt.write(
@@ -158,16 +166,14 @@ def write_matching_statistics_txt(stats, filename="results/matching_statistics.t
         for applicant, house in stats["always_used"]:
             stattxt.write(f"X{applicant}{house} is equal to 1 in every matching.\n")
 
-def main():
-    preferences = read_preferences()
+def main_sd(instance):
+    input = "../data/" + instance + ".csv"
+    preferences = read_preferences(input)
     matchings = serial_dictatorship(preferences)
     m = len(preferences) #applicants
-    #all_solutions(matchings)
-    #write_unique_matchings(matchings, len(preferences))
+    all_solutions(matchings, instance)
+    write_unique_matchings(matchings, len(preferences), instance)
     unique_matchings = get_unique_matchings(matchings, m)
-    write_matching_vectors(unique_matchings, preferences)
+    write_matching_vectors(unique_matchings, preferences, instance)
     stats = compute_matching_statistics(unique_matchings, preferences)
-    write_matching_statistics_txt(stats)
-
-if __name__ == '__main__':
-    main()
+    write_matching_statistics_txt(stats, instance)
