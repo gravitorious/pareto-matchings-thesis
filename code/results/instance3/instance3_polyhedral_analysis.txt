@@ -1,0 +1,10 @@
+Dimension: 0
+Number of vertices: 1
+
+Equations:
+  X22 = 0
+  X11 = 0
+  X12 = 1
+  X21 = 1
+
+Inequalities:

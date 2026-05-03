@@ -131,15 +131,16 @@ def find_fractional_vertex(A, H, P):
                     for v, val_qq in lp_vals_QQ.items():
                         if val_qq > QQ(0):
                             print(f"x_{v} = {val_qq}")
-                    return
+                    return lp_vals_QQ.items()
         except Exception:
             continue
     print("No fractional vertex was found after 1000 trials.")
+    return None
 
-def read_preferences(filename="../data/applicant_preferences.csv"):
+def read_preferences(instance):
     P = {}
     houses = set()
-    with open(filename, newline="") as prefcsv:
+    with open("data/" + instance + ".csv", newline="") as prefcsv:
         reader = csv.DictReader(prefcsv)
         for row in reader:
             applicant = int(row["applicant"])
@@ -154,6 +155,6 @@ def read_preferences(filename="../data/applicant_preferences.csv"):
     H = sorted(houses)
     return A, H, P
 
-if __name__ == '__main__':
-    A, H, P = read_preferences()
-    find_fractional_vertex(A, H, P)
+def lp_solve(instance):
+    A, H, P = read_preferences(instance)
+    return find_fractional_vertex(A, H, P)

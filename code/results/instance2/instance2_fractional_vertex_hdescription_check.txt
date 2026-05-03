@@ -1,0 +1,89 @@
+Fractional relaxation vertex
+================================================================================
+X12 = 6/7
+X21 = 1/7
+X42 = 1/7
+X44 = 3/7
+X51 = 5/7
+
+Summary
+================================================================================
+Number of variables: 17
+Number of violated equations: 3
+Number of violated inequalities: 5
+Number of satisfied inequalities: 14
+
+Violated equations
+================================================================================
+X23 + X33 + X53 = 1
+value = -1
+
+X41 + X42 + X44 + X45 = 1
+value = -3/7
+
+X21 + X51 = X42 + X44 + X45
+value = 2/7
+
+
+Violated inequalities
+================================================================================
+X12 + X14 + X24 >= 1
+value = -1/7
+
+X14 + X21 + X23 + X24 >= 1 + X42
+value = -1
+
+X12 + X14 + X21 + X23 + X24 + X53 >= 1 + X35 + X42 + X45
+value = -1/7
+
+X12 + X14 + X21 + X23 + X24 >= 1 + X42 + X44 + X45
+value = -4/7
+
+X35 >= X44
+value = -3/7
+
+
+Satisfied inequalities
+================================================================================
+X42 >= 0
+value = 1/7
+
+X12 + X14 <= 1
+value = 1/7
+
+X12 + X42 + X52 <= 1
+value = 0
+
+X12 + X42 + X52 >= X21 + X23 + X24
+value = 6/7
+
+X12 + X14 + X21 + X23 + X24 >= 1 + X35 + X45
+value = 0
+
+X44 >= 0
+value = 3/7
+
+X42 + X44 + X45 >= X21
+value = 3/7
+
+X23 + X53 >= X35
+value = 0
+
+X35 + X42 + X45 >= X21 + X23
+value = 0
+
+X53 >= 0
+value = 0
+
+X21 >= X42
+value = 0
+
+X35 + X45 >= X23 + X53
+value = 0
+
+1 + X35 >= X14 + X23 + X24 + X44 + X53
+value = 4/7
+
+X23 >= 0
+value = 0
+

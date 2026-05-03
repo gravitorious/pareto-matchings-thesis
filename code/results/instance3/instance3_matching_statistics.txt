@@ -1,0 +1,8 @@
+STATS
+Number of unique matchings: 1
+Minimum matching size: 2 (matchings: 1)
+Maximum matching size: 2 (matchings: 1)
+X11 is never equal to 1 in any matching.
+X22 is never equal to 1 in any matching.
+X12 is equal to 1 in every matching.
+X21 is equal to 1 in every matching.

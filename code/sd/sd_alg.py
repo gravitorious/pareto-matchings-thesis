@@ -41,15 +41,16 @@ def serial_dictatorship(preferences):
     return matchings
 
 def all_solutions(matchings, instance):
+    #matchings = {perm, dict with matchings}
     n = len(next(iter(matchings.values())))  #applicants
-    path = Path("../results/" + instance + "/" + instance + "_sd_pareto_matchings.csv")
+    path = Path("results/" + instance + "/" + instance + "_sd_pareto_matchings.csv")
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", newline="") as sdcsv:
         writer = csv.writer(sdcsv)
         writer.writerow(["order", "matching"])
         for perm, matching in matchings.items():
             order_str = ",".join(map(str, perm))
-            alloc_list = [matching.get(a, -1) for a in range(1, n + 1)]
+            alloc_list = [matching.get(a, -1) for a in perm]
             alloc_str = ",".join(map(str, alloc_list))
             writer.writerow([order_str, alloc_str])
 
@@ -63,7 +64,7 @@ def get_unique_matchings(matchings, m):
     return sorted(unique)
 
 def write_unique_matchings(matchings, m, instance):
-    path = Path("../results/" + instance + "/" + instance + "_unique_pareto_matchings.csv")
+    path = Path("results/" + instance + "/" + instance + "_unique_pareto_matchings.csv")
     path.parent.mkdir(parents=True, exist_ok=True)
     unique = get_unique_matchings(matchings, m)
     with open(path, "w", newline="") as uniquecsv:
@@ -73,13 +74,13 @@ def write_unique_matchings(matchings, m, instance):
             writer.writerow(alloc)
     return unique
 
-def write_matching_vectors(unique_matchings, preferences, instance):
+def write_pom_vectors(unique_matchings, preferences, instance):
     col = []
     #create Xij columns
     for applicant in sorted(preferences.keys()):
         for house in sorted(set(preferences[applicant])):
             col.append((applicant, house))
-    path = Path("../results/" + instance + "/" + instance + "_matching_vectors.csv")
+    path = Path("results/" + instance + "/" + instance + "_pom_vectors.csv")
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", newline="") as vectorcsv:
         writer = csv.writer(vectorcsv)
@@ -148,7 +149,7 @@ def compute_matching_statistics(unique_matchings, preferences):
     return stats
 
 def write_matching_statistics_txt(stats, instance):
-    path = Path("../results/" + instance + "/" + instance + "_matching_statistics.txt")
+    path = Path("results/" + instance + "/" + instance + "_matching_statistics.txt")
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", encoding="utf-8") as stattxt:
         stattxt.write("STATS\n")
@@ -166,14 +167,14 @@ def write_matching_statistics_txt(stats, instance):
         for applicant, house in stats["always_used"]:
             stattxt.write(f"X{applicant}{house} is equal to 1 in every matching.\n")
 
-def main_sd(instance):
-    input = "../data/" + instance + ".csv"
+def sd_alg(instance):
+    input = "data/" + instance + ".csv"
     preferences = read_preferences(input)
     matchings = serial_dictatorship(preferences)
     m = len(preferences) #applicants
     all_solutions(matchings, instance)
     write_unique_matchings(matchings, len(preferences), instance)
     unique_matchings = get_unique_matchings(matchings, m)
-    write_matching_vectors(unique_matchings, preferences, instance)
+    write_pom_vectors(unique_matchings, preferences, instance)
     stats = compute_matching_statistics(unique_matchings, preferences)
     write_matching_statistics_txt(stats, instance)

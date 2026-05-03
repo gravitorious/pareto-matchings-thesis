@@ -1,0 +1,5 @@
+STATS
+Number of unique matchings: 3
+Minimum matching size: 2 (matchings: 1, 2, 3)
+Maximum matching size: 2 (matchings: 1, 2, 3)
+X12 is never equal to 1 in any matching.

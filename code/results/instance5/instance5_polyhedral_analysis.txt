@@ -1,0 +1,22 @@
+Dimension: 7
+Number of vertices: 14
+
+Equations:
+  X54 + X64 = 1
+  X11 + X21 + X51 = 1
+  X12 + X22 + X32 + X42 = 1
+  X44 = 0
+  X43 + X63 = 1
+
+Inequalities:
+  X12 >= 0
+  X21 >= 0
+  X12 + X22 + X32 <= 1
+  X12 + X22 + X32 + X63 >= 1
+  X12 + X21 + X22 <= 1
+  X11 + X12 + X21 <= 1
+  X11 + X21 + X64 >= 1
+  X11 >= 0
+  X63 + X64 <= 1
+  X22 >= 0
+  X32 >= 0

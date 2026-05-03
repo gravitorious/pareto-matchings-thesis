@@ -1,13 +1,16 @@
 Dimension: 11
 Number of vertices: 16
-Equations:  X23 + X33 + X53 = 1
+
+Equations:
+  X23 + X33 + X53 = 1
   X31 = 0
   X41 + X42 + X44 + X45 = 1
   X23 + X53 = X34 + X35
   X12 + X22 + X42 + X52 = 1
   X21 + X51 = X42 + X44 + X45
 
-Inequalities:  X42 >= 0
+Inequalities:
+  X42 >= 0
   X12 + X14 <= 1
   X12 + X42 + X52 <= 1
   X12 + X42 + X52 >= X21 + X23 + X24

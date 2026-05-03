@@ -1,0 +1,12 @@
+Dimension: 2
+Number of vertices: 3
+
+Equations:
+  X11 + X21 = 1
+  X22 + X32 = 1
+  X12 = 0
+
+Inequalities:
+  X32 <= 1
+  X11 + X32 >= 1
+  X11 <= 1

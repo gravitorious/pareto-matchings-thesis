@@ -1,13 +1,16 @@
-Dimension: 9
+    Dimension: 9
 Number of vertices: 14
-Equations:  X31 = 0
+
+Equations:
+  X31 = 0
   X33 + X34 + X35 = 1
   X23 + X33 + X43 = 1
   X11 + X12 + X14 = 1
   X11 + X21 + X51 = 1
   X12 + X22 + X42 + X52 = 1
 
-Inequalities:  X34 >= 0
+Inequalities:
+  X34 >= 0
   X42 + X45 >= X33 + X34
   X42 + X43 + X45 <= 1
   X51 >= 0
