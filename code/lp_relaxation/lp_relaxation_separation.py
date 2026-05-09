@@ -10,8 +10,11 @@ def to_QQ(v, max_den=1000000, tol=1e-8):
     if abs(vf - 1) <= tol: return QQ(1)
     return QQ(Fraction(vf).limit_denominator(max_den))
 
-#feasibility check - all constraints without coalition free constraint
-def check_exact_feasibility(vals_QQ, V, A, H, P, Q):
+#feasibility check - all constraints, with coalition constraints restricted
+#to the cuts already added by separation
+def check_exact_feasibility(vals_QQ, V, A, H, P, Q, coalition_constraints=None):
+    if coalition_constraints is None:
+        coalition_constraints = []
     for v_item in V:
         if vals_QQ[v_item] < QQ(0) or vals_QQ[v_item] > QQ(1): return False
     for a in A:
@@ -29,6 +32,9 @@ def check_exact_feasibility(vals_QQ, V, A, H, P, Q):
             worse_houses = [h_p for h_p in P[a] if P[a].index(h) < P[a].index(h_p)]
             s2 = sum(vals_QQ[(a, h_p)] for h_p in worse_houses)
             if s1 - s2 < QQ(0): return False
+    for C in coalition_constraints:
+        if sum(vals_QQ[(a, h)] for a, h in C) > QQ(len(C) - 1):
+            return False
     return True
 
 #separation
@@ -94,6 +100,12 @@ def find_fractional_vertex(A, H, P):
         if P.get(a): lp.add_constraint(sum(x[a, h] for h in P[a]) <= 1)
     for h in H:
         if Q[h]: lp.add_constraint(sum(x[a, h] for a in Q[h]) <= 1)
+    #first-choice-houses constraint - added later
+    #============================================================
+    first_choice_houses = sorted({P[a][0] for a in A if P.get(a)})
+    for h in first_choice_houses:
+        lp.add_constraint(sum(x[a, h] for a in Q[h]) >= 1)
+    #============================================================
     for a in A:
         for h in P.get(a, []):
             lp.add_constraint(sum(x[a, h_p] for h_p in P[a]) +
@@ -104,7 +116,8 @@ def find_fractional_vertex(A, H, P):
             lp.add_constraint(sum(x[a_p, h] for a_p in Q[h]) -
                               sum(x[a, h_p] for h_p in worse_houses) >= 0)
     #generate random objective functions
-    pyrandom.seed(1)
+    pyrandom.seed(25)
+    coalition_constraints = []
     for trial in range(1, 1001):
         objective_coeffs = {v: pyrandom.randint(-20, 20) for v in V}
         lp.set_objective(sum(QQ(objective_coeffs[v]) * x[v[0], v[1]] for v in V))
@@ -115,12 +128,13 @@ def find_fractional_vertex(A, H, P):
                 C = separation(sol, G)
                 if C is None:
                     break
+                coalition_constraints.append(C)
                 lp.add_constraint(sum(x[a, h] for a, h in C) <= len(C) - 1)
             #rationalize solution
             lp_vals_QQ = {v: to_QQ(sol[v]) for v in V}
             is_fractional = any(QQ(0) < val < QQ(1) for val in lp_vals_QQ.values())
             if is_fractional:
-                if check_exact_feasibility(lp_vals_QQ, V, A, H, P, Q):
+                if check_exact_feasibility(lp_vals_QQ, V, A, H, P, Q, coalition_constraints):
                     print("=" * 60)
                     print(f"Found fractional vertex at trial: {trial}")
                     print("-" * 60)
@@ -132,9 +146,9 @@ def find_fractional_vertex(A, H, P):
                         if val_qq > QQ(0):
                             print(f"x_{v} = {val_qq}")
                     return lp_vals_QQ.items()
-        except Exception:
+        except Exception as e:
+            print(e)
             continue
-    print("No fractional vertex was found after 1000 trials.")
     return None
 
 def read_preferences(instance):

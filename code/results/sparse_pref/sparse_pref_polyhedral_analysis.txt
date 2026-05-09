@@ -1,0 +1,18 @@
+Dimension: 5
+Number of vertices: 6
+
+Equations:
+  X44 + X54 = 1
+  X33 + X43 = 1
+  X65 + X66 = 1
+  X11 + X21 = 1
+  X12 + X32 = 1
+  X55 = X66
+
+Inequalities:
+  X11 >= 0
+  X66 >= 0
+  X44 >= X66
+  X33 >= X44
+  X12 >= X33
+  X11 + X12 <= 1

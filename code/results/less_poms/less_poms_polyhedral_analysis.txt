@@ -1,0 +1,30 @@
+Dimension: 0
+Number of vertices: 1
+
+Equations:
+  X66 = 1
+  X11 = 1
+  X12 = 0
+  X13 = 0
+  X14 = 0
+  X22 = 1
+  X23 = 0
+  X24 = 0
+  X25 = 0
+  X33 = 1
+  X34 = 0
+  X35 = 0
+  X36 = 0
+  X41 = 0
+  X44 = 1
+  X45 = 0
+  X46 = 0
+  X51 = 0
+  X52 = 0
+  X55 = 1
+  X56 = 0
+  X61 = 0
+  X62 = 0
+  X63 = 0
+
+Inequalities:

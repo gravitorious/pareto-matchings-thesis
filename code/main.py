@@ -8,4 +8,8 @@ if __name__ == "__main__":
     variables, vertices = ip_convex_hull.read_vector_csv(instance) #read POM vectors
     convex_hull = ip_convex_hull.polyhedral_analysis(instance, variables, vertices)
     fractional_solution = relaxation.lp_solve(instance)
-    ip_convex_hull.check_fractional_vertex(instance, convex_hull, variables, fractional_solution)
+    if fractional_solution is None:
+        print("No fractional vertex was found")
+
+    else:
+        ip_convex_hull.check_fractional_vertex(instance, convex_hull, variables, fractional_solution)

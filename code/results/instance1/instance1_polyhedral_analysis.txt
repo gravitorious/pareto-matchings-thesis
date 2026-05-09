@@ -1,4 +1,4 @@
-    Dimension: 9
+Dimension: 9
 Number of vertices: 14
 
 Equations:

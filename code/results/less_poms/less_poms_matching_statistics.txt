@@ -1,0 +1,28 @@
+STATS
+Number of unique matchings: 1
+Minimum matching size: 6 (matchings: 1)
+Maximum matching size: 6 (matchings: 1)
+X12 is never equal to 1 in any matching.
+X13 is never equal to 1 in any matching.
+X14 is never equal to 1 in any matching.
+X23 is never equal to 1 in any matching.
+X24 is never equal to 1 in any matching.
+X25 is never equal to 1 in any matching.
+X34 is never equal to 1 in any matching.
+X35 is never equal to 1 in any matching.
+X36 is never equal to 1 in any matching.
+X41 is never equal to 1 in any matching.
+X45 is never equal to 1 in any matching.
+X46 is never equal to 1 in any matching.
+X51 is never equal to 1 in any matching.
+X52 is never equal to 1 in any matching.
+X56 is never equal to 1 in any matching.
+X61 is never equal to 1 in any matching.
+X62 is never equal to 1 in any matching.
+X63 is never equal to 1 in any matching.
+X11 is equal to 1 in every matching.
+X22 is equal to 1 in every matching.
+X33 is equal to 1 in every matching.
+X44 is equal to 1 in every matching.
+X55 is equal to 1 in every matching.
+X66 is equal to 1 in every matching.
