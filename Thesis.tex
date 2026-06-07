@@ -757,7 +757,203 @@ backgroundcolor=\color{gray!10!white},
 	\paragraph{Further Variants of the Model} The Gale and Shapley algorithm focuses on a one-to-one matching model, which means that each element from one set can be matched to exactly one element from the other set. Also, the sizes of the sets and the preference lists are the same. These assumptions are actually rare. In real-life scenarios, we may have many-to-one or even many-to-many assignments, incomplete lists, and preferences with ties. Additionally, stability is just one of many criteria used to evaluate the quality of a matching. In a later chapter, we will study some of these extended scenarios.
 
 
-\chapter{Polyhedral Approaches to Matching Problems} 
+\chapter{Polyhedral Approaches to Matching Problems}
+
+\section{Preliminaries}
+	
+	There exist many excellent references on linear programming and polyhedral combinatorics. This section is based mainly on \cite{matousek2007understanding} and \cite{schrijver2003volA}.
+	
+	Let $C$ be any subset of $\mathbb{R}^{n}$. We say that $C$ is \emph{convex} if for every two points $u, v \in C$ and for every $\lambda \in [0, 1]$, $u + \lambda d$ belongs to $C$, where $d = v - u$. In other words, we say that $C$ is convex if for every $u, v \in C$, it also contains the line segment between $u$ and $v$. It is easy to see that the intersection of convex sets is convex. 
+	
+	Let $S \subset \mathbb{R}^{n}$ be a set. The \emph{convex hull} of $S$, denoted by $\mathit{conv(S)}$, is the intersection of all the convex sets containing $S$. Expressed differently, it is the smallest convex set containing $S$. It is often more useful to describe the convex hull in terms of convex combinations.
+	
+	Let $v_{1}, \ldots, v_{k} \in \mathbb{R}^{n}$ and $\lambda_{1}, \ldots, \lambda_{k}$ be non-negative reals such that $\lambda_{1} + \ldots + \lambda_{k} = 1$. Then, $\lambda_{1}v_{1} + \ldots + \lambda_{k}v_{k}$ is called a \emph{convex combination} of $v_{1}, \ldots, v_{k}$. Geometrically, convex combinations can be viewed as taking the line segments between the given points (by setting all coefficients to zero except those corresponding to two points) and then generating all points contained in the resulting shape as more coefficients are allowed to be non-zero. For two points, this generates the entire line segment connecting them, and for three \emph{non-collinear} points, it generates the whole triangle (including its boundary). The set of all such points forms a convex set, called the convex hull of the given set. Therefore, $\operatorname{conv}(S) = \{\sum_{i = 1}^{k} \lambda_{i} v_{i} : k \in \mathbb{N}, v_{i} \in S, \lambda_{i} \geq 0, \sum_{i = 1}^{k} \lambda_{i} = 1 \}$, which is equivalent to the previous definition.
+	
+	A set $S \subseteq \mathbb{R}^{n}$ is an \emph{affine subspace} of $\mathbb{R}^{n}$ if $S = p + V = \{p + v : v \in V\}$ for some $p \in \mathbb{R}^{n}$ and some linear subspace $V$ of $\mathbb{R}^{n}$. In other words, it is a linear subspace that has been shifted by a fixed vector. If $p \in V$, then the subspace is simply a linear subspace. 
+	
+	Recall the definition of a convex combination, but let $\lambda_{i} \in \mathbb{R}$ instead of $\lambda_{i} \in [0, 1]$. For two points, the result is the line passing through these two points. This line is formed by the affine combinations of these points (and it does not need to pass through the origin). In general, given $v_{1}, \ldots, v_{k} \in \mathbb{R}^{n}$ and $\lambda_{1}, \ldots, \lambda_{k} \in \mathbb{R}$ such that $\lambda_{1} + \ldots + \lambda_{k} = 1$, the sum $\lambda_{1}v_{1} + \ldots + \lambda_{k}v_{k}$ is called an \emph{affine combination} of $v_{1}, \ldots, v_{k}$. 
+	
+	The dimension of an affine subspace $S$, denoted by $\operatorname{dim}(S)$, is defined to be $\operatorname{dim}(V)$. Using affine combinations, we can generate a line, a plane, or a \emph{hyperplane}, which is an affine subspace of dimension $n - 1$. Similarly to the definition of a convex hull, given a set $S \subseteq \mathbb{R}^{n}$, the \emph{affine hull} of $S$ ($\operatorname{aff}(S)$)  is the intersection of all affine subspaces containing $S$, or equivalently, the set of all possible affine combinations of a finite number of elements of $S$. 
+	
+	We are also interested in knowing which points contribute to  ``extending" the affine hull (i.e., increasing its dimension). For example, in $\mathbb{R}^{2}$, the points $(1, 0)$, $(0, 1)$, and $(1, 1)$ are affinely independent because the first two define a line, and by adding $(1, 1)$, we extend the affine hull to all of $\mathbb{R}^{2}$. We say that the points $v_{1}, \ldots, v_{k} \in \mathbb{R}^{n}$ are \emph{affinely independent} if them can be written as an affine combination of the remaining points. It can be proved that $v_{1}, \ldots, v_{k} \in \mathbb{R}^{n}$ are affinely independent if and only if the vectors $v_{2} - v_{1}, \ldots, v_{k} - v_{1}$ are linearly independent.
+	
+	A hyperplane in $\mathbb{R}^{n}$ describes all the solutions $x \in \mathbb{R}^{n}$ of a single linear equation of the form $a_{1}x_{1} + a_{2}x_{2} + \ldots + a_{n}x_{n} = b$ where at least one $a_{i}$ is not zero and $b \in \mathbb{R}$. We can also express it using two inequalities $a_{1}x_{1} + a_{2}x_{2} + \ldots + a_{n}x_{n} \leq b$ and $a_{1}x_{1} + a_{2}x_{2} + \ldots + a_{n}x_{n} \geq b$. These inequalities are called \emph{half-spaces} (and more specifically \emph{closed} half-spaces because they contain their boundary). 
+	
+	A \emph{polyhedron} $P \subseteq \mathbb{R}^{n}$ is the intersection of a finite number of halfspaces. This means that we could write $P = \{x \in \mathbb{R}^{n} : Ax \leq b\}$ where $A \in \mathbb{R}^{m \times n}$ and $b \in \mathbb{R}^{m}$. It is easy to see that polyhedra is convex because halfspaces are convex. We call $z$ an \emph{extreme point} (or \emph{vertex}) of $P$ if $z \in P$ and there do not exist distinct $x,y \in P$ and $\lambda \in (0,1)$ such that $z = (1 - \lambda)x + \lambda y$ (which means that $z$ is not an internal point of any segment from $x$ to $y$ such that $x,y \in P$). The \emph{dimension} of a polyhedron $P$, denoted by $\operatorname{dim}(P)$, is the minimum dimension of an affine subspace containing $P$.
+	
+	Let $P = \{x \in \mathbb{R}^{n} : Ax \leq b\}$ and denote $a_i^T$ to be the $i$-th row of $A$. For a point $x^{*} \in P$, we say that the inequality $a_i^Tx \leq b_i$ is \emph{active} at $x^{*}$ if $a_i^Tx^{*} = b_i$. Let $A^{=}x \leq b^{=}$ be the subsystem of $Ax \leq b$ active at $x^{*}$. A point $x^{*} \in P$ is an extreme point of $P$ if and only if the active constraint vectors at $x^{*}$ contain $n$ linearly independent rows, i.e., $\operatorname{rank}(A^{=}) = n. $
+	In general, if a polyhedron is described by both equalities and inequalities,
+	$ P = \{x \in \mathbb{R}^{n} : Dx = d,\ Ax \leq b\}$, then $x^{*} \in P$ is an extreme point of $P$ if and only if
+	$
+	\operatorname{rank}
+	\begin{bmatrix}
+		D \\
+		A^{=}
+	\end{bmatrix}
+	= n
+	$.
+	
+	An inequality $a^Tx \leq b$ is called \emph{valid} for $P$ if it is satisfied by every point of $P$, that is, if $a^Tx \leq b$ for all $x \in P$. The set
+	$F = \{x \in P : a^Tx = b\}$
+	is called the \emph{face} of $P$ induced by this valid inequality.
+	A face $F$ of $P$ is called a \emph{facet} if $\operatorname{dim}(F) = \operatorname{dim}(P) - 1.$
+	In this case, we say that the inequality $a^Tx \leq b$ is \emph{facet-defining} for $P$. Equivalently, if $d = \operatorname{dim}(P)$ and the inequality is not satisfied with equality by every point of $P$, then it is facet-defining if and only if its equality set contains $d$ affinely independent points of $P$.
+	
+	A polyhedron $P \subseteq \mathbb{R}^{n}$ is called a \emph{polytope} if it is bounded (in other words there exists $M > 0$ such that $\|x\| < M$, $\forall x \in P$, where $\|\|$ is the euclidean norm). A polytope has a finite number of extreme points and every other point of that polytope can be expressed as a convex combination of its extreme points. In fact, if $C$ is the set of the extreme points of $P$, we can describe it with the convex hull of $C$, which means that $P = \operatorname{conv}(C)$. Hence, there are two representations of a polytope $P$. The first one is by defining the linear inequalities $Ax \leq b$, which is called the \emph{H-description} (or \emph{linear description}) and the second one by its vertices, which is called the \emph{V-description}.
+	
+	A polyhedron $P \subseteq \mathbb{R}^{n}$ with at least one vertex is called \emph{integral} if all of its vertices are integral. In particular, a polytope is integral if and only if
+	$P = \operatorname{conv}(P \cap \mathbb{Z}^{n})$.
+	
+	Let $c : \{1, \ldots, n\} \rightarrow \mathbb{R}\ $. In linear programming (LP) we are interested to maximize a function $c^{T}x$ (which is often called an \emph{objective function}) over a polyhedron. This is a linear optimization problem, which we call it a \emph{primal problem}. The \emph{constraints} of that problem are the linear description of it. In this thesis, we will mostly use maximization problems with nonnegative variables. Hence, the primal problem can be expressed as
+	\begin{equation} \label{3.1}
+		\begin{aligned}
+			\max \ & c^T x \\
+			\text{s.t.} \ & Ax \leq b \\
+			& x \geq 0
+		\end{aligned}
+	\end{equation}
+	
+	Any vector $x \in \mathbb{R}^n$ satisfying all constraints is called a \emph{feasible solution}. The set of all feasible solutions is called the \emph{feasible region} and in the case of a linear program, this region is a polyhedron. Any feasible solution that achieves the maximum possible value of the objective function is called an \emph{optimal solution}. There can be multiple optimal solutions, or none at all. If the objective function can attain arbitrarily large values, we say that the LP is \emph{unbounded}. Such a problem can be solved using known algorithms that are polynomial in the input size, for example, the ellipsoid method.
+	
+	We also recall the basic notion of linear programming duality. Consider the primal linear program of \ref{3.1}
+	where $A \in \mathbb{R}^{m \times n}$, $b \in \mathbb{R}^{m}$ and $c \in \mathbb{R}^{n}$. The corresponding \emph{dual problem} is
+	\[
+	\begin{aligned}
+		\min \quad & b^Ty \\
+		\text{s.t.} \quad & A^Ty \geq c, \\
+		& y \geq 0.
+	\end{aligned}
+	\]
+	The variables $x$ are called the \emph{primal variables}, while the variables $y$ are called the \emph{dual variables}. A vector satisfying the constraints of the primal problem is called a \emph{primal feasible solution}, and a vector satisfying the constraints of the dual problem is called a \emph{dual feasible solution}.
+	
+	The weak duality theorem states that, for every primal feasible solution $x$ and every dual feasible solution $y$, we have
+	\[
+	c^Tx \leq b^Ty.
+	\]
+	Therefore, the value of any dual feasible solution gives an upper bound on the value of any primal feasible solution.
+	
+	The strong duality theorem states that, if the primal problem has an optimal solution and its optimal value is finite, then the dual problem also has an optimal solution and the two optimal values are equal.
+	
+	
+	
+	Consider a linear program $ \max \{c^Tx : Ax = b,\ x \geq 0\}$ (which is often called \emph{standard form}), where $A \in \mathbb{R}^{m \times n}$ has rank $m$. A set $B \subseteq \{1, \ldots, n\}$ with $|B| = m$ is called a \emph{basis} if the submatrix $A_B$ consisting of the columns of $A$ indexed by $B$ is nonsingular. The variables indexed by $B$ are called \emph{basic variables}, while the remaining variables are called \emph{nonbasic variables}. Setting the nonbasic variables equal to $0$ and solving $A_Bx_B = b$ gives the associated \emph{basic solution}, namely
+	\[
+	x_B = A_B^{-1}b, \qquad x_N = 0.
+	\]
+	If this solution also satisfies $x_B \geq 0$, then it is called a \emph{basic feasible solution}.
+	
+	For linear programs in standard form, the basic feasible solutions are exactly the extreme points of the feasible polyhedron. Therefore, if such a linear program has an optimal solution, then it has an optimal basic feasible solution.
+	
+	If we consider the LP problem but restrict $x \in \mathbb{Z}^{n}_{+}$, it becomes an \emph{integer program} (IP). Unlike LP, this problem is difficult, i.e., it is known to be NP-hard. However, if the feasible region of the LP relaxation is integral, then we can solve the LP instead of the IP and obtain an integer optimal solution. The problem is still difficult if the size of the linear description is exponential in $n$ or $m$. One way to address this issue is by solving the \emph{separation} problem, in which, for a given point $x \in \mathbb{R}^{n}_{+}$, we decide whether it violates any of the inequalities of $Ax \leq b$ and return one such inequality.
+	
+	A matrix $A$ is \emph{totally unimodular} if every square submatrix of $A$ has determinant equal to $0$, $1$ or $-1$. We will prove the following lemma.
+	\begin{llemma}
+		Let $A$ be a totally unimodular matrix and let $A^{'}$ be the matrix obtained from $A$ by appending a unit vector \(e_i\) as a new column. Then $A^{'}$ is totally unimodular.
+	\end{llemma}
+	\begin{proof}
+		Let \(B\) be an arbitrary square submatrix of \(A'\). If \(B\) does not contain the appended column \(e_i\), then \(B\) is a square submatrix of \(A\), and therefore \(\det(B)\in\{-1,0,1\}\).
+		
+		Suppose now that \(B\) contains the appended column. The restriction of \(e_i\) to the rows of \(B\) is either the zero vector or a unit vector. In the first case, \(B\) has a zero column, so \(\det(B)=0\). In the second case, expanding along this column gives
+		\[
+		\det(B)=\pm \det(C),
+		\]
+		where \(C\) is a square submatrix of \(A\). Since \(A\) is totally unimodular, \(\det(C)\in\{-1,0,1\}\), and hence \(\det(B)\in\{-1,0,1\}\).
+		
+		Thus every square submatrix of \(A'\) has determinant in \(\{-1,0,1\}\), so \(A'\) is totally unimodular.
+	\end{proof}
+	
+	An \emph{LP relaxation} of an integer program is obtained by removing the integrality constraints on the variables and allowing them to take arbitrary real values within the feasible region.
+	We now show how total unimodularity can be used to solve certain integer programs via their LP relaxations, following the approach of \cite[p.~145]{matousek2007understanding}.
+	
+	\begin{llemma}
+		Let
+		$\max \{c^T x : Ax \leq b,\ x \geq 0\}$
+		be the LP relaxation of an integer program, where $A$ is totally unimodular and $b\in\mathbb Z^m$. Suppose that the linear program has an optimal solution. Then it also admits an integral optimal solution.
+	\end{llemma}
+	\begin{proof}
+		Introduce slack variables $s\in \mathbb{R}^m$ and $s \geq 0$, so that $Ax+s=b.$
+		Then the linear program can be written in standard form as
+		\[
+		\max \left\{
+		\begin{bmatrix}
+			c \\
+			0
+		\end{bmatrix}^T
+		\begin{bmatrix}
+			x \\
+			s
+		\end{bmatrix}
+		:
+		\begin{bmatrix}
+			A & I_m
+		\end{bmatrix}
+		\begin{bmatrix}
+			x \\
+			s
+		\end{bmatrix}
+		=b,\ x\geq 0,\ s\geq 0
+		\right\}.
+		\]
+		
+		Let
+		\[
+		M=\begin{bmatrix} A & I_m \end{bmatrix}.
+		\]
+		Since $A$ is totally unimodular, and $I_m$ is obtained by appending the unit vectors $e_1,\dots,e_m$, the previous result implies that $M=[A\ I_m]$ is also totally unimodular.
+		
+		By the fundamental theorem of linear programming, since the linear program has an optimal solution, it has an optimal basic feasible solution (we could get one using the simplex method). Let
+		\[
+		z^*=
+		\begin{bmatrix}
+			x^* \\
+			s^*
+		\end{bmatrix}
+		\]
+		be such an optimal basic feasible solution. Then there exists a basis matrix $M_B$, consisting of linearly independent columns of $M$, such that
+		\[
+		z_B^* = M_B^{-1}b,
+		\]
+		and all nonbasic variables are equal to $0$.
+		
+		Now $M_B$ is a nonsingular square submatrix of $M$. Since $M$ is totally unimodular,
+		\[
+		\det(M_B)\in \{-1,0,1\}.
+		\]
+		But \(M_B\) is nonsingular, so
+		\[
+		\det(M_B)=\pm 1.
+		\]
+		Therefore,
+		\[
+		M_B^{-1}=\frac{\operatorname{adj}(M_B)}{\det(M_B)}
+		\]
+		has integer entries, because \(M_B\) has integer entries and \(\det(M_B)=\pm 1\). Since \(b\in \mathbb{Z}^m\), it follows that
+		\[
+		z_B^*=M_B^{-1}b
+		\]
+		is integral. The nonbasic variables are zero, hence they are also integral. Therefore,
+		\[
+		z^*=
+		\begin{bmatrix}
+			x^* \\
+			s^*
+		\end{bmatrix}
+		\in \mathbb{Z}^{n+m}.
+		\]
+		In particular,
+		\[
+		x^*\in \mathbb{Z}^n.
+		\]
+		Thus the original linear program has an integral optimal solution.
+	\end{proof}
+	
+	
+
+\section{The Bipartite Matching Polytope}
+
+\section{The Stable Matching Polytope}
+
+\section{Further Remarks}
 
 \chapter{Pareto Matchings in One-to-One Models} 
 
