@@ -202,8 +202,7 @@ backgroundcolor=\color{gray!10!white},
 	
 	It is straightforward to see that every augmenting path has odd length. We will use the term $M$-augmenting whenever we want to emphasize the matching $M$.
 	
-\section{Maximum Bipartite Matching}
-
+\section{Maximum Bipartite Matching} \label{2.2}
 	In this section, we present two famous algorithms for finding a maximum bipartite matching and prove their correctness.
 
 	The first algorithm is derived from a theorem of Berge \cite{berge1957}, previously observed by Petersen \cite{petersen1891theorie}.
@@ -834,7 +833,15 @@ backgroundcolor=\color{gray!10!white},
 	
 	The strong duality theorem states that, if the primal problem has an optimal solution and its optimal value is finite, then the dual problem also has an optimal solution and the two optimal values are equal.
 	
+	We recall two standard facts relating linear programs and vertices of polyhedra. 
 	
+	\begin{pprop} 
+		Let $P \subseteq \mathbb{R}^{n}$ be a polyhedron, and let $v \in P$. If $v$ is a vertex of $P$, then there exists a nonzero vector $c\in \mathbb{R}^{n}$ such that \[ c^Tv > c^Ty \] for every $y\in P\setminus\{v\}$. 
+	\end{pprop}
+	
+	\begin{ttheorem} (Fundamental theorem of linear programming)
+		Let $P \subseteq \mathbb{R}^{n}$ be a polyhedron. If the linear program \[ \max\{c^Tx : x\in P\} \] has an optimal solution and $P$ has at least one vertex, then it has an optimal solution that is a vertex of $P$. 
+	\end{ttheorem}
 	
 	Consider a linear program $ \max \{c^Tx : Ax = b,\ x \geq 0\}$ (which is often called \emph{standard form}), where $A \in \mathbb{R}^{m \times n}$ has rank $m$. A set $B \subseteq \{1, \ldots, n\}$ with $|B| = m$ is called a \emph{basis} if the submatrix $A_B$ consisting of the columns of $A$ indexed by $B$ is nonsingular. The variables indexed by $B$ are called \emph{basic variables}, while the remaining variables are called \emph{nonbasic variables}. Setting the nonbasic variables equal to $0$ and solving $A_Bx_B = b$ gives the associated \emph{basic solution}, namely
 	\[
@@ -947,9 +954,19 @@ backgroundcolor=\color{gray!10!white},
 		Thus the original linear program has an integral optimal solution.
 	\end{proof}
 	
+	Consequently, we can deduce the following corollary.
+	
+	\begin{ccor} \label{IntPolyTU}
+		The feasible region of a linear program with totally unimodular constraint matrix and integral right-hand size forms an integral polyhedron.
+	\end{ccor}
+	
+	To see why, suppose for contradiction, that $P$ has a non-integral vertex $v$. Since $v$ is a vertex, there exists a vector $c$ such that $v$ is the unique optimal solution of $\max\{c^Tx : x\in P\}$. Since the constraint matrix is totally unimodular and the right-hand side is integral, the above linear program admits an integral optimal solution $x^*$. However, the optimal solution is unique, and therefore $x^*=v$. This implies that $v$ is integral, which contradicts our assumption. Hence every vertex of $P$ is integral, and so $P$ is integral.
 	
 
 \section{The Bipartite Matching Polytope}
+
+
+	
 
 \section{The Stable Matching Polytope}
 
