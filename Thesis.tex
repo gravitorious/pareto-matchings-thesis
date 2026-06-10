@@ -803,7 +803,7 @@ backgroundcolor=\color{gray!10!white},
 	A polyhedron $P \subseteq \mathbb{R}^{n}$ with at least one vertex is called \emph{integral} if all of its vertices are integral. In particular, a polytope is integral if and only if
 	$P = \operatorname{conv}(P \cap \mathbb{Z}^{n})$.
 	
-	Let $c : \{1, \ldots, n\} \rightarrow \mathbb{R}\ $. In linear programming (LP) we are interested to maximize a function $c^{T}x$ (which is often called an \emph{objective function}) over a polyhedron. This is a linear optimization problem, which we call it a \emph{primal problem}. The \emph{constraints} of that problem are the linear description of it. In this thesis, we will mostly use maximization problems with nonnegative variables. Hence, the primal problem can be expressed as
+	Let $c : \{1, \ldots, n\} \rightarrow \mathbb{R}\ $. In linear programming (LP) we are interested to maximize a function $c^{T}x$ (which is often called an \emph{objective function}) over a polyhedron. This is a linear optimization problem, which we call it a \emph{primal problem}. The \emph{constraints} of that problem are the linear description of it. In this thesis, we will mostly use maximization problems with nonnegative variables. Unless stated otherwise, the variables of a linear program are assumed to be real-valued. Hence, the primal problem can be expressed as
 	\begin{equation} \label{3.1}
 		\begin{aligned}
 			\max \ & c^T x \\
@@ -965,9 +965,135 @@ backgroundcolor=\color{gray!10!white},
 
 \section{The Bipartite Matching Polytope}
 
-
+	We solved the maximum bipartite matching problem algorithmically  in \ref{2.2}. In this section, we will solve the same problem using linear programming terminology. Let $G = (V_{1} \cup V_{2}, E)$ be a bipartite graph with $n$ vertices $v_{1}, \ldots, v_{n}$ and $m$ edges $e_{1}, \ldots, e_{m}$ and let $\delta(v)$ denote the set of edges incident to $v$. The IP describing the problem is the following:
 	
-
+	\begin{equation}
+		\begin{array}{r@{\quad}r@{\;}c@{\;}l@{\;}l}
+			\max & \displaystyle\sum_{e\in E} x_e \\[2mm]
+			\text{s.t.} 
+			& \displaystyle\sum_{e\in \delta(v)} x_e & \leq & 1, & \forall v\in V(G),\\[2mm]
+			& x_e & \geq & 0, & \forall e\in E,\\
+			& x_e & \in & \mathbb{Z}, & \forall e\in E.
+		\end{array}
+	\end{equation}
+	
+	or in compact form:
+		
+	\begin{equation} \label{mbm-compact}
+		\begin{array}{r@{\quad}r@{\;}c@{\;}l}
+			\max & \displaystyle\sum_{j=1}^{m} x_j \\[2mm]
+			\text{s.t.}
+			& Ax & \leq & \mathbf{1},\\
+			& x & \geq & 0,\\
+			& x & \in & \mathbb{Z}^{m}.
+		\end{array}
+	\end{equation}
+	
+	where $\mathbf{1}$ is a vector with $n$ components, each equal to $1$ and the matrix $A$ is defined as:
+	
+	\[
+	A_{v,e} =
+	\begin{cases}
+		1, & \text{if  } v \text{ is incident to edge } e,\\
+		0, & \text{otherwise.}
+	\end{cases}
+	\]
+	
+	In fact, $x$'s components can be $0$ or $1$ based on the constraint matrix, so we could simply write $x_{j} \in \{0, 1\}$. Consider now the LP relaxation of \ref{mbm-compact}.
+	
+	\begin{equation} \label{mbm-compact}
+		\begin{array}{r@{\quad}r@{\;}c@{\;}l}
+			\max & \displaystyle\sum_{j=1}^{m} x_j \\[2mm]
+			\text{s.t.}
+			& Ax & \leq & \mathbf{1},\\
+			& x & \geq & 0.
+		\end{array}
+	\end{equation}
+	
+	Since the feasible region is non-empty and bounded, it is a polytope, guaranteeing that the LP relaxation has an optimal solution at a vertex. The polytope of \ref{mbm-compact-LP-Relaxation} is integral. To prove it, it's sufficient (see \ref{IntPolyTU}) to show that $A$ is totally unimodular, since the right-hand side vector $\mathbf{1}$ is integral.
+	
+	\begin{llemma}
+		Let $G=(V_{1}\cup V_{2},E)$ be a bipartite graph, and let $A$ be its vertex-edge incidence matrix. Then $A$ is totally unimodular.
+	\end{llemma}
+	
+	\begin{proof}
+		We prove that every square submatrix of $A$ has determinant equal to $0$, $1$, or $-1$.
+		
+		Let $Q$ be an arbitrary square submatrix of $A$. We use induction on the size of $Q$. If $Q$ is a $1 \times 1$ matrix, then its determinant is either $0$ or $1$, since all entries of $A$ are $0$ or $1$.
+		
+		Now suppose that $Q$ has size $k \times k$, with $k \geq 2$, and assume that the claim holds for all smaller square submatrices of $A$.
+		
+		Since $A$ is the vertex-edge incidence matrix of $G$, every column of $A$ contains exactly two entries equal to $1$, one corresponding to each endpoint of the edge. Therefore, every column of $Q$ contains at most two entries equal to $1$.
+		
+		If some column of $Q$ contains no entry equal to $1$, then this column is zero, and hence
+		\[
+		\det(Q)=0.
+		\]
+		
+		If some column of $Q$ contains exactly one entry equal to $1$, then we expand the determinant along this column. We get
+		\[
+		\det(Q)=\pm \det(Q'),
+		\]
+		where $Q'$ is a square submatrix of $A$ of size $(k-1)\times(k-1)$. By the induction hypothesis,
+		\[
+		\det(Q')\in\{-1,0,1\}.
+		\]
+		Therefore,
+		\[
+		\det(Q)\in\{-1,0,1\}.
+		\]	
+		
+		It remains to consider the case where every column of $Q$ contains exactly two entries equal to $1$. Since $G$ is bipartite, every edge has one endpoint in $V_1$ and one endpoint in $V_2$. Hence, in every column of $Q$, one of the two $1$'s appears in a row corresponding to a vertex of $V_1$, and the other appears in a row corresponding to a vertex of $V_2$.
+		
+		Therefore, the sum of the rows of $Q$ corresponding to vertices in $V_1$ is equal to the sum of the rows of $Q$ corresponding to vertices in $V_2$. Hence, the rows of $Q$ are linearly dependent, and so
+		\[
+		\det(Q)=0.
+		\]		
+		
+		In all cases, we have
+		\[
+		\det(Q)\in\{-1,0,1\}.
+		\]
+	\end{proof}
+	
+	Since the polytope of the LP relaxation contains all feasible solutions of the IP, the LP relaxation can only have an optimal value at least as large as that of the IP. However, the polytope of the LP relaxation is integral and since it has an optimal solution at a vertex, this optimal solution is also integral. This optimal solution is feasible for the original IP as well, since each component of the solution is either $0$ or $1$. Consequently, the LP relaxation and the IP have the same optimal value, and we can solve the LP relaxation instead of the integer program and obtain a maximum matching.
+	
+	Another famous problem in graph theory, is the \emph{minimum vertex cover}. A vertex cover of graph $G$ is a minimum set of nodes such that each edge of the graph has at least one endpoint in the set. This problem is NP-hard in a general graph. However, if the graph is bipartite, we can solve it in polynomial time. In fact, the following theorem holds.
+	
+	\begin{theorem}[K\"onig's Theorem]
+		Let $G=(V_1\cup V_2,E)$ be a bipartite graph. Then the maximum cardinality of a matching in $G$ is equal to the minimum cardinality of a vertex cover in $G$.
+	\end{theorem}
+	
+	\begin{proof}
+		Let $A$ be the vertex-edge incidence matrix of $G$. Consider the LP relaxation \ref{mbm-compact} of the maximum matching problem. We have shown that, since $A$ is totally unimodular and the right-hand side vector is integral, the optimal value of this relaxation is equal to the maximum cardinality of a matching in $G$.
+		
+		The dual of this LP relaxation is
+		\[
+		\begin{array}{r@{\quad}r@{\;}c@{\;}l}
+			\min & \mathbf{1}^T y \\[2mm]
+			\text{s.t.}
+			& A^T y & \geq & \mathbf{1},\\
+			& y & \geq & 0.
+		\end{array}
+		\]
+		This is exactly the LP relaxation of the minimum vertex cover problem. Indeed, the integer program for minimum vertex cover is
+		\[
+		\begin{array}{r@{\quad}r@{\;}c@{\;}l}
+			\min & \mathbf{1}^T y \\[2mm]
+			\text{s.t.}
+			& A^T y & \geq & \mathbf{1},\\
+			& y & \geq & 0,\\
+			& y & \in & \mathbb{Z}^{n}.
+		\end{array}
+		\]
+		Here $y_v=1$ means that the vertex $v$ is chosen in the vertex cover. The constraint $A^Ty\geq \mathbf{1}$ says that for every edge, at least one of its endpoints must be chosen.
+		
+		Since $A$ is totally unimodular, $A^T$ is also totally unimodular. Therefore, again by the total unimodularity result, the LP relaxation of the minimum vertex cover problem has an integral optimal solution. Moreover, in an optimal integral solution we may assume that every component is either $0$ or $1$, since if $y_v>1$, replacing $y_v$ by $1$ keeps all constraints feasible and does not increase the objective value. Hence, the optimal value of the vertex cover LP relaxation is equal to the minimum cardinality of a vertex cover in $G$.
+		
+		Finally, by strong duality, the optimal values of the two LP relaxations are equal. The first one is equal to the maximum cardinality of a matching in $G$, and the second one is equal to the minimum cardinality of a vertex cover in $G$. Therefore, these two quantities are equal.
+	\end{proof}
+	
+	
 \section{The Stable Matching Polytope}
 
 \section{Further Remarks}
