@@ -553,7 +553,7 @@ backgroundcolor=\color{gray!10!white},
 \clearpage 
 \newpage
 	
-\section{The Stable Marriage Problem}
+\section{The Stable Marriage Problem}\label{sec:stable-marriage}
 
 	Assume that we are given a set of $n$ men $\{m_{1}, m_{2}, \dots, m_{n}\}$ and $n$ women $\{w_{1}, w_{2}, \dots, w_{n}\}$, where each man has a strict preference ranking over all $n$ women, and each woman also has a strict preference ranking over all $n$ men. We say that a $\mathit{matching}$ is a set of unordered pairs consisting of a man and a woman (similarly to the previous section, where we considered the undirected edges of a bipartite graph) and each of them appears at most once. A $\mathit{marriage}$ is a perfect matching between men and women, meaning that every man and every woman is matched exactly once. A marriage is $\mathit{unstable}$ if there exists a pair $\{m_{i}, w_{j}\}$ that does not belong to the matching such that $m_{i}$ prefers $w_{j}$ over his actual partner, and $w_{j}$ prefers $m_{i}$ over her actual partner. We call such a pair a $\mathit{blocking}$ $\mathit{pair}$. Otherwise, we say that it is $\mathit{stable}$.
 
@@ -869,17 +869,17 @@ backgroundcolor=\color{gray!10!white},
 		Thus every square submatrix of \(A'\) has determinant in \(\{-1,0,1\}\), so \(A'\) is totally unimodular.
 	\end{proof}
 	
-	An \emph{LP relaxation} of an integer program is obtained by removing the integrality constraints on the variables and allowing them to take arbitrary real values within the feasible region.
-	We now show how total unimodularity can be used to solve certain integer programs via their LP relaxations, following the approach of \cite[p.~145]{matousek2007understanding}.
+	An \emph{LP relaxation} of an IP is obtained by removing the integrality constraints on the variables and allowing them to take arbitrary real values within the feasible region.
+	We now show how total unimodularity can be used to solve IP via LP relaxation, following the approach of \cite[p.~145]{matousek2007understanding}.
 	
 	\begin{llemma}
 		Let
 		$\max \{c^T x : Ax \leq b,\ x \geq 0\}$
-		be the LP relaxation of an integer program, where $A$ is totally unimodular and $b\in\mathbb Z^m$. Suppose that the linear program has an optimal solution. Then it also admits an integral optimal solution.
+		be the LP relaxation of an IP, where $A$ is totally unimodular and $b\in\mathbb Z^m$. Suppose that the LP has an optimal solution. Then it also admits an integral optimal solution.
 	\end{llemma}
 	\begin{proof}
 		Introduce slack variables $s\in \mathbb{R}^m$ and $s \geq 0$, so that $Ax+s=b.$
-		Then the linear program can be written in standard form as
+		Then the LP can be written in standard form as
 		\[
 		\max \left\{
 		\begin{bmatrix}
@@ -968,27 +968,37 @@ backgroundcolor=\color{gray!10!white},
 	We solved the maximum bipartite matching problem algorithmically  in \ref{2.2}. In this section, we will solve the same problem using linear programming terminology. Let $G = (V_{1} \cup V_{2}, E)$ be a bipartite graph with $n$ vertices $v_{1}, \ldots, v_{n}$ and $m$ edges $e_{1}, \ldots, e_{m}$ and let $\delta(v)$ denote the set of edges incident to $v$. The IP describing the problem is the following:
 	
 	\begin{equation}
-		\begin{array}{r@{\quad}r@{\;}c@{\;}l@{\;}l}
+		\label{matching-ip}
+		\begin{array}{r@{\quad}l}
 			\max & \displaystyle\sum_{e\in E} x_e \\[2mm]
-			\text{s.t.} 
-			& \displaystyle\sum_{e\in \delta(v)} x_e & \leq & 1, & \forall v\in V(G),\\[2mm]
-			& x_e & \geq & 0, & \forall e\in E,\\
-			& x_e & \in & \mathbb{Z}, & \forall e\in E.
+			\text{s.t.} &
+			\begin{aligned}[t]
+				\displaystyle\sum_{e\in \delta(v)} x_e &\leq 1,
+				&& \forall v\in V(G),\\
+				x_e &\geq 0,
+				&& \forall e\in E,\\
+				x_e &\in \mathbb{Z},
+				&& \forall e\in E.
+			\end{aligned}
 		\end{array}
 	\end{equation}
 	
 	or in compact form:
-		
-	\begin{equation} \label{mbm-compact}
-		\begin{array}{r@{\quad}r@{\;}c@{\;}l}
-			\max & \displaystyle\sum_{j=1}^{m} x_j \\[2mm]
-			\text{s.t.}
-			& Ax & \leq & \mathbf{1},\\
-			& x & \geq & 0,\\
-			& x & \in & \mathbb{Z}^{m}.
-		\end{array}
-	\end{equation}
 	
+	\begin{equation}
+		\label{mbm-compact}
+		\begin{array}{r@{\quad}l}
+			\max & \displaystyle\sum_{j=1}^{m} x_j \\[2mm]
+			\text{s.t.} &
+			\begin{aligned}[t]
+				Ax &\leq \mathbf{1},\\
+				x &\geq 0,\\
+				x &\in \mathbb{Z}^{m}.
+			\end{aligned}
+		\end{array}
+	\end{equation}	
+	
+
 	where $\mathbf{1}$ is a vector with $n$ components, each equal to $1$ and the matrix $A$ is defined as:
 	
 	\[
@@ -1002,13 +1012,15 @@ backgroundcolor=\color{gray!10!white},
 	In fact, $x$'s components can be $0$ or $1$ based on the constraint matrix, so we could simply write $x_{j} \in \{0, 1\}$. Consider now the LP relaxation of \ref{mbm-compact}.
 	
 	\begin{equation} \label{mbm-compact}
-		\begin{array}{r@{\quad}r@{\;}c@{\;}l}
+		\begin{array}{r@{\quad}l}
 			\max & \displaystyle\sum_{j=1}^{m} x_j \\[2mm]
-			\text{s.t.}
-			& Ax & \leq & \mathbf{1},\\
-			& x & \geq & 0.
+			\text{s.t.} &
+			\begin{aligned}[t]
+				Ax &\leq \mathbf{1},\\
+				x &\geq 0.
+			\end{aligned}
 		\end{array}
-	\end{equation}
+	\end{equation}	
 	
 	Since the feasible region is non-empty and bounded, it is a polytope, guaranteeing that the LP relaxation has an optimal solution at a vertex. The polytope of \ref{mbm-compact-LP-Relaxation} is integral. To prove it, it's sufficient (see \ref{IntPolyTU}) to show that $A$ is totally unimodular, since the right-hand side vector $\mathbf{1}$ is integral.
 	
@@ -1056,7 +1068,7 @@ backgroundcolor=\color{gray!10!white},
 		\]
 	\end{proof}
 	
-	Since the polytope of the LP relaxation contains all feasible solutions of the IP, the LP relaxation can only have an optimal value at least as large as that of the IP. However, the polytope of the LP relaxation is integral and since it has an optimal solution at a vertex, this optimal solution is also integral. This optimal solution is feasible for the original IP as well, since each component of the solution is either $0$ or $1$. Consequently, the LP relaxation and the IP have the same optimal value, and we can solve the LP relaxation instead of the integer program and obtain a maximum matching.
+	Since the polytope of the LP relaxation contains all feasible solutions of the IP, the LP relaxation can only have an optimal value at least as large as that of the IP. However, the polytope of the LP relaxation is integral and since it has an optimal solution at a vertex, this optimal solution is also integral. This optimal solution is feasible for the original IP as well, since each component of the solution is either $0$ or $1$. Consequently, the LP relaxation and the IP have the same optimal value, so we can solve the LP instead of the IP to obtain a maximum matching.
 	
 	Another famous problem in graph theory, is the \emph{minimum vertex cover}. A vertex cover of graph $G$ is a minimum set of nodes such that each edge of the graph has at least one endpoint in the set. This problem is NP-hard in a general graph. However, if the graph is bipartite, we can solve it in polynomial time. In fact, the following theorem holds.
 	
@@ -1076,7 +1088,7 @@ backgroundcolor=\color{gray!10!white},
 			& y & \geq & 0.
 		\end{array}
 		\]
-		This is exactly the LP relaxation of the minimum vertex cover problem. Indeed, the integer program for minimum vertex cover is
+		This is exactly the LP relaxation of the minimum vertex cover problem. Indeed, the IP for minimum vertex cover is
 		\[
 		\begin{array}{r@{\quad}r@{\;}c@{\;}l}
 			\min & \mathbf{1}^T y \\[2mm]
@@ -1088,15 +1100,172 @@ backgroundcolor=\color{gray!10!white},
 		\]
 		Here $y_v=1$ means that the vertex $v$ is chosen in the vertex cover. The constraint $A^Ty\geq \mathbf{1}$ says that for every edge, at least one of its endpoints must be chosen.
 		
-		Since $A$ is totally unimodular, $A^T$ is also totally unimodular. Therefore, again by the total unimodularity result, the LP relaxation of the minimum vertex cover problem has an integral optimal solution. Moreover, in an optimal integral solution we may assume that every component is either $0$ or $1$, since if $y_v>1$, replacing $y_v$ by $1$ keeps all constraints feasible and does not increase the objective value. Hence, the optimal value of the vertex cover LP relaxation is equal to the minimum cardinality of a vertex cover in $G$.
+		Since $A$ is totally unimodular, it is easy to see that $A^T$ is also totally unimodular. Therefore, again by the total unimodularity result, the LP relaxation of the minimum vertex cover problem has an integral optimal solution. Moreover, in an optimal integral solution we may assume that every component is either $0$ or $1$, since if $y_v>1$, replacing $y_v$ by $1$ keeps all constraints feasible and does not increase the objective value. Hence, the optimal value of the vertex cover LP relaxation is equal to the minimum cardinality of a vertex cover in $G$.
 		
 		Finally, by strong duality, the optimal values of the two LP relaxations are equal. The first one is equal to the maximum cardinality of a matching in $G$, and the second one is equal to the minimum cardinality of a vertex cover in $G$. Therefore, these two quantities are equal.
 	\end{proof}
 	
-	
-\section{The Stable Matching Polytope}
+\newpage
 
-\section{Further Remarks}
+\section{The Stable Matching Polytope} \label{sec:stable-matching-polytope}
+	
+	In Section 2.3, we studied the stable marriage problem from an algorithmic point of view. In particular, the Gale--Shapley algorithm computes a stable marriage in polynomial time \cite{Gale01011962}. In this section, we study the same problem from a polyhedral point of view.
+	
+	We keep the same assumptions as before. There are \(n\) men and \(n\) women, all preference lists are complete and strict, and every feasible solution is a marriage. Let
+	\[
+	U=\{m_1,m_2,\dots,m_n\}
+	\]
+	be the set of men and
+	\[
+	V=\{w_1,w_2,\dots,w_n\}
+	\]
+	be the set of women. For a man \(m\), we write \(w'\succ_m w\) if \(m\) prefers woman \(w'\) to woman \(w\). Similarly, for a woman \(w\), we write \(m'\succ_w m\) if \(w\) prefers man \(m'\) to man \(m\).
+	
+	For every pair \((m,w)\in U\times V\), define a variable
+	\[
+	x_{mw}=
+	\begin{cases}
+		1, & \text{if } m \text{ is matched with } w,\\
+		0, & \text{otherwise}.
+	\end{cases}
+	\]
+	
+	Then the stable marriage problem can be written as the following IP:
+	\begin{equation}
+		\label{stable-marriage-ip}
+		\begin{aligned}
+			\sum_{w\in V} x_{mw} &= 1,
+			&& \forall m\in U,\\
+			\sum_{m\in U} x_{mw} &= 1,
+			&& \forall w\in V,\\
+			x_{mw}
+			+
+			\sum_{\substack{w'\in V\\ w'\succ_m w}} x_{mw'}
+			+
+			\sum_{\substack{m'\in U\\ m'\succ_w m}} x_{m'w}
+			&\geq 1,
+			&& \forall (m,w)\in U\times V,\\
+			x_{mw} &\in \{0,1\},
+			&& \forall (m,w)\in U\times V.
+		\end{aligned}
+	\end{equation}
+	
+	The first two families of constraints say that each man is matched with exactly one woman and each woman is matched with exactly one man. Hence, they describe a marriage.
+	
+	The third family of constraints expresses stability. Fix a pair $(m,w)$. The inequality says that at least one of the following must happen:
+	\[
+	m \text{ is matched with } w,
+	\]
+	or
+	\[
+	m \text{ is matched with a woman he prefers to } w,
+	\]
+	or
+	\[
+	w \text{ is matched with a man she prefers to } m.
+	\]
+	If none of these happens, then $m$ and $w$ prefer each other to their assigned partners. Therefore, $(m,w)$ is a blocking pair.
+	
+	\begin{llemma}
+		The feasible integer points of \ref{stable-marriage-ip} are exactly the incidence vectors of stable marriages.
+	\end{llemma}
+	
+	\begin{proof}
+		Let $x$ be a feasible integer point of \ref{stable-marriage-ip}. Since $x_{mw}\in\{0,1\}$, the first two families of constraints define a marriage. Let $N$ be this marriage.
+		
+		We show that $N$ is stable. Suppose for the sake of contradiction that there exists a blocking pair $(m,w)$. Then $m$ is not matched with $w$, so
+		\[
+		x_{mw}=0.
+		\]
+		Also, since $m$ prefers $w$ to his assigned partner, $m$ is not matched with any woman $w'$ such that $w'\succ_m w$. Thus,
+		\[
+		\sum_{\substack{w'\in V\\ w'\succ_m w}} x_{mw'}=0.
+		\]
+		Similarly, since $w$ prefers $m$ to her assigned partner, $w$ is not matched with any man $m'$ such that $m'\succ_w m$. Hence,
+		\[
+		\sum_{\substack{m'\in U\\ m'\succ_w m}} x_{m'w}=0.
+		\]
+		Therefore, the stability constraint for the pair $(m,w)$ is violated. This is a contradiction. Hence, $N$ is stable.
+		
+		Conversely, let $N$ be a stable marriage and let $\chi^N$ be its incidence vector. The first two families of constraints are clearly satisfied. Now fix a pair $(m,w)$. If $m$ is matched with $w$, then the stability inequality is satisfied because $x_{mw}=1$. Otherwise, since $N$ is stable, the pair $(m,w)$ is not blocking. Therefore, either $m$ is matched with a woman he prefers to $w$, or $w$ is matched with a man she prefers to $m$. Hence, the stability inequality is again satisfied.
+	\end{proof}
+	
+	
+	We now define the polytope associated with stable marriages.
+	
+	\begin{ddef}
+		The $\mathit{stable}$ $\mathit{matching}$ $\mathit{polytope}$, also called the $\mathit{stable}$ $\mathit{marriage}$ $\mathit{polytope}$ in this setting, is
+		\[
+		P_{SM}
+		=
+		\operatorname{conv}
+		\left\{
+		\chi^N\in \mathbb{R}^{U\times V}
+		:
+		N \text{ is a stable marriage}
+		\right\}.
+		\]
+	\end{ddef}
+	
+	Thus, $P_{SM}$ is the convex hull of all incidence vectors of stable marriages. It contains all stable marriages as integral points, but it may also contain fractional points. For example, if $N_1$ and $N_2$ are two different stable marriages, then $\frac{1}{2}\chi^{N_1}+\frac{1}{2}\chi^{N_2}$
+	is usually fractional and also belongs to $P_{SM}$.
+	
+	Let $Q_{SM}$ be the polyhedron obtained from \ref{stable-marriage-ip} by replacing the constraints $x_{mw}\in\{0,1\}$
+	with $x_{mw}\geq 0.$
+	Since the first two families of constraints imply $x_{mw}\leq 1$, no separate upper bound is needed.
+	
+	The important question is whether this linear relaxation introduces fractional vertices. In fact, the relaxation is \emph{exact}.
+	
+	\begin{ttheorem}[Vande Vate \cite{VandeVate1989}; Rothblum \cite{Rothblum1992}]
+		For every stable marriage instance with complete and strict preference lists,
+		\[
+		Q_{SM}=P_{SM}.
+		\]
+		Equivalently, every extreme point of $Q_{SM}$ is the incidence vector of a stable marriage.
+	\end{ttheorem}
+	
+	The nontrivial part of the theorem is that the polyhedron $Q_{SM}$ has no fractional extreme points. Therefore, every fractional feasible point of $Q_{SM}$ is only a convex combination of stable marriages, and not a new vertex of the relaxation.
+	
+	The nontrivial part of the theorem is that the polyhedron $Q_{SM}$ has no fractional extreme points, so $Q_{SM}$ is \emph{integral}. Therefore, every fractional feasible point of $Q_{SM}$ can be written as a convex combination of incidence vectors of stable marriages, and is not a new vertex of the relaxation.
+	
+	This gives a complete linear description of the stable matching polytope:
+	\[
+	P_{SM}
+	=
+	\left\{
+	x\in\mathbb{R}_{\geq 0}^{U\times V}
+	:
+	\begin{array}{ll}
+		\sum_{w\in V}x_{mw}=1, & \forall m\in U,\\[2mm]
+		\sum_{m\in U}x_{mw}=1, & \forall w\in V,\\[2mm]
+		x_{mw}
+		+
+		\sum_{\substack{w'\in V\\ w'\succ_m w}}x_{mw'}
+		+
+		\sum_{\substack{m'\in U\\ m'\succ_w m}}x_{m'w}
+		\geq 1,
+		& \forall (m,w)\in U\times V.
+	\end{array}
+	\right\}.
+	\]
+	
+	The formulation has $n^2$ variables, $2n$ assignment constraints, and $n^2$ stability constraints, apart from non-negativity. Hence, it is a compact linear formulation.
+	
+	\paragraph{Consequences.}
+	The Gale--Shapley algorithm is enough if we only want to find one stable marriage. The polyhedral formulation is useful when we want to optimize a linear objective over all stable marriages. For example, if each pair $(m,w)$ has weight $c_{mw}$, we may solve
+
+	\begin{equation} \label{optimal-stable-marriage-lp}
+		\begin{aligned}
+			\max \quad & \sum_{m\in U}\sum_{w\in V} c_{mw}x_{mw} \\
+			\text{s.t.} \quad & x\in Q_{SM}.
+		\end{aligned}
+	\end{equation}
+
+	Because every extreme point of $Q_{SM}$ is integral, there exists an optimal extreme point of \ref{optimal-stable-marriage-lp} that is the incidence vector of a stable marriage. Therefore, the optimal stable marriage problem with a linear objective can be solved as LP.
+	
+	This section gives only a brief polyhedral view of the stable marriage problem. We introduced the natural integer formulation, defined the stable matching polytope, and stated the main result that its linear relaxation is integral. Together with the maximum bipartite matching formulation studied in the previous section, this gives another example where the natural linear relaxation is integral. However, this is not the case for many other matching problems. In the next chapter, we will study one such case.
+
+
 
 \chapter{Pareto Matchings in One-to-One Models} 
 
