@@ -30,30 +30,41 @@
 \usepackage{makeidx}
 \usepackage{float}
 \usepackage[nameinlink]{cleveref}
+\usepackage{url}
 \setlength{\parindent}{2em}
 \setmainfont{CMU Serif}
 
 \newcommand{\en}{\selectlanguage{english}}
 \newcommand{\gr}{\selectlanguage{greek}}
 
-\lstset { %to add C++ code manually
-language=C++,
-belowcaptionskip=1\baselineskip,
-breaklines=true,
-frame=none,
-numbers=left, 
-basicstyle=\footnotesize\ttfamily,
-keywordstyle=\bfseries\color{green!40!black},
-commentstyle=\itshape\color{purple!40!black},
-identifierstyle=\color{blue},
-backgroundcolor=\color{gray!10!white},
-%how to use it
-%\begin{lstlisting}
-%	for (int i=0; i<iterations;i++){
-%		do something
-%	}
-%\end{lstlisting}
+
+
+\lstset{
+	language=Python,
+	belowcaptionskip=1\baselineskip,
+	breaklines=true,
+	frame=none,
+	numbers=left,
+	numberstyle=\tiny\color{gray},
+	basicstyle=\footnotesize\ttfamily,
+	keywordstyle=\bfseries\color{green!40!black},
+	commentstyle=\itshape\color{purple!40!black},
+	stringstyle=\color{orange!70!black},
+	identifierstyle=\color{blue!60!black},
+	backgroundcolor=\color{gray!10!white},
+	showstringspaces=false,
+	keepspaces=true,
+	tabsize=4,
+	columns=fullflexible,
+	captionpos=b
+	%how to use it
+	%\begin{lstlisting}
+	%	for (int i=0; i<iterations;i++){
+		%		do something
+		%	}
+	%\end{lstlisting}
 }
+
 %LISTA
 %\begin{enumerate}
 %		\item Basic Analysis of Algorithms (1-2 lessons)
@@ -601,7 +612,7 @@ backgroundcolor=\color{gray!10!white},
 		w_3 \text{ is matched with } m_4,\quad
 		w_4 \text{ is matched with } m_3.
 		\]
-		Hence, no woman prefers any other man to her assigned partner. Therefore, no blocking pair can exist, since a blocking pair would require both agents to prefer each other over their current partners. Consequently, \(M\) is a stable matching.
+		Hence, no woman prefers any other man to her assigned partner. Therefore, no blocking pair can exist, since a blocking pair would require both to prefer each other over their current partners. Consequently, \(M\) is a stable matching.
 		Moreover, this stable matching is not unique, since
 		\[
 		M'=\{\{m_1,w_1\},\{m_2,w_2\},\{m_3,w_3\},\{m_4,w_4\}\}
@@ -835,7 +846,7 @@ backgroundcolor=\color{gray!10!white},
 	
 	We recall two standard facts relating linear programs and vertices of polyhedra. 
 	
-	\begin{pprop} 
+	\begin{pprop} \label{hyperplane-th}
 		Let $P \subseteq \mathbb{R}^{n}$ be a polyhedron, and let $v \in P$. If $v$ is a vertex of $P$, then there exists a nonzero vector $c\in \mathbb{R}^{n}$ such that \[ c^Tv > c^Ty \] for every $y\in P\setminus\{v\}$. 
 	\end{pprop}
 	
@@ -1272,26 +1283,26 @@ backgroundcolor=\color{gray!10!white},
 	
 	In this chapter, we study a different setting, where the two sides need not have the same size, and only one side has preferences over the other side. For these reasons, it is natural to formulate this matching problem in the setting of a housing market.
 	
-	The house allocation problem has been studied from an algorithmic point of view in \cite{abraham2004pareto}. An integer programming formulation for the same setting was later proposed by Eirinakis, Magos, and Mourtos \cite{eirinakis2015model}. In this chapter, we follow the notation and the basic definitions used in these works.
+	The \emph{house allocation problem} has been studied from an algorithmic point of view in \cite{abraham2004pareto}. An integer programming formulation for the same setting was later proposed by Eirinakis, Magos, and Mourtos \cite{eirinakis2015model}. In this chapter, we follow the notation and the basic definitions used in these works.
 	
 	House allocation is a one-sided matching problem. We are given a finite set
 	\[
 	A=\{a_1,\ldots,a_r\}
 	\]
-	of agents and a finite set
+	of applicants and a finite set
 	\[
 	H=\{h_1,\ldots,h_s\}
 	\]
 	of houses. The houses are indivisible objects, and no monetary transfers are allowed. 
-	In contrast with two-sided matching models, only the agents have preferences.
+	In contrast with two-sided matching models, only the applicants have preferences.
 	
-	Each agent $a\in A$ finds acceptable only some houses in $H$. We denote by
-	$P(a)$ the preference list of agent $a$. The list $P(a)$ is strict, so no ties are
+	Each applicant $a\in A$ finds acceptable only some houses in $H$. We denote by
+	$P(a)$ the preference list of applicant $a$. The list $P(a)$ is strict, so no ties are
 	allowed. If $h,h'\in P(a)$, then
 	\[
 	h >_a h'
 	\]
-	means that agent $a$ prefers house $h$ to house $h'$.
+	means that applicant $a$ prefers house $h$ to house $h'$.
 	
 	The acceptable pairs define a bipartite graph
 	\[
@@ -1301,32 +1312,32 @@ backgroundcolor=\color{gray!10!white},
 	\[
 	E=\{(a,h)\in A\times H: h\in P(a)\}.
 	\]
-	Thus, an edge \((a,h)\) means that house \(h\) is acceptable to agent \(a\).
+	Thus, an edge \((a,h)\) means that house \(h\) is acceptable to applicant \(a\).
 	
 	For each house \(h\in H\), let
 	\[
 	Q(h)=\{a\in A: h\in P(a)\}.
 	\]
-	Therefore, \(Q(h)\) is the set of agents whose preference list contains house \(h\).
+	Therefore, \(Q(h)\) is the set of applicants whose preference list contains house \(h\).
 	
-	A matching is a set $M\subseteq E$ such that each agent is assigned to at most
-	one house and each house is assigned to at most one agent. If $(a,h)\in M$,
+	A matching is a set $M\subseteq E$ such that each applicant is assigned to at most
+	one house and each house is assigned to at most one applicant. If $(a,h)\in M$,
 	then we write
 	\[
 	M(a)=h
 	\quad\text{and}\quad
 	M(h)=a.
 	\]
-	If an agent or a house is not assigned in $M$, then we write
+	If an applicant or a house is not assigned in $M$, then we write
 	\[
 	M(z)=\emptyset,
 	\quad z\in A\cup H.
 	\]
-	Thus, in this model, every feasible allocation is \emph{one-to-one}: no agent receives
-	more than one house and no house is given to more than one agent.
+	Thus, in this model, every feasible allocation is \emph{one-to-one}: no applicant receives
+	more than one house and no house is given to more than one applicant.
 	
-	A matching $M'$ is a \emph{Pareto improvement} over a matching $M$ if every agent
-	is at least as well off in $M'$ as in $M$, and at least one agent is strictly better
+	A matching $M'$ is a \emph{Pareto improvement} over a matching $M$ if every applicant
+	is at least as well off in $M'$ as in $M$, and at least one applicant is strictly better
 	off. Here, being unmatched is considered worse than being assigned any acceptable
 	house. A matching $M$ is Pareto optimal if no Pareto improvement over $M$
 	exists.
@@ -1342,17 +1353,17 @@ backgroundcolor=\color{gray!10!white},
 	In other words, no additional acceptable pair can be added to \(M\) without
 	violating the matching constraints.
 	
-	A matching $M$ is \emph{trade-in free} if there is no agent $a\in A$ and no house
+	A matching $M$ is \emph{trade-in free} if there is no applicant $a\in A$ and no house
 	$h\in P(a)$ such that
 	\[
 	M(a)\neq \emptyset,\qquad M(h)=\emptyset,
 	\qquad\text{and}\qquad h>_a M(a).
 	\]
-	Thus, no matched agent can improve the current assignment by replacing the
+	Thus, no matched applicant can improve the current assignment by replacing the
 	assigned house with an unmatched house.
 	
 	A matching $M$ is \emph{coalition free} if it does not admit a coalition. A coalition is
-	a sequence of matched agents
+	a sequence of matched applicants
 	\[
 	C=\langle a_{i_0},a_{i_1},\ldots,a_{i_{k-1}}\rangle,
 	\quad k\geq 2,
@@ -1363,7 +1374,7 @@ backgroundcolor=\color{gray!10!white},
 	\quad c=0,\ldots,k-1,
 	\]
 	where the indices are taken modulo $k$. If such a sequence exists, then the
-	agents in $C$ can cyclically exchange their assigned houses, and every agent in
+	applicants in $C$ can cyclically exchange their assigned houses, and every applicant in
 	the sequence becomes strictly better off.
 	
 	The following characterization connects these three properties with Pareto
@@ -1378,7 +1389,7 @@ backgroundcolor=\color{gray!10!white},
 	will be presented in the next section.
 	
 	For this formulation, it is useful to define coalitions independently of a specific
-	matching. A plausible coalition is a set of agent-house pairs
+	matching. A plausible coalition is a set of applicant-house pairs
 	\[
 	C=\{(a_{i_c},h_{i_c}): c=0,\ldots,k-1\},
 	\quad k\geq 2,
@@ -1390,7 +1401,7 @@ backgroundcolor=\color{gray!10!white},
 	\{h_{i_c},h_{i_{c+1}}\}\subseteq P(a_{i_c}),
 	\]
 	where again the indices are taken modulo $k$. If all pairs of such a set appear
-	simultaneously in a matching, then the corresponding agents form a coalition.
+	simultaneously in a matching, then the corresponding applicants form a coalition.
 	We denote by $\mathcal C$ the family of all plausible coalitions.
 	
 	Finally, for every acceptable pair $(a,h)\in E$, we define a binary variable
@@ -1419,15 +1430,15 @@ backgroundcolor=\color{gray!10!white},
 	\[
 	x_{ah}=
 	\begin{cases}
-		1, & \text{if agent } a \text{ is assigned to house } h,\\
+		1, & \text{if applicant } a \text{ is assigned to house } h,\\
 		0, & \text{otherwise.}
 	\end{cases}
 	\]
-	Thus, a vector $x$ represents a set of agent-house pairs, and the constraints below
+	Thus, a vector $x$ represents a set of applicant-house pairs, and the constraints below
 	force this set to be a Pareto optimal matching.
 	
-	First, we need the usual matching constraints. Each agent can be assigned to at
-	most one house, and each house can be assigned to at most one agent. Hence, we
+	First, we need the usual matching constraints. Each applicant can be assigned to at
+	most one house, and each house can be assigned to at most one applicant. Hence, we
 	require
 	\[
 	\sum_{h\in P(a)} x_{ah} \leq 1,
@@ -1438,10 +1449,10 @@ backgroundcolor=\color{gray!10!white},
 	\sum_{a\in Q(h)} x_{ah} \leq 1,
 	\qquad \forall h\in H.
 	\]
-	The first family of constraints controls the agents, while the second family
+	The first family of constraints controls the applicants, while the second family
 	controls the houses.
 	
-	Next, we impose maximality. Fix an acceptable pair $(a,h)$. If agent $a$ is
+	Next, we impose maximality. Fix an acceptable pair $(a,h)$. If applicant $a$ is
 	unmatched and house $h$ is also unmatched, then the pair $(a,h)$ could be added
 	to the matching. This is exactly what maximality forbids. Therefore, for every
 	$a\in A$ and every $h\in P(a)$, we require
@@ -1451,13 +1462,13 @@ backgroundcolor=\color{gray!10!white},
 	\sum_{a'\in Q(h)\setminus\{a\}} x_{a'h}
 	\geq 1.
 	\]
-	The first sum says whether agent $a$ is matched to some house. The second sum
-	says whether house $h$ is matched to some agent different from $a$. Hence, the
+	The first sum says whether applicant $a$ is matched to some house. The second sum
+	says whether house $h$ is matched to some applicant different from $a$. Hence, the
 	constraint prevents the case in which $a$ and $h$ are both unmatched.
 	
-	We also need to exclude trade-ins. Fix an agent $a$ and a house $h\in P(a)$.
-	If house $h$ is unmatched, then agent $a$ must not be assigned to a house that
-	is less preferred than $h$. Otherwise, agent $a$ could drop the current assignment and move to the free house $h$. This is expressed by
+	We also need to exclude trade-ins. Fix an applicant $a$ and a house $h\in P(a)$.
+	If house $h$ is unmatched, then applicant $a$ must not be assigned to a house that
+	is less preferred than $h$. Otherwise, applicant $a$ could drop the current assignment and move to the free house $h$. This is expressed by
 	\[
 	\sum_{a'\in Q(h)} x_{a'h}
 	-
@@ -1467,11 +1478,11 @@ backgroundcolor=\color{gray!10!white},
 	\]
 	Indeed, if house $h$ is unmatched, then the first sum is equal to $0$. The
 	constraint then forces all variables $x_{ah'}$ with $h>_a h'$ to be equal to $0$.
-	Thus, agent $a$ cannot be assigned to a worse house while $h$ is free.
+	Thus, applicant $a$ cannot be assigned to a worse house while $h$ is free.
 	
 	Finally, we need to exclude coalitions. Let $C\in\mathcal C$ be a plausible
 	coalition. If all pairs in $C$ appeared simultaneously in a matching, then the
-	corresponding agents would be able to cyclically exchange houses and all become
+	corresponding applicants would be able to cyclically exchange houses and all become
 	strictly better off. Therefore, at least one pair of every plausible coalition must be
 	absent from the matching. This gives the constraints
 	\[
@@ -1518,13 +1529,93 @@ backgroundcolor=\color{gray!10!white},
 	in size, because the set $\mathcal C$ can be large.
 
 
-\section{The Linear Relaxation and Fractional Solutions}
+\section{Linear Relaxation and the Separation Problem}
+
+	The next step is to study the LP relaxation of \ref{pareto-matching-ip} as we similarly did for other known problems in chapter $3$. We saw that those problems had an integral feasible region, which means we could obtain an optimal value by solving their LP relaxation, and, for this reason, get our answer in polynomial time. Unfortunately, this is not the case for the house allocation problem. 
+	
+	Consider the LP relaxation of \ref{pareto-matching-ip} by removing the constraints $x_{ah} \in \{0,1\}, \forall a\in A,\ \forall h\in P(a)$ and adding $x_{ah} \geq 0, \forall a\in A,\ \forall h\in P(a)$. Because of the matching constraints, the feasible region is bounded. To prove that the polytope is not integral, it's sufficient to find a fractional vertex. To do this, we will actually do a brute force using the \Cref{hyperplane-th}. More specifically, we will generate random coefficients to construct an objective function and then solving the resulting LP using the simplex method (which \emph{guarantees} that we will get a vertex). We will repeat these steps until we find a fractional vertex. 
+	
+ 	Of course, the above method is really slow, since the polytope can be very large, with millions of integral vertices but only a few fractional ones. Nevertheless, we got to find one with the following input.
+ 
+ 	\begin{table}[h]
+ 		\centering
+ 		\begin{tabular}{c|cccc}
+ 			\hline
+ 			applicant & pref1 & pref2 & pref3 & pref4 \\
+ 			\hline
+ 			1 & 1 & 2 & 4 & $\emptyset$ \\
+ 			2 & 1 & 3 & 2 & $\emptyset$ \\
+ 			3 & 3 & 5 & 1 & 4 \\
+ 			4 & 3 & 2 & 5 & $\emptyset$ \\
+ 			5 & 2 & 1 & $\emptyset$ & $\emptyset$ \\
+ 			\hline
+ 		\end{tabular}
+ 		\caption{Preference lists of the applicants in the first instance.}
+ 		\label{tab:instance1}
+ 	\end{table}
+ 	
+ 	In the above input we have the preference lists of $5$ applicants. There are $5$ houses in total. Each row $i$ is a preference list of the applicant $i$. With pref1 we mean the first preference of an applicant, pref2 the second one, etc. For example the applicant $4$ prefers the house $3$, than the house $2$. We need $15$ binary variables for this input, which means that each incidence vector will have $15$ components. 
+ 	
+ 	To solve the linear relaxation we used the GLPK solver in SageMath \cite{sagemathGLPK}. The variables were declared as continuous and nonnegative. The
+ 	program generated the following random objective function:
+ 	
+ 	\[
+ 	\begin{aligned}
+ 		\max \quad
+ 		& -13x_{11}-17x_{12}-15x_{14}-x_{21}
+ 		+12x_{23}+14x_{22} \\
+ 		& +14x_{33}-8x_{35}-9x_{31}-16x_{34}
+ 		+12x_{43}+4x_{42} \\
+ 		& -14x_{45}+8x_{52}-16x_{51}.
+ 	\end{aligned}
+ 	\]
+ 	Solving the linear relaxation with this objective function gives the following
+ 	fractional optimal solution:
+ 	\[
+ 	\begin{aligned}
+ 		x_{11}&=1, &
+ 		x_{12}&=0, &
+ 		x_{14}&=0, \\
+ 		x_{21}&=0, &
+ 		x_{23}&=0, &
+ 		x_{22}&=1, \\
+ 		x_{33}&=\frac{1}{2}, &
+ 		x_{35}&=\frac{1}{2}, &
+ 		x_{31}&=0, \\
+ 		x_{34}&=0, &
+ 		x_{43}&=\frac{1}{2}, &
+ 		x_{42}&=0, \\
+ 		x_{45}&=0, &
+ 		x_{52}&=0, &
+ 		x_{51}&=0.
+ 	\end{aligned}
+ 	\]
+
+	which is a fractional vertex.
+	
+	\begin{pprop}
+		\label{prop:pareto-relaxation-not-integral}
+		The linear relaxation of \ref{pareto-matching-ip} is not integral in general.
+	\end{pprop}
+	
+	The code used for this experiment is given in \Cref{lst:lp-relaxation}. The listing contains the final version of the experiment, where some additional constraints have already been included. Since these constraints have not yet been discussed, the output does not coincide with the solution obtained from the basic relaxation. We explain this difference in the final section.
+	
+	\paragraph{Separation}
+	
+	
+
 
 \section{The Pareto Matching Polytope}
 
 \section{Computational Examples and Candidate Cutting Inequalities}
 
+\appendix
+\chapter{Linear Programming Relaxation of House Allocation Problem}\label{LP-relaxation-solve}
 
+\lstinputlisting[
+	caption={LP relaxation of house allocation problem},
+	label={lst:lp-relaxation}
+]{code/lp_relaxation/lp_relaxation_separation.py}
 
 \clearpage
 \renewcommand{\bibname}{References}
