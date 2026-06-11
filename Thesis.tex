@@ -186,7 +186,7 @@ backgroundcolor=\color{gray!10!white},
 
 	Let $G = (V,E)$ be an undirected graph with $|V| = n$ vertices and $|E| = m$ edges. We call $G$ bipartite if we can partition its vertex set into two sets $V_{1}, V_{2}$ such that for each edge ${u,v} \in E$, $u \in V_{1}$ and $v \in V_{2}$. If every vertex of $V_{1}$ is adjacent to every vertex of $V_{2}$ and $|V_{1}| = n_{1}, |V_{2}| = n_{2}$, then we call $G$ a complete bipartite graph and denote it by $K_{n_{1},n_{2}}$. By a path, we mean a simple path, i.e., a path in which no vertex is repeated. The length of a path is the number of edges it contains.
 
-	From set theory, we recall that the symmetric difference of two sets $A$ and $B$, denoted by $A\bigtriangleup B$, is the set of elements that belong to $A$ or $B$ but not both. Thus, $A\bigtriangleup B = (A \setminus B) \cup (B \setminus A) = (A \cup B) \setminus (A \cap B)$. Also, if we want to add an element $x$ to set $A$, we shall use the shorthand $A + x \coloneqq A \cup \{x\}$, and if we  to remove it $A - x \coloneqq A \setminus \{x\}$.
+	From set theory, we recall that the symmetric difference of two sets $A$ and $B$, denoted by $A\bigtriangleup B$, is the set of elements that belong to $A$ or $B$ but not both. Thus, $A\bigtriangleup B = (A \setminus B) \cup (B \setminus A) = (A \cup B) \setminus (A \cap B)$. Also, if we want to add an element $x$ to set $A$, we will use the shorthand $A + x \coloneqq A \cup \{x\}$, and if we  to remove it $A - x \coloneqq A \setminus \{x\}$.
 
 	We write $T(n) = O(f(n))$ if and only if there exist positive constants $c$ and $n_{0}$ such that $T(n) \leq c f(n)$ for all $n \geq n_{0}$. Most of the time, $T(n)$ will denote a bound on the worst-case running time of an algorithm defined on the positive integers. Similarly, we say that $T(n) = \Omega(f(n))$ if and only if there exist positive constants $c$ and $n_{0}$ such that $T(n) \geq cf(n)$ for all $n \geq n_{0}$. Finally, we say that $T(n) = \Theta(f(n))$ if and only if $T(n) = O(f(n))$ and $T(n) = \Omega(f(n))$.
 
@@ -1266,8 +1266,162 @@ backgroundcolor=\color{gray!10!white},
 	This section gives only a brief polyhedral view of the stable marriage problem. We introduced the natural integer formulation, defined the stable matching polytope, and stated the main result that its linear relaxation is integral. Together with the maximum bipartite matching formulation studied in the previous section, this gives another example where the natural linear relaxation is integral. However, this is not the case for many other matching problems. In the next chapter, we will study one such case.
 
 
+\chapter{Pareto Matchings in one-to-one Models} 
 
-\chapter{Pareto Matchings in One-to-One Models} 
+\section{Model and Definitions}
+
+	In Sections $2.3$ and $3.3$, we studied the stable marriage problem, where there are $n$ men and $n$ women, and each participant has a preference list containing all members of the opposite side. Therefore, every stable matching matches all participants.
+	
+	In this chapter, we study a different setting, where the two sides need not have the same size, and only one side has preferences over the other side. For these reasons, it is natural to formulate this matching problem in the setting of a housing market.
+	
+	The house allocation problem has been studied from an algorithmic point of view in \cite{abraham2004pareto}. An integer programming formulation for the same setting was later proposed by Eirinakis, Magos, and Mourtos \cite{eirinakis2015model}. In this chapter, we follow the notation and the basic definitions used in these works.
+	
+	House allocation is a one-sided matching problem. We are given a finite set
+	\[
+	A=\{a_1,\ldots,a_r\}
+	\]
+	of agents and a finite set
+	\[
+	H=\{h_1,\ldots,h_s\}
+	\]
+	of houses. The houses are indivisible objects, and no monetary transfers are allowed. 
+	In contrast with two-sided matching models, only the agents have preferences.
+	
+	Each agent $a\in A$ finds acceptable only some houses in $H$. We denote by
+	$P(a)$ the preference list of agent $a$. The list $P(a)$ is strict, so no ties are
+	allowed. If $h,h'\in P(a)$, then
+	\[
+	h >_a h'
+	\]
+	means that agent $a$ prefers house $h$ to house $h'$.
+	
+	The acceptable pairs define a bipartite graph
+	\[
+	G=(A,H,E),
+	\]
+	where
+	\[
+	E=\{(a,h)\in A\times H: h\in P(a)\}.
+	\]
+	Thus, an edge \((a,h)\) means that house \(h\) is acceptable to agent \(a\).
+	
+	For each house \(h\in H\), let
+	\[
+	Q(h)=\{a\in A: h\in P(a)\}.
+	\]
+	Therefore, \(Q(h)\) is the set of agents whose preference list contains house \(h\).
+	
+	A matching is a set $M\subseteq E$ such that each agent is assigned to at most
+	one house and each house is assigned to at most one agent. If $(a,h)\in M$,
+	then we write
+	\[
+	M(a)=h
+	\quad\text{and}\quad
+	M(h)=a.
+	\]
+	If an agent or a house is not assigned in $M$, then we write
+	\[
+	M(z)=\emptyset,
+	\quad z\in A\cup H.
+	\]
+	Thus, in this model, every feasible allocation is \emph{one-to-one}: no agent receives
+	more than one house and no house is given to more than one agent.
+	
+	A matching $M'$ is a \emph{Pareto improvement} over a matching $M$ if every agent
+	is at least as well off in $M'$ as in $M$, and at least one agent is strictly better
+	off. Here, being unmatched is considered worse than being assigned any acceptable
+	house. A matching $M$ is Pareto optimal if no Pareto improvement over $M$
+	exists.
+	
+	We next recall three properties of matchings that will be useful for describing
+	Pareto optimality.
+	
+	A matching $M$ is \emph{maximal} if there is no acceptable pair $(a,h)\in E$ such
+	that
+	\[
+	M(a)=M(h)=\emptyset.
+	\]
+	In other words, no additional acceptable pair can be added to \(M\) without
+	violating the matching constraints.
+	
+	A matching \(M\) is \emph{trade-in free} if there is no agent \(a\in A\) and no house
+	\(h\in P(a)\) such that
+	\[
+	M(a)\neq \emptyset,\qquad M(h)=\emptyset,
+	\qquad\text{and}\qquad h>_a M(a).
+	\]
+	Thus, no matched agent can improve her assignment by replacing her current
+	house with an unmatched house.
+	
+	A matching $M$ is \emph{coalition free} if it does not admit a coalition. A coalition is
+	a sequence of matched agents
+	\[
+	C=\langle a_{i_0},a_{i_1},\ldots,a_{i_{k-1}}\rangle,
+	\quad k\geq 2,
+	\]
+	such that
+	\[
+	M(a_{i_{c+1}})>_{a_{i_c}} M(a_{i_c}),
+	\quad c=0,\ldots,k-1,
+	\]
+	where the indices are taken modulo $k$. If such a sequence exists, then the
+	agents in $C$ can cyclically exchange their assigned houses, and every agent in
+	the sequence becomes strictly better off.
+	
+	The following characterization connects these three properties with Pareto
+	optimality.
+	
+	\begin{pprop}[{\cite[Chapter 2, p. 6]{abraham2004pareto}}]
+		A matching $M$ is Pareto optimal if and only if $M$ is maximal, trade-in free,
+		and coalition free.
+	\end{pprop}
+	
+	This characterization is the basis of the integer programming formulation that
+	will be presented in the next section.
+	
+	For this formulation, it is useful to define coalitions independently of a specific
+	matching. A plausible coalition is a set of agent-house pairs
+	\[
+	C=\{(a_{i_c},h_{i_c}): c=0,\ldots,k-1\},
+	\quad k\geq 2,
+	\]
+	such that, for every \(c=0,\ldots,k-1\),
+	\[
+	h_{i_{c+1}}>_{a_{i_c}} h_{i_c},
+	\qquad
+	\{h_{i_c},h_{i_{c+1}}\}\subseteq P(a_{i_c}),
+	\]
+	where again the indices are taken modulo $k$. If all pairs of such a set appear
+	simultaneously in a matching, then the corresponding agents form a coalition.
+	We denote by $\mathcal C$ the family of all plausible coalitions.
+	
+	Finally, for every acceptable pair $(a,h)\in E$, we define a binary variable
+	$x_{ah}$. For a matching $M$, its incidence vector is the vector $x^M\in
+	\{0,1\}^{E}$ given by
+	\[
+	x^M_{ah}=
+	\begin{cases}
+		1, & \text{if } (a,h)\in M,\\
+		0, & \text{otherwise.}
+	\end{cases}
+	\]
+	These incidence vectors will later be used to define the Pareto matching
+	polytope.
+
+
+\section{An Integer Programming Formulation}
+
+	
+
+
+
+\section{The Linear Relaxation and Fractional Solutions}
+
+\section{The Pareto Matching Polytope}
+
+\section{Computational Examples and Candidate Cutting Inequalities}
+
+
 
 \clearpage
 \renewcommand{\bibname}{References}
