@@ -1104,8 +1104,6 @@ backgroundcolor=\color{gray!10!white},
 		
 		Finally, by strong duality, the optimal values of the two LP relaxations are equal. The first one is equal to the maximum cardinality of a matching in $G$, and the second one is equal to the minimum cardinality of a vertex cover in $G$. Therefore, these two quantities are equal.
 	\end{proof}
-	
-\newpage
 
 \section{The Stable Matching Polytope} \label{sec:stable-matching-polytope}
 	
@@ -1344,14 +1342,14 @@ backgroundcolor=\color{gray!10!white},
 	In other words, no additional acceptable pair can be added to \(M\) without
 	violating the matching constraints.
 	
-	A matching \(M\) is \emph{trade-in free} if there is no agent \(a\in A\) and no house
-	\(h\in P(a)\) such that
+	A matching $M$ is \emph{trade-in free} if there is no agent $a\in A$ and no house
+	$h\in P(a)$ such that
 	\[
 	M(a)\neq \emptyset,\qquad M(h)=\emptyset,
 	\qquad\text{and}\qquad h>_a M(a).
 	\]
-	Thus, no matched agent can improve her assignment by replacing her current
-	house with an unmatched house.
+	Thus, no matched agent can improve the current assignment by replacing the
+	assigned house with an unmatched house.
 	
 	A matching $M$ is \emph{coalition free} if it does not admit a coalition. A coalition is
 	a sequence of matched agents
@@ -1410,9 +1408,114 @@ backgroundcolor=\color{gray!10!white},
 
 
 \section{An Integer Programming Formulation}
-
 	
-
+	We now present an integer programming formulation for Pareto optimal matchings,
+	following Eirinakis, Magos, and Mourtos \cite{eirinakis2015model}. The formulation uses the
+	characterization stated in the previous section: a matching is Pareto optimal if
+	and only if it is maximal, trade-in free, and coalition free.
+	
+	For every acceptable pair $(a,h)$, where $a\in A$ and $h\in P(a)$, we define a
+	binary variable $x_{ah}$. The meaning of this variable is
+	\[
+	x_{ah}=
+	\begin{cases}
+		1, & \text{if agent } a \text{ is assigned to house } h,\\
+		0, & \text{otherwise.}
+	\end{cases}
+	\]
+	Thus, a vector $x$ represents a set of agent-house pairs, and the constraints below
+	force this set to be a Pareto optimal matching.
+	
+	First, we need the usual matching constraints. Each agent can be assigned to at
+	most one house, and each house can be assigned to at most one agent. Hence, we
+	require
+	\[
+	\sum_{h\in P(a)} x_{ah} \leq 1,
+	\qquad \forall a\in A,
+	\]
+	and
+	\[
+	\sum_{a\in Q(h)} x_{ah} \leq 1,
+	\qquad \forall h\in H.
+	\]
+	The first family of constraints controls the agents, while the second family
+	controls the houses.
+	
+	Next, we impose maximality. Fix an acceptable pair $(a,h)$. If agent $a$ is
+	unmatched and house $h$ is also unmatched, then the pair $(a,h)$ could be added
+	to the matching. This is exactly what maximality forbids. Therefore, for every
+	$a\in A$ and every $h\in P(a)$, we require
+	\[
+	\sum_{h'\in P(a)} x_{ah'}
+	+
+	\sum_{a'\in Q(h)\setminus\{a\}} x_{a'h}
+	\geq 1.
+	\]
+	The first sum says whether agent $a$ is matched to some house. The second sum
+	says whether house $h$ is matched to some agent different from $a$. Hence, the
+	constraint prevents the case in which $a$ and $h$ are both unmatched.
+	
+	We also need to exclude trade-ins. Fix an agent $a$ and a house $h\in P(a)$.
+	If house $h$ is unmatched, then agent $a$ must not be assigned to a house that
+	is less preferred than $h$. Otherwise, agent $a$ could drop the current assignment and move to the free house $h$. This is expressed by
+	\[
+	\sum_{a'\in Q(h)} x_{a'h}
+	-
+	\sum_{\substack{h'\in P(a)\\ h>_a h'}} x_{ah'}
+	\geq 0,
+	\qquad \forall a\in A,\ \forall h\in P(a).
+	\]
+	Indeed, if house $h$ is unmatched, then the first sum is equal to $0$. The
+	constraint then forces all variables $x_{ah'}$ with $h>_a h'$ to be equal to $0$.
+	Thus, agent $a$ cannot be assigned to a worse house while $h$ is free.
+	
+	Finally, we need to exclude coalitions. Let $C\in\mathcal C$ be a plausible
+	coalition. If all pairs in $C$ appeared simultaneously in a matching, then the
+	corresponding agents would be able to cyclically exchange houses and all become
+	strictly better off. Therefore, at least one pair of every plausible coalition must be
+	absent from the matching. This gives the constraints
+	\[
+	\sum_{(a,h)\in C} x_{ah} \leq |C|-1,
+	\qquad \forall C\in\mathcal C.
+	\]
+	
+	Putting all constraints together, we obtain the following integer programming
+	formulation:
+	\begin{equation}
+		\label{pareto-matching-ip}
+		\begin{aligned}
+			\sum_{h\in P(a)} x_{ah} &\leq 1,
+			&& \forall a\in A,\\
+			\sum_{a\in Q(h)} x_{ah} &\leq 1,
+			&& \forall h\in H,\\
+			\sum_{h'\in P(a)} x_{ah'}
+			+
+			\sum_{a'\in Q(h)\setminus\{a\}} x_{a'h}
+			&\geq 1,
+			&& \forall a\in A,\ \forall h\in P(a),\\
+			\sum_{a'\in Q(h)} x_{a'h}
+			-
+			\sum_{\substack{h'\in P(a)\\ h>_a h'}} x_{ah'}
+			&\geq 0,
+			&& \forall a\in A,\ \forall h\in P(a),\\
+			\sum_{(a,h)\in C} x_{ah} &\leq |C|-1,
+			&& \forall C\in\mathcal C,\\
+			x_{ah} &\in \{0,1\},
+			&& \forall a\in A,\ \forall h\in P(a).
+		\end{aligned}
+	\end{equation}
+	
+	The first two families of constraints ensure that the selected pairs form a
+	matching. The third family enforces maximality, the fourth family enforces the
+	trade-in free property, and the fifth family excludes coalitions. Therefore, by the
+	characterization of Pareto optimal matchings, the feasible integer points of
+	\ref{pareto-matching-ip} are exactly the incidence vectors of Pareto optimal
+	matchings.
+	
+	The formulation is written as a feasibility problem, since our goal is to describe
+	the set of Pareto optimal matchings rather than optimize a particular objective
+	function. Notice also that the family of coalition constraints may be exponential
+	in size, because the set $\mathcal C$ can be large.
 
 
 \section{The Linear Relaxation and Fractional Solutions}
