@@ -862,7 +862,7 @@
 	
 	For linear programs in standard form, the basic feasible solutions are exactly the extreme points of the feasible polyhedron. Therefore, if such a linear program has an optimal solution, then it has an optimal basic feasible solution.
 	
-	If we consider the LP problem but restrict $x \in \mathbb{Z}^{n}_{+}$, it becomes an \emph{integer program} (IP). Unlike LP, this problem is difficult, i.e., it is known to be NP-hard. However, if the feasible region of the LP relaxation is integral, then we can solve the LP instead of the IP and obtain an integer optimal solution. The problem is still difficult if the size of the linear description is exponential in $n$ or $m$. One way to address this issue is by solving the \emph{separation} problem, in which, for a given point $x \in \mathbb{R}^{n}_{+}$, we decide whether it violates any of the inequalities of $Ax \leq b$ and return one such inequality.
+	If we consider the LP problem but restrict $x \in \mathbb{Z}^{n}_{+}$, it becomes an \emph{integer program} (IP). Unlike LP, this problem is difficult, i.e., it is known to be NP-hard. However, if the feasible region of the LP relaxation is integral, then we can solve the LP instead of the IP and obtain an integer optimal solution. The problem is still difficult if the size of the linear description is exponential in $n$ or $m$. One way to address this issue is by solving the \emph{separation} problem, in which, for a given point $x \in \mathbb{R}^{n}_{+}$, we decide whether it violates any of the inequalities of $Ax \leq b$ and return one such inequality (we will use this technique in the last chapter).
 	
 	A matrix $A$ is \emph{totally unimodular} if every square submatrix of $A$ has determinant equal to $0$, $1$ or $-1$. We will prove the following lemma.
 	\begin{llemma}
@@ -1277,7 +1277,7 @@
 
 \chapter{Pareto Matchings in one-to-one Models} 
 
-\section{Model and Definitions}
+\section{Model and Definitions} \label{def-pareto}
 
 	In Sections $2.3$ and $3.3$, we studied the stable marriage problem, where there are $n$ men and $n$ women, and each participant has a preference list containing all members of the opposite side. Therefore, every stable matching matches all participants.
 	
@@ -1525,11 +1525,10 @@
 	
 	The formulation is written as a feasibility problem, since our goal is to describe
 	the set of Pareto optimal matchings rather than optimize a particular objective
-	function. Notice also that the family of coalition constraints may be exponential
-	in size, because the set $\mathcal C$ can be large.
+	function. 
 
 
-\section{Linear Relaxation and the Separation Problem}
+\section{Linear Relaxation and the Separation Problem} \label{linear-relaxation}
 
 	The next step is to study the LP relaxation of \ref{pareto-matching-ip} as we similarly did for other known problems in chapter $3$. We saw that those problems had an integral feasible region, which means we could obtain an optimal value by solving their LP relaxation, and, for this reason, get our answer in polynomial time. Unfortunately, this is not the case for the house allocation problem. 
 	
@@ -1550,8 +1549,8 @@
  			5 & 2 & 1 & $\emptyset$ & $\emptyset$ \\
  			\hline
  		\end{tabular}
- 		\caption{Preference lists of the applicants in the first instance.}
- 		\label{tab:instance1}
+ 		\caption{Preference lists of the applicants}
+ 		\label{basic-pom-instance}
  	\end{table}
  	
  	In the above input we have the preference lists of $5$ applicants. There are $5$ houses in total. Each row $i$ is a preference list of the applicant $i$. With pref1 we mean the first preference of an applicant, pref2 the second one, etc. For example the applicant $4$ prefers the house $3$, than the house $2$. We need $15$ binary variables for this input, which means that each incidence vector will have $15$ components. 
@@ -1600,22 +1599,108 @@
 	
 	The code used for this experiment is given in \Cref{lst:lp-relaxation}. The listing contains the final version of the experiment, where some additional constraints have already been included. Since these constraints have not yet been discussed, the output does not coincide with the solution obtained from the basic relaxation. We explain this difference in the final section.
 	
-	\paragraph{Separation}
+	\paragraph{Separation.} Notice that the family of coalition constraints may be large. In fact, the size of $\mathcal C$ can be factorial (or even larger). 
+	Consider an instance with five applicants and twenty-five houses. Let the houses be divided into five blocks
+	\[
+	H_1=\{1,2,3,4,5\},\quad
+	H_2=\{6,7,8,9,10\},\quad
+	H_3=\{11,12,13,14,15\},
+	\]
+	\[
+	H_4=\{16,17,18,19,20\},\quad
+	H_5=\{21,22,23,24,25\}.
+	\]
+	Denote the $j$-th house of block $H_i$ by $h_{i,j}$. Assume that applicant $a_i$ ranks all houses of $H_{i+1}$ above all houses of $H_i$, where the index is taken cyclically ($H_6=H_1$). Then, for every permutation $\pi$ of the set $\{1,2,3,4,5\}$, the set
+	\[
+	C_\pi=
+	\{(a_1,h_{1,\pi(1)}),(a_2,h_{2,\pi(2)}),(a_3,h_{3,\pi(3)}),
+	(a_4,h_{4,\pi(4)}),(a_5,h_{5,\pi(5)})\}
+	\]
+	forms a plausible coalition. Indeed, applicant $a_1$ prefers $h_{2,\pi(2)}$ to $h_{1,\pi(1)}$, applicant $a_2$ prefers $h_{3,\pi(3)}$ to $h_{2,\pi(2)}$, and so on, while applicant $a_5$ prefers $h_{1,\pi(1)}$ to $h_{5,\pi(5)}$. Therefore, each such permutation defines a distinct plausible coalition. Since there are $5!$ permutations of \(\{1,2,3,4,5\}\), this construction gives at least
+	$5! = 120$ distinct plausible coalitions. More generally, the same construction with $n$ applicants and $n$ houses in each block gives at least $n!$ plausible coalitions. This shows why generating all these constraints upfront is impractical, making a separation procedure essential. 
 	
+	The envy graph used in {\cite[Chapter 2, p. 6]{abraham2004pareto}} is defined with respect to a fixed matching $M$. In that graph, the vertices are the applicants, and an edge from $a_i$ to $a_j$ means that $a_i$ would prefer the house assigned to $a_j$ in $M$. Thus, for a matching $M$, coalitions can be detected by looking for directed cycles in this graph.
 	
-
+	In our separation procedure, we use a slightly different auxiliary graph, since the current solution of the LP relaxation need not correspond to a matching. The vertices of this graph are the assignment pairs
+	\[
+	V=\{(a,h): h\in P(a)\}.
+	\]
+	For two vertices $(a,h)$ and $(a^{'},h^{'})$, with $a\neq a'$, we add a directed edge
+	\[
+	(a,h)\longrightarrow (a',h')
+	\]
+	whenever applicant $a$ strictly prefers $h'$ to $h$. Therefore, a directed cycle in this graph represents a possible cyclic improvement among assignment pairs, and hence corresponds to a plausible coalition.
+	
+	Let $x^*$ be the current solution of the LP relaxation. To separate the coalition-free constraints, we assign to each vertex $(a,h)$ the weight
+	\[
+	w(a,h)=1-x^*_{ah}.
+	\]
+	For a directed cycle $C$, the corresponding coalition inequality is
+	\[
+	\sum_{(a,h)\in C} x_{ah}\leq |C|-1.
+	\]
+	At the point $x^*$, this inequality is violated if and only if
+	\[
+	\sum_{(a,h)\in C} x^*_{ah}>|C|-1,
+	\]
+	or equivalently,
+	\begin{equation}\label{cycle-condition}
+		\sum_{(a,h)\in C} (1-x^*_{ah})<1.
+	\end{equation}
+	Hence, the separation problem reduces to finding a minimum-weight directed cycle in the auxiliary graph. If the weight of such a cycle is less than $1$, then the corresponding coalition constraint is violated and is added to the relaxation. Otherwise, no coalition-free constraint is violated by the current LP solution.
+	
+	The separation procedure is implemented as a cutting-plane procedure. We first solve the LP relaxation without adding any coalition-free constraints. Let $x^*$ be the solution obtained from this relaxation.
+	
+	Using $x^*$, we then construct the auxiliary directed graph described above. The unweighted structure of this graph depends only on the preference lists. However, in each iteration, the vertex weights depend on the current LP solution. More precisely, each vertex $(a,h)$ receives weight
+	\[
+	w(a,h)=1-x^*_{ah}.
+	\]
+	Since we use Floyd--Warshall and this algorithm applies only to edge-weighted graphs, we convert these vertex weights into edge weights. Assume a directed edge $((a, h), (a^{'},h^{'}))$ and let $u = (a, h)$ and $v = (a^{'},h^{'})$.
+	We then set the edge weight ($w^{*}$) equal to the weight of the head vertex:
+	\[
+	w^{*}(u, v) = w(v).
+	\]
+	With this convention, the weight of a directed cycle is exactly the sum of the weights of its vertices.
+	
+	We then run the Floyd--Warshall algorithm on this weighted directed graph and obtain the all-pairs shortest-path distance matrix $D$. We do not inspect the diagonal entries $D_{u,u}$, since they correspond to the empty path and are equal to zero. Instead, for every directed edge $(u,v)$, we check whether there is a path from $v$ back to $u$. If such a path exists, then the edge $(u,v)$ together with a shortest path from $v$ to $u$ forms a directed cycle. Its weight is
+	\[
+	w^{*}(u,v)+D_{v,u}.
+	\]
+	Therefore, by checking the quantity $w^{*}(u,v)+D_{v,u}$ over all directed edges $(u,v)$, we find a minimum-weight directed cycle in the auxiliary graph.
+	
+	If the minimum cycle $C$ has weight strictly less than $1$, then the coalition-free constraint
+	\[
+	\sum_{(a,h)\in C}x_{ah}\leq |C|-1
+	\]
+	is violated by the current solution $x^*$. We add this inequality to the LP relaxation and solve the relaxation again.
+	
+	The process is repeated until the separation step finds no additional violated coalition-free constraint. At that point, the current LP solution satisfies both the coalition constraints that have already been added explicitly and all remaining coalition constraints that have not been generated. Hence, instead of generating all constraints of $\mathcal C$ in advance, we add only those that are actually violated during the solution process.
+	
 
 \section{The Pareto Matching Polytope}
 
+	
+
+
+
 \section{Computational Examples and Candidate Cutting Inequalities}
 
+\chapter{Conclusion and Future Work}
+
 \appendix
-\chapter{Linear Programming Relaxation of House Allocation Problem}\label{LP-relaxation-solve}
+\chapter{Source Code}
+\section{Linear Programming Relaxation of House Allocation Problem}\label{LP-relaxation-solve}
 
 \lstinputlisting[
 	caption={LP relaxation of house allocation problem},
 	label={lst:lp-relaxation}
 ]{code/lp_relaxation/lp_relaxation_separation.py}
+
+\section{Convex Hull of Pareto Optimal Vectors}\label{convex-hull-pareto-code}
+\lstinputlisting[
+caption={Description and statistics of the pareto matching polytope},
+label={lst:convex-hull-pareto}
+]{code/polyhedral_analysis/ip_h_description.py}
 
 \clearpage
 \renewcommand{\bibname}{References}
