@@ -177,17 +177,42 @@
 \tableofcontents
 
 \clearpage
-\listoffigures
-
-\clearpage
-\listoftables
-
-\clearpage
 \printindex %Linear Programming (LP)\index{Linear Programming} gia na mpei sto eurethrio
 
 \pagenumbering{arabic}
 
 \chapter{Introduction}
+
+	Matching theory is one of the central topics in graph theory and combinatorial optimization. 
+	
+	Matchings appear in a wide range of problems in computer science, mathematics, economics, and operations research. It provides a natural way to model situations in which agents, objects, or resources must be paired under certain restrictions.
+	
+	Consider the case where there are, let's say, $n$ teachers and you have to decide which schools to assign them to based on some criteria. Criteria may vary, for example, each teacher may have preferences based on their outcomes and schools, depending on the needs of courses without a teacher. Another example is when $n$ applicants have preferences over houses they want to buy. There is only one side with preferences, but we still have two sides we want to match. An example without two sides is when we have a set of professors, projects, and students, and our purpose is to assign each project to a professor and then assign students to each project. Here, each assignment is a triplet, and there could be many criteria.
+	
+	The algorithmic study of matchings has played an important role in the development of efficient combinatorial algorithms. Some matching problems admit elegant, strongly polynomial algorithms, while others become computationally difficult even with only small changes to the model. 
+	
+	The profound impact of matching theory on real-world economics and society was notably recognized in 2012, when Alvin E. Roth and Lloyd S. Shapley were awarded the Nobel in Economic Sciences. Their recognition was rooted in the theory of stable allocations, originating from the foundational 1962 work by David Gale and Lloyd Shapley.  
+	
+	Linear and integer programming provide another fundamental approach to optimization. The overwhelming majority of problems in Economics, Engineering, as well as many problems in Computer Science, have linear functions as one of their basic characteristics. Consequently, Linear Programming finds numerous applications in all these areas, which makes it one of the most widely applied branch of Mathematics. It is a relatively new science, born to meet the demands of the Second World War. During the first years of its development, the simplex algorithm dominated completely. However, in subsequent decades, interior-point and exterior-point algorithms were developed, revolutionizing the landscape. These newer methods are often considered superior, particularly for large-scale optimization problems, as they offer polynomial-time complexity guarantees and can navigate the feasible region to reach the optimal solution much more efficiently in practice.
+	
+	In integer programming, many natural decision variables are restricted to take values zero or one, representing whether an object is selected, an edge is used, or an assignment is made. However, solving integer programs directly is generally difficult. A common strategy is therefore to relax the integrality restrictions and study the corresponding linear program. When the relaxation has integral optimal solutions, the original discrete problem can be solved through linear programming. 
+	
+	The purpose of this thesis is to study matching problems from both of these perspectives.  We first present classical algorithmic results for two fundamental problems in matching theory, and then study related formulations through linear and integer programming. The final part of the thesis focuses on a Pareto optimal matching problem in a one-to-one house allocation model, where the behavior of the linear relaxation is substantially more complicated.
+	
+	Chapter 2 is devoted to matching problems and algorithms. We begin with the maximum bipartite matching problem. After introducing the basic definitions, we present a classical augmenting-path implementation with running time $O(nm)$, where $n$ denotes the number of vertices and $m$ the number of edges.	We then give an implementation of the Hopcroft--Karp algorithm, which improves the running time to $O(\sqrt{n}(n + m))$ by finding many shortest augmenting paths in phases. The chapter continues with the stable marriage problem and the Gale--Shapley algorithm, one of the most influential algorithms in matching theory.
+	
+	A particular emphasis of this chapter is the presentation of the algorithms. 
+	The pseudocodes are written in a detailed form, so that their translation into an actual programming language is almost immediate. Moreover, the proofs are adapted to the implementations rather than being presented only at a high conceptual level. This makes the connection between the code, the algorithmic idea and the correctness argument explicit. The goal is not only to state that the algorithms work, but also to make clear why each step is necessary.
+	
+	Chapter 3 introduces the polyhedral point of view. We first recall the basic language of linear programming, integer programming, polyhedra, polytopes and integrality. We then return to the matching problems studied in Chapter 2 and examine them through linear and integer programming formulations. For the maximum bipartite matching problem, the linear relaxation captures the integer structure of the problem, and optimal matching solutions can be obtained through linear programming. A similar phenomenon appears in the stable marriage problem, where the corresponding stable matching polytope has an integral linear description. These examples illustrate how polyhedral structure can explain why certain discrete optimization problems admit efficient linear programming approaches.
+	
+	Chapter 4 studies a different problem, Pareto optimal matchings in a one-to-one house allocation model. In this setting, agents have strict preference lists over houses, and the aim is to describe matchings that are Pareto optimal. We present an integer programming formulation for this problem and then study its linear relaxation. Unlike the classical examples of Chapter 3, the relaxation is not integral in general. We demonstrate this by constructing fractional solutions that satisfy the relaxation but do not correspond to convex combinations of Pareto optimal matching vectors.
+	
+	A further difficulty is that one family of constraints in the formulation can be very large. To handle this, we use a separation approach. So, instead of listing all such constraints in advance, we search for violated constraints only when they are needed.	This allows the relaxation to be solved more efficiently in practice and makes it possible to run computational experiments on small instances.
+	
+	The computational part of the thesis compares the linear relaxation with the actual convex hull of Pareto optimal matching vectors. For several small instances, we enumerate Pareto optimal matchings, compute the corresponding convex hull and inspect its linear description. This allows us to identify inequalities that are valid for the true Pareto optimal matching polytope but are not enforced by the original relaxation. Based on these experiments, we propose and prove two families of additional valid inequalities: prefix-cover inequalities, and safe-holder inequalities. These constraints strengthen the relaxation by cutting off fractional solutions that do not belong to the convex hull of Pareto optimal matchings.
+	
+	The thesis therefore follows a progression from algorithms to polyhedra and then to computational polyhedral analysis. The first part explains how classical matching algorithms work in detail. The second part shows how linear programming can exactly capture some matching problems. The final part shows that, for Pareto optimal house allocation, the situation is not that easy. The natural relaxation is not sufficient, and additional valid inequalities are needed to obtain a tighter description. The implementation details and source code are included in the appendices, so that the computational experiments can be reproduced and extended.
 
 \chapter{Matching Problems and Algorithms}
 
