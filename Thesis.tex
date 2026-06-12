@@ -193,8 +193,6 @@
 
 \section{Definitions}
 
-	
-
 	Let $G = (V,E)$ be an undirected graph with $|V| = n$ vertices and $|E| = m$ edges. We call $G$ bipartite if we can partition its vertex set into two sets $V_{1}, V_{2}$ such that for each edge ${u,v} \in E$, $u \in V_{1}$ and $v \in V_{2}$. If every vertex of $V_{1}$ is adjacent to every vertex of $V_{2}$ and $|V_{1}| = n_{1}, |V_{2}| = n_{2}$, then we call $G$ a complete bipartite graph and denote it by $K_{n_{1},n_{2}}$. By a path, we mean a simple path, i.e., a path in which no vertex is repeated. The length of a path is the number of edges it contains.
 
 	From set theory, we recall that the symmetric difference of two sets $A$ and $B$, denoted by $A\bigtriangleup B$, is the set of elements that belong to $A$ or $B$ but not both. Thus, $A\bigtriangleup B = (A \setminus B) \cup (B \setminus A) = (A \cup B) \setminus (A \cap B)$. Also, if we want to add an element $x$ to set $A$, we will use the shorthand $A + x \coloneqq A \cup \{x\}$, and if we  to remove it $A - x \coloneqq A \setminus \{x\}$.
@@ -1312,13 +1310,13 @@
 	\[
 	E=\{(a,h)\in A\times H: h\in P(a)\}.
 	\]
-	Thus, an edge \((a,h)\) means that house \(h\) is acceptable to applicant \(a\).
+	Thus, an edge $(a,h)$ means that house $h$ is acceptable to applicant $a$.
 	
 	For each house \(h\in H\), let
 	\[
 	Q(h)=\{a\in A: h\in P(a)\}.
 	\]
-	Therefore, \(Q(h)\) is the set of applicants whose preference list contains house \(h\).
+	Therefore, $Q(h)$ is the set of applicants whose preference list contains house $h$.
 	
 	A matching is a set $M\subseteq E$ such that each applicant is assigned to at most
 	one house and each house is assigned to at most one applicant. If $(a,h)\in M$,
@@ -1521,7 +1519,7 @@
 	trade-in free property, and the fifth family excludes coalitions. Therefore, by the
 	characterization of Pareto optimal matchings, the feasible integer points of
 	\ref{pareto-matching-ip} are exactly the incidence vectors of Pareto optimal
-	matchings.
+	matchings. We refer to these as POM vectors.
 	
 	The formulation is written as a feasibility problem, since our goal is to describe
 	the set of Pareto optimal matchings rather than optimize a particular objective
@@ -1675,22 +1673,797 @@
 	is violated by the current solution $x^*$. We add this inequality to the LP relaxation and solve the relaxation again.
 	
 	The process is repeated until the separation step finds no additional violated coalition-free constraint. At that point, the current LP solution satisfies both the coalition constraints that have already been added explicitly and all remaining coalition constraints that have not been generated. Hence, instead of generating all constraints of $\mathcal C$ in advance, we add only those that are actually violated during the solution process.
+
+	\begin{llemma}
+		The separation problem for the coalition-free constraints can be solved in polynomial time.
+		More precisely, let $n=|A|$ be the number of applicants, let
+		\[
+		L=\max_{a\in A}|P(a)|
+		\]
+		be the maximum length of a preference list, and let
+		\[
+		r=\sum_{a\in A}|P(a)|
+		\]
+		be the number of acceptable pairs. Then one separation call can be performed in
+		$O(r^3)$ time. In particular, since $r\leq nL$, this is also $O(n^3L^3)$.
+	\end{llemma}
+	
+	\begin{proof}
+		For each applicant $a\in A$, let $\ell_a=|P(a)|$ be the length of the preference list of $a$.
+		Then
+		\[
+		r=\sum_{a\in A}\ell_a
+		\]
+		is the number of acceptable pairs, and therefore also the number of variables $x_{ah}$.
+		
+		The auxiliary graph has one vertex for each acceptable pair $(a,h)$. Hence,
+		\[
+		|V_G|=r\leq nL.
+		\]
+		
+		We now estimate the number of edges. Fix a vertex $(a,h)$, and suppose that
+		$h$ appears in position $t$ of the preference list $P(a)$. Then applicant $a$
+		prefers exactly $t-1$ houses to $h$. For each such house $h'$, there can be
+		edges to vertices of the form $(a',h')$, with $a'\neq a$. In the worst case,
+		there are at most $n-1$ such vertices. Therefore, the outdegree of $(a,h)$ is
+		at most
+		\[
+		(t-1)(n-1).
+		\]
+		Summing over all vertices, we obtain
+		\[
+		|E_G|
+		\leq
+		(n-1)\sum_{a\in A}\sum_{t=1}^{\ell_a}(t-1).
+		\]
+		Since
+		\[
+		\sum_{t=1}^{\ell_a}(t-1)
+		=
+		\frac{\ell_a(\ell_a-1)}{2},
+		\]
+		we get
+		\[
+		|E_G|
+		\leq
+		(n-1)\sum_{a\in A}\frac{\ell_a(\ell_a-1)}{2}.
+		\]
+		In particular, since $\ell_a\leq L$ for every applicant $a$, we have
+		\[
+		|E_G|
+		\leq
+		(n-1)n\frac{L(L-1)}{2}
+		=
+		O(n^2L^2).
+		\]
+		Equivalently, since $r\leq nL$, we can write
+		\[
+		|E_G|=O(r^2).
+		\]
+		
+		After the graph has been constructed, one separation call consists of the
+		following steps. First, we assign weights to the vertices, which takes $O(r)$
+		time. Then we convert these vertex weights into edge weights, which takes
+		$O(|E_G|)$ time. We then run the Floyd--Warshall algorithm on a graph with
+		$r$ vertices, which takes
+		\[
+		O(r^3)
+		\]
+		time. Finally, we inspect all directed edges $(u,v)$ and check the value
+		\[
+		w^*(u,v)+D_{v,u}.
+		\]
+		This takes $O(|E_G|)$ time.
+		
+		Hence, the total running time of one separation call is
+		\[
+		O(r^3+|E_G|)=O(r^3).
+		\]
+		Since $r\leq nL$, this is also
+		\[
+		O((nL)^3)=O(n^3L^3).
+		\]
+		In the case of complete preference lists with $n$ houses, we have $L=n$ and
+		therefore $r\leq n^2$. In that case, the worst-case running time becomes
+		\[
+		O(n^6).
+		\]
+	\end{proof}
 	
 
 \section{The Pareto Matching Polytope}
 
+	In this section, we study the polytope obtained from the POM vectors. The goal is not to give a general closed-form description of this polytope (which we think it's a hard task), but rather to examine it computationally for small instances. This allows us to compare the true convex hull of Pareto optimal matchings with the linear relaxation studied in the previous section.
 	
+	We start from a fixed house allocation instance with applicant set $A$, house set $H$, and preference lists $P(a)$ for every applicant $a\in A$. For this instance, we first generate Pareto optimal matchings using the Serial Dictatorship algorithm (code: \ref{sd-algorithm-code}). More precisely, we consider all possible permutations of the applicants. For each permutation, the applicants are processed one by one according to this order, and each applicant receives the most preferred house that is still available, if such a house exists.
+	
+	By the characterization theorem {\cite[Chapter 6, p. 13-14]{abraham2004pareto}} for Pareto optimal matchings in house allocation, every outcome of Serial Dictatorship is Pareto optimal, and every Pareto optimal matching can be obtained from Serial Dictatorship for some ordering of the applicants. Therefore, by running Serial Dictatorship over all permutations of $A$ and removing duplicate outcomes, we obtain exactly the set of Pareto optimal matchings of the instance.
+	
+	Each Pareto optimal matching for a given matching $M$ is represented by its incidence vector $x^M_{ah}$ as we defined in \Cref{def-pareto}.
+	
+	After generating all Pareto optimal matchings, we obtain a finite set of binary vectors. The Pareto matching polytope of the instance is then defined as
+	\[
+	P_{\mathrm{POM}}=\operatorname{conv}\{x^M : M \text{ is a Pareto optimal matching}\}.
+	\]
+	This is the exact convex hull of all Pareto optimal matchings for the given instance.
+	
+	For small instances, we can compute this convex hull explicitly. Starting from the vertex description, given by the POM vectors, we use compute SageMath to generate the $H$-description of $P_{\mathrm{POM}}$. In other words, we obtain a description of the form
+	\[
+	P_{\mathrm{POM}}=\{x : Bx\leq d,\ Ex=f\},
+	\]
+	where the inequalities describe the facets of the polytope and the equations describe its affine hull.
+	
+	For each instance, we record basic statistics of the resulting polytope. These include the number of variables, the number of distinct Pareto optimal matchings, the dimension of the polytope, the number of equations in the affine hull, and the number of inequalities in the $H$-description. These statistics give a first indication of the structure of the Pareto matching polytope for the instance under consideration.
+	
+	The $H$-description also allows us to test whether a given point belongs to the true convex hull. In particular, if $x^*$ is a feasible solution of the LP relaxation, we can evaluate all equations and inequalities of the $H$-description at $x^*$. If one of them is violated, then $x^*$ does not belong to $P_{\mathrm{POM}}$. This gives a direct way to compare the LP relaxation with the actual Pareto matching polytope. This part of the project's source code can be found in \ref{convex-hull-pareto-code}. 
+	
+	The purpose of this computational study is to understand the structure of $P_{\mathrm{POM}}$ on small instances. In the final chapter, we use these computations on concrete examples and analyze which inequalities of the true convex hull are violated by fractional solutions of the relaxation. 
+	
+	All the above computations can be found in \ref{convex-hull-pareto-code}.
 
+\section{Candidate Cutting Inequalities}
 
+	After relaxing the binary restrictions to $0\le x_{ah}\le 1, a\in A,\ h\in P(a),$ some of the implications that are enforced by integrality are lost. As a result, the linear relaxation may contain fractional points which do not belong to the convex hull of POM vectors.
+	
+	In this section we introduce two families of valid inequalities that strengthen the linear relaxation. These inequalities are not claimed to give a complete description of the Pareto-optimal matching polytope. Instead, they are candidate cutting inequalities motivated by the structure of Pareto optimality and by the fractional solutions that appear in the relaxation.
+	
+	We define
+	\[
+	y_h=\sum_{a\in Q(h)}x_{ah}.
+	\]
+	Thus $y_h$ represents whether the house $h$ is assigned. Also, for $a\in A$ and $h\in P(a)$, we define
+	\[
+	B_a(h)=\{g\in P(a):g\succ_a h\},
+	\]
+	that is, the set of houses that agent $a$ prefers to $h$. Similarly, we define
+	\[
+	W_a(h)=\{r\in P(a):h\succ_a r\},
+	\]
+	the set of houses that are worse than $h$ according to the preferences of $a$.
+	
+	\subsection{First-choice and prefix-cover inequalities}
+	
+	We first consider a simple but important implication of Pareto optimality. Suppose that a house $h$ is the first choice of some agent $a$. Then, in every Pareto-optimal matching (i.e. in every POM vector), the house $h$ must be assigned. Indeed, if $h$ were unmatched, then either $a$ would be unmatched, contradicting maximality, or $a$ would be matched to a worse house, contradicting trade-in freeness.
+	
+	Therefore, for every house $h$ that appears as the first choice of at least one agent, the following inequality is valid for the Pareto-optimal matching polytope:
+	\[
+	\sum_{b\in Q(h)}x_{bh}\ge 1.
+	\]
+	Together with the matching constraint
+	\[
+	\sum_{b\in Q(h)}x_{bh}\le 1,
+	\]
+	this implies
+	\[
+	\sum_{b\in Q(h)}x_{bh}=1.
+	\]
+	
+	The reason why this inequality is useful is that the original relaxation does not necessarily enforce it. To see this, fix an agent $a$ whose first choice is $h$. Since $h$ is the first choice of $a$, we have $B_a(h)=\varnothing$. The maximality constraint for the pair $(a,h)$ can be written as
+	\[
+	y_h+\sum_{r\in W_a(h)}x_{ar}\ge 1.
+	\]
+	The trade-in free constraint for the same pair is
+	\[
+	y_h-\sum_{r\in W_a(h)}x_{ar}\ge 0.
+	\]
+	If we write
+	\[
+	z_a=\sum_{r\in W_a(h)}x_{ar},
+	\]
+	then these two constraints become
+	\[
+	y_h+z_a\ge 1,
+	\]
+	and
+	\[
+	y_h\ge z_a.
+	\]
+	In the integer formulation, $y_h\in\{0,1\}$. Hence these two inequalities force $y_h=1$. In the linear relaxation, however, $y_h$ may be fractional. For example, the values
+	\[
+	y_h=\frac{1}{2},
+	\qquad
+	z_a=\frac{1}{2}
+	\]
+	satisfy both inequalities. Thus the relaxation may allow a first-choice house to be only partially assigned.
+	
+	The following small instance illustrates this phenomenon. Let
+	\[
+	A=\{a_1,a_2\},
+	\qquad
+	H=\{h_1,h_2\},
+	\]
+	with preference lists
+	\[
+	P(a_1)=\langle h_1,h_2\rangle,
+	\qquad
+	P(a_2)=\langle h_2\rangle.
+	\]
+	The unique Pareto-optimal matching is
+	\[
+	M=\{(a_1,h_1),(a_2,h_2)\}.
+	\]
+	Indeed, the house $h_1$ is the first choice of $a_1$, so it must be assigned to $a_1$, and then maximality forces $a_2$ to be assigned to $h_2$.
+	
+	However, the linear relaxation admits the fractional point
+	\[
+	x_{11}=\frac{1}{2},
+	\qquad
+	x_{12}=\frac{1}{2},
+	\qquad
+	x_{22}=\frac{1}{2},
+	\]
+	with all other variables equal to zero. The matching constraints are satisfied, since
+	\[
+	x_{11}+x_{12}=1,
+	\]
+	\[
+	x_{22}=\frac{1}{2}\le 1,
+	\]
+	and
+	\[
+	x_{12}+x_{22}=1.
+	\]
+	The maximality constraints are also satisfied. For example, for the pair $(a_1,h_1)$, the left-hand side is
+	\[
+	x_{11}+x_{12}=1,
+	\]
+	and for the pair $(a_2,h_2)$, the left-hand side is
+	\[
+	x_{22}+x_{12}=1.
+	\]
+	The trade-in constraint for $(a_1,h_1)$ is
+	\[
+	x_{11}-x_{12}\ge 0,
+	\]
+	which is satisfied with equality. There is no nontrivial coalition cycle in this instance. Hence this point is feasible for the original relaxation.
+	
+	Nevertheless, it is not contained in the convex hull of POM vectors, because in every POM vector the house $h_1$ is fully assigned to $a_1$. The first-choice inequality
+	\[
+	x_{11}\ge 1
+	\]
+	cuts off this fractional solution.
+	
+	This observation can be generalized. The first-choice inequality is only the special case of a broader family.
+	
+	\begin{pprop}
+		For every agent $a\in A$ and every house $h\in P(a)$, the inequality
+		\[
+		\sum_{b\in Q(h)}x_{bh}
+		+
+		\sum_{g\in B_a(h)}x_{ag}
+		\ge 1
+		\]
+		is valid for the Pareto-optimal matching polytope.
+	\end{pprop}
+	
+	\begin{proof}
+		Let $M$ be a Pareto-optimal matching, and let $x$ be its incidence vector. We prove that
+		\[
+		\sum_{b\in Q(h)}x_{bh}
+		+
+		\sum_{g\in B_a(h)}x_{ag}
+		\ge 1
+		\]
+		holds for $x$.
+		
+		There are two cases.
+		
+		First, suppose that the house $h$ is assigned in $M$. Then
+		\[
+		\sum_{b\in Q(h)}x_{bh}=1,
+		\]
+		and the inequality follows immediately.
+		
+		Second, suppose that the house $h$ is not assigned in $M$. Then
+		\[
+		\sum_{b\in Q(h)}x_{bh}=0.
+		\]
+		Since $h\in P(a)$, if agent $a$ were unmatched, then the pair $(a,h)$ could be added to the matching, contradicting maximality. Therefore, $a$ must be matched to some house in $P(a)$.
+		
+		Moreover, $a$ cannot be matched to a house worse than $h$. If $a$ were matched to some $r\in W_a(h)$, then $h$ would be an unmatched house preferred by $a$ to the current assignment. This would contradict trade-in freeness.
+		
+		Thus, when $h$ is unmatched, agent $a$ must be matched to a house $g\in B_a(h)$. Hence
+		\[
+		\sum_{g\in B_a(h)}x_{ag}=1.
+		\]
+		Therefore,
+		\[
+		\sum_{b\in Q(h)}x_{bh}
+		+
+		\sum_{g\in B_a(h)}x_{ag}
+		=
+		0+1
+		=
+		1.
+		\]
+		The inequality holds in both cases. Since it holds for every POM vector, it is valid for their convex hull.
+	\end{proof}
+	
+	We call these inequalities \emph{prefix-cover inequalities}. They say that, for every agent $a$ and every acceptable house $h$, either the house $h$ must be assigned to some agent, or $a$ must be assigned to a house that appears before $h$ in the preference list of $a$. When $h$ is the first choice of $a$, the set $B_a(h)$ is empty, and the inequality reduces exactly to the first-choice house covering inequality.
+	
+	\subsection{Safe-holder inequalities}
+	
+	The second family of inequalities comes from combining trade-in freeness with coalition freeness.
+	
+	Suppose that agent $a$ is assigned to a house $h$, and let $g\in P(a)$ be a house such that
+	\[
+	g\succ_a h.
+	\]
+	In a Pareto-optimal matching, the house $g$ must be assigned. Otherwise, agent $a$ could leave $h$ and take the unmatched house $g$, contradicting trade-in freeness.
+	
+	However, it is not enough that $g$ is assigned to some agent. The holder of $g$ must be compatible with the fact that $a$ is assigned to $h$. If $g$ is assigned to an agent $b$ who prefers $h$ to $g$, then $a$ and $b$ form a two-agent coalition: agent $a$ wants $g$, while agent $b$ wants $h$. Such a matching is not coalition-free.
+	
+	This motivates the following definition. For $a\in A$, $h\in P(a)$, and $g\in B_a(h)$, define the set of safe holders of $g$ with respect to the assignment $(a,h)$ by
+	\[
+	S(a,h,g)
+	=
+	\{b\in Q(g)\setminus\{a\}: h\notin P(b)\ \text{or}\ g\succ_b h\}.
+	\]
+	Thus $b\in S(a,h,g)$ if $b$ can hold $g$ without creating a two-agent exchange with $a$. If $h\notin P(b)$, then $b$ does not find $h$ acceptable, so no such exchange can occur. If $h\in P(b)$, then $b$ is safe precisely when $b$ prefers $g$ to $h$.
+	
+	The corresponding inequality is
+	\[
+	\boxed{
+		x_{ah}
+		\le
+		\sum_{b\in S(a,h,g)}x_{bg}
+	}
+	\]
+	for every $a\in A$, every $h\in P(a)$, and every $g\in B_a(h)$.
+	
+	Before proving validity, we give a small example showing why this inequality is useful. Let
+	\[
+	A=\{a_1,a_2\},
+	\qquad
+	H=\{h_1,h_2\},
+	\]
+	with preferences
+	\[
+	P(a_1)=\langle h_1,h_2\rangle,
+	\qquad
+	P(a_2)=\langle h_2,h_1\rangle.
+	\]
+	The unique Pareto-optimal matching is
+	\[
+	M=\{(a_1,h_1),(a_2,h_2)\},
+	\]
+	where both agents receive their first choice. The other perfect matching,
+	\[
+	M'=\{(a_1,h_2),(a_2,h_1)\},
+	\]
+	is not Pareto optimal, because the two agents can exchange houses and both improve.
+	
+	Consider the fractional point
+	\[
+	x_{11}=x_{12}=x_{21}=x_{22}=\frac{1}{2}.
+	\]
+	This point satisfies the assignment constraints. It also satisfies the coalition-free inequality corresponding to the two-agent coalition $\{(a_1,h_2),(a_2,h_1)\}$, because
+	\[
+	x_{12}+x_{21}
+	=
+	\frac{1}{2}+\frac{1}{2}
+	=
+	1.
+	\]
+	Thus the coalition inequality is tight, but not violated.
+	
+	However, this fractional point is not in the convex hull of POM vectors, since the only Pareto-optimal matching is $M$. The safe-holder inequality identifies this issue. Take
+	\[
+	a=a_1,
+	\qquad
+	h=h_2,
+	\qquad
+	g=h_1.
+	\]
+	Agent $a_1$ prefers $h_1$ to $h_2$. The only other agent who can hold $h_1$ is $a_2$. But $a_2$ prefers $h_2$ to $h_1$. Therefore, $a_2$ is not a safe holder of $h_1$ with respect to the assignment $(a_1,h_2)$. Hence
+	\[
+	S(a_1,h_2,h_1)=\varnothing.
+	\]
+	The safe-holder inequality becomes
+	\[
+	x_{12}\le 0.
+	\]
+	The fractional point violates this inequality, since
+	\[
+	x_{12}=\frac{1}{2}.
+	\]
+	Thus the safe-holder inequality cuts off a fractional solution that is allowed by the original relaxation.
+	
+	\begin{pprop}
+		For every $a\in A$, every $h\in P(a)$, and every $g\in B_a(h)$, the inequality
+		\[
+		x_{ah}
+		\le
+		\sum_{b\in S(a,h,g)}x_{bg}
+		\]
+		is valid for the Pareto-optimal matching polytope.
+	\end{pprop}
+	
+	\begin{proof}
+		Let $M$ be a Pareto-optimal matching, and let $x$ be its incidence vector. We prove that
+		\[
+		x_{ah}
+		\le
+		\sum_{b\in S(a,h,g)}x_{bg}.
+		\]
+		
+		If
+		\[
+		x_{ah}=0,
+		\]
+		then the inequality is immediate.
+		
+		Suppose now that
+		\[
+		x_{ah}=1.
+		\]
+		Thus, in $M$, agent $a$ is assigned to $h$. Since $g\in B_a(h)$, we have
+		\[
+		g\succ_a h.
+		\]
+		If $g$ were unmatched, agent $a$ could leave $h$ and take $g$. This would contradict trade-in freeness. Therefore, $g$ must be assigned in $M$.
+		
+		Let $b$ be the agent assigned to $g$. Since $a$ is already assigned to $h$, we have $b\ne a$. Therefore,
+		\[
+		b\in Q(g)\setminus\{a\}.
+		\]
+		
+		We claim that $b\in S(a,h,g)$. Suppose not. Then $h\in P(b)$ and
+		\[
+		h\succ_b g.
+		\]
+		But then $a$ and $b$ form a two-agent coalition: agent $a$, currently assigned to $h$, prefers $g$, while agent $b$, currently assigned to $g$, prefers $h$. This contradicts coalition freeness.
+		
+		Therefore, the holder $b$ of $g$ must belong to $S(a,h,g)$. Hence
+		\[
+		\sum_{b'\in S(a,h,g)}x_{b'g}=1.
+		\]
+		Since $x_{ah}=1$, we get
+		\[
+		x_{ah}
+		\le
+		\sum_{b'\in S(a,h,g)}x_{b'g}.
+		\]
+		
+		Thus the inequality holds for every Pareto-optimal matching vector, and therefore it is valid for the Pareto-optimal matching polytope.
+	\end{proof}
+	
+	The safe-holder inequalities strengthen the relaxation by enforcing, in a linear way, a condition that is automatic in the integer model. In an integral matching, if $a$ receives $h$ and prefers $g$ to $h$, then $g$ must be assigned to an agent who does not create a two-agent coalition with $a$. In the linear relaxation, the original constraints may allow $g$ to be assigned fractionally to unsafe holders. The safe-holder inequalities exclude such fractional configurations.
+	
+	Together, the prefix-cover inequalities and the safe-holder inequalities capture two different implications of Pareto optimality. The prefix-cover inequalities come from maximality and trade-in freeness, while the safe-holder inequalities combine trade-in freeness with coalition freeness. Both families are valid for the Pareto-optimal matching polytope and can be added to the linear relaxation as candidate cutting inequalities.
 
-\section{Computational Examples and Candidate Cutting Inequalities}
+	
 
 \chapter{Conclusion and Future Work}
 
 \appendix
-\chapter{Source Code}
-\section{Linear Programming Relaxation of House Allocation Problem}\label{LP-relaxation-solve}
 
+\chapter{Implementation Details and Usage Guide}
+
+	This project was developed in order to study the polytope of Pareto-optimal matchings in the House Allocation problem. The main goal is to compare two objects. The first one is the true convex hull of all Pareto-optimal matching vectors. The second one is the polytope defined by the linear programming relaxation of the integer programming model. By comparing them, we can find fractional solutions of the relaxation and identify valid inequalities that are missing from the relaxation.
+	
+	The program follows the same general pipeline for every input instance. First, it reads a preference instance from a CSV file. Then it runs the Serial Dictatorship algorithm for all possible orders of the applicants. This gives Pareto-optimal matchings. Since different applicant orders can produce the same matching, duplicate matchings are removed. The remaining unique Pareto-optimal matchings are converted into incidence vectors, called POM vectors. These vectors are then used to construct the convex hull with SageMath. From this convex hull, the program extracts the H-description, namely the equations and inequalities that describe the true Pareto-optimal matching polytope.
+	
+	After that, the program solves the LP relaxation of the integer programming model. The coalition-free constraints are not added all at once, because there may be exponentially many of them. Instead, they are added by a separation procedure. The program searches for a fractional solution of the relaxation by solving the LP with several random objective functions. If a fractional solution is found, it is compared with the H-description of the true convex hull. The final output shows which equations and inequalities of the true polytope are violated by the fractional relaxation solution.
+	
+	\section{Project Structure}
+	
+	The project has the following main folders and files:
+	
+	\begin{verbatim}
+		data/
+		sd/
+		lp_relaxation/
+		polyhedral_analysis/
+		results/
+		main.py
+		README.txt
+	\end{verbatim}
+	
+	The folder \texttt{data/} contains the input instances. Each instance is a CSV file containing the preference lists of the applicants.
+	
+	The folder \texttt{sd/} contains the implementation of Serial Dictatorship. This part generates Pareto-optimal matchings and writes them in vector form.
+	
+	The folder \texttt{lp\_relaxation/} contains the implementation of the LP relaxation of the integer programming model. It also contains the separation procedure for the coalition-free constraints.
+	
+	The folder \texttt{polyhedral\_analysis/} contains the code that builds the convex hull of the Pareto-optimal matching vectors and extracts its H-description.
+	
+	The folder \texttt{results/} contains the output files. For each input instance, a separate folder is created.
+	
+	The file \texttt{main.py} runs the complete experiment for one selected instance.
+	
+	\section{Input Files}
+	
+	Each input instance is stored as a CSV file in the folder \texttt{data/}. The first column is called \texttt{applicant}. The remaining columns are called \texttt{pref1}, \texttt{pref2}, and so on. They contain the houses in decreasing order of preference.
+	
+	For example:
+	
+	\begin{verbatim}
+		applicant,pref1,pref2,pref3,pref4
+		1,1,2,4,
+		2,1,3,2,
+		3,3,5,1,4
+		4,3,2,5,
+		5,2,1,,
+	\end{verbatim}
+	
+	This means that applicant 1 prefers house 1 first, then house 2, then house 4. Empty entries mean that the applicant has no more acceptable houses.
+	
+	In the current implementation, the input files follow a simple convention: applicants are numbered consecutively as \(1,2,\ldots,n\). The examples used in the experiments are small instances.
+	
+	\section{The Main File}
+	
+	The file \texttt{main.py} controls the whole experiment. The instance is selected by changing the following line:
+	
+	\begin{verbatim}
+		instance = "instance1"
+	\end{verbatim}
+	
+	Then the following steps are executed:
+	
+	\begin{enumerate}
+		\item Run Serial Dictatorship:
+		\begin{verbatim}
+			sd.sd_alg(instance)
+		\end{verbatim}
+		
+		\item Read the POM vectors:
+		\begin{verbatim}
+			variables, vertices = ip_convex_hull.read_vector_csv(instance)
+		\end{verbatim}
+		
+		\item Construct the convex hull and extract its H-description:
+		\begin{verbatim}
+			convex_hull = ip_convex_hull.polyhedral_analysis(instance, variables, vertices)
+		\end{verbatim}
+		
+		\item Solve the LP relaxation and search for a fractional solution:
+		\begin{verbatim}
+			fractional_solution = relaxation.lp_solve(instance)
+		\end{verbatim}
+		
+		\item If a fractional solution is found, compare it with the H-description of the true polytope:
+		\begin{verbatim}
+			ip_convex_hull.check_fractional_vertex(
+			instance,
+			convex_hull,
+			variables,
+			fractional_solution
+			)
+		\end{verbatim}
+	\end{enumerate}
+	
+	If no fractional solution is found, the program prints:
+	
+	\begin{verbatim}
+		No fractional vertex was found
+	\end{verbatim}
+	
+	\section{Serial Dictatorship Implementation}
+	
+	The file \texttt{sd/sd\_alg.py} implements the Serial Dictatorship part of the experiment.
+	
+	The function \texttt{read\_preferences} reads the CSV file and stores the preferences in a dictionary. For example, if applicant 1 has preference list \(1,2,4\), then this is stored as:
+	
+	\[
+	P(1) = [1,2,4].
+	\]
+	
+	The function \texttt{serial\_dictatorship} considers all permutations of the applicants. For each permutation, the applicants are processed in that order. Each applicant receives the best available house in her preference list. This produces one Pareto-optimal matching for each ordering of the applicants.
+	
+	Since different permutations may produce the same matching, the function \texttt{get\_unique\_matchings} removes duplicates. The unique matchings are then written to the results folder.
+	
+	The function \texttt{write\_pom\_vectors} converts each unique matching into an incidence vector. For every acceptable pair \((a,h)\), there is a variable \(X_{ah}\). The value is 1 if applicant \(a\) is matched to house \(h\), and 0 otherwise.
+	
+	The same file also computes simple statistics, such as the number of unique matchings, the minimum and maximum matching size, variables that are never used, and variables that are always used.
+	
+	\section{Polyhedral Analysis}
+	
+	The file \texttt{polyhedral\_analysis/ip\_h\_description.py} builds the true Pareto-optimal matching polytope.
+	
+	The function \texttt{read\_vector\_csv} reads the POM vectors from the file:
+	
+	\begin{verbatim}
+		results/<instance>/<instance>_pom_vectors.csv
+	\end{verbatim}
+	
+	Each row is treated as one vertex of the polytope. The variables are read from the column names, such as \texttt{X11}, \texttt{X23}, and so on (this only works for single-digit applicants/houses like X34. It breaks for X101, X112, etc. This limitation will be addressed in future versions).
+	
+	The function \texttt{polyhedral\_analysis} constructs the convex hull using SageMath:
+	
+	\[
+	\operatorname{conv}\{x^1,x^2,\ldots,x^k\},
+	\]
+	
+	where each \(x^i\) is a POM vector. SageMath is then used to compute the H-description of this polytope. The H-description consists of equations and inequalities.
+	
+	The output is written to:
+	
+	\begin{verbatim}
+		results/<instance>/<instance>_polyhedral_analysis.txt
+	\end{verbatim}
+	
+	This file contains the dimension of the convex hull, the number of vertices, the equations, and the inequalities.
+	
+	The function \texttt{check\_fractional\_vertex} compares a fractional solution of the LP relaxation with the H-description of the true polytope. It checks which equations and inequalities are satisfied and which are violated.
+	
+	\section{LP Relaxation and Separation}
+	
+	The file \texttt{lp\_relaxation/lp\_relaxation\_separation.py} implements the LP relaxation of the integer programming model.
+	
+	For every acceptable pair \((a,h)\), the model has a variable:
+	
+	\[
+	x_{ah}.
+	\]
+	
+	In the integer programming model, this variable is binary. In the LP relaxation, it is continuous:
+	
+	\[
+	0 \leq x_{ah} \leq 1.
+	\]
+	
+	The relaxation contains the matching constraints. Each applicant can receive at most one house:
+	
+	\[
+	\sum_{h \in P(a)} x_{ah} \leq 1.
+	\]
+	
+	Each house can be assigned to at most one applicant:
+	
+	\[
+	\sum_{a \in Q(h)} x_{ah} \leq 1.
+	\]
+	
+	The model also contains maximality constraints and trade-in-free constraints. These are part of the original model for Pareto-optimal matchings.
+	
+	The coalition-free constraints are handled differently. They may be exponentially many, so the program does not add all of them at the beginning. Instead, it solves the current relaxation and then searches for a violated coalition constraint. If one is found, it is added to the LP, and the LP is solved again. This is called separation.
+	
+	The separation procedure builds a directed graph whose vertices are acceptable pairs \((a,h)\). A directed cycle in this graph corresponds to a plausible coalition. For a coalition \(C\), the corresponding constraint is:
+	
+	\[
+	\sum_{(a,h)\in C} x_{ah} \leq |C|-1.
+	\]
+	
+	The code searches for violated coalition constraints using shortest path computations. If the current LP solution violates a coalition constraint, that constraint is added to the model.
+	
+	The program also uses random objective functions in order to search for fractional vertices of the relaxation. If a fractional solution is found, the values are converted to exact rational numbers using SageMath.
+	
+	\section{Output Files}
+	
+	For every instance, the program creates a folder:
+	
+	\begin{verbatim}
+		results/<instance>/
+	\end{verbatim}
+	
+	For example, for \texttt{instance1}, the output folder is:
+	
+	\begin{verbatim}
+		results/instance1/
+	\end{verbatim}
+	
+	The main output files are described below.
+	
+	\paragraph{\texttt{<instance>\_sd\_pareto\_matchings.csv}}
+	
+	This file contains the result of Serial Dictatorship for every permutation of the applicants.
+	
+	It has two columns:
+	
+	\begin{itemize}
+		\item \texttt{order}: the order in which the applicants were processed;
+		\item \texttt{matching}: the matching produced by that order.
+	\end{itemize}
+	
+	This file may contain duplicate matchings, because different applicant orders can lead to the same matching.
+	
+	\paragraph{\texttt{<instance>\_unique\_pareto\_matchings.csv}}
+	
+	This file contains only the unique Pareto-optimal matchings.
+	
+	The columns are:
+	
+	\begin{verbatim}
+		A1,A2,A3,...
+	\end{verbatim}
+	
+	Each row gives one matching. The value in column \texttt{Ai} is the house assigned to applicant \(i\). The value \(-1\) means that the applicant is unmatched.
+	
+	\paragraph{\texttt{<instance>\_pom\_vectors.csv}}
+	
+	This file contains the incidence vectors of the unique Pareto-optimal matchings.
+	
+	Each column corresponds to a variable \(X_{ah}\). For example, the column \texttt{X23} corresponds to the pair \((2,3)\), meaning applicant 2 matched to house 3.
+	
+	Each row corresponds to one unique Pareto-optimal matching. A value of 1 means that the pair is used in that matching. An empty cell means 0.
+	
+	These vectors are the vertices used to construct the convex hull.
+	
+	\paragraph{\texttt{<instance>\_matching\_statistics.txt}}
+	
+	This file contains simple statistics about the unique Pareto-optimal matchings.
+	
+	It includes:
+	
+	\begin{itemize}
+		\item the number of unique matchings;
+		\item the minimum matching size;
+		\item the maximum matching size;
+		\item which matchings have minimum or maximum size;
+		\item variables that are never equal to 1;
+		\item variables that are equal to 1 in every matching.
+	\end{itemize}
+	
+	This file is useful for understanding the structure of the instance before studying the full polytope.
+	
+	\paragraph{\texttt{<instance>\_polyhedral\_analysis.txt}}
+	
+	This file contains the H-description of the true Pareto-optimal matching polytope.
+	
+	It includes:
+	
+	\begin{itemize}
+		\item the dimension of the convex hull;
+		\item the number of vertices;
+		\item the equations of the convex hull;
+		\item the inequalities of the convex hull.
+	\end{itemize}
+	
+	The inequalities in this file are important because they describe the facets or valid inequalities of the true polytope. By comparing them with the LP relaxation, we can see which inequalities are missing from the relaxation.
+	
+	\paragraph{\texttt{<instance>\_fractional\_vertex\_hdescription\_check.txt}}
+	
+	This file is created after the LP relaxation finds a fractional solution.
+	
+	It contains:
+	
+	\begin{itemize}
+		\item the nonzero coordinates of the fractional solution;
+		\item the number of variables;
+		\item the number of violated equations;
+		\item the number of satisfied equations;
+		\item the number of violated inequalities;
+		\item the number of satisfied inequalities;
+		\item the actual violated inequalities and their residual values.
+	\end{itemize}
+	
+	For an inequality, the program prints the value of:
+	
+	\[
+	\text{lhs} - \text{rhs}.
+	\]
+	
+	If this value is negative, then the inequality is violated by the fractional relaxation solution.
+	
+	This file is one of the most important outputs of the experiment. It shows exactly which inequalities of the true polytope cut off the fractional point.
+	
+	\section{How to Run an Experiment}
+	
+	To run an experiment, first choose the instance in \texttt{main.py}. For example:
+	
+	\begin{verbatim}
+		instance = "instance1"
+	\end{verbatim}
+	
+	Then run the main file in an environment where SageMath and GLPK are available. For example:
+	
+	\begin{verbatim}
+		sage -python main.py
+	\end{verbatim}
+	
+	Alternatively, if the Python interpreter is already configured to use SageMath, the file can be run directly from the IDE.
+	
+	After the program finishes, the output files are written in:
+	
+	\begin{verbatim}
+		results/<instance>/
+	\end{verbatim}
+	
+	
+\chapter{Source Code}
+
+\section{Linear Programming Relaxation of House Allocation Problem}\label{LP-relaxation-solve}
 \lstinputlisting[
 	caption={LP relaxation of house allocation problem},
 	label={lst:lp-relaxation}
@@ -1701,6 +2474,18 @@
 caption={Description and statistics of the pareto matching polytope},
 label={lst:convex-hull-pareto}
 ]{code/polyhedral_analysis/ip_h_description.py}
+
+\section{Serial Dictatorship Algorithm}\label{sd-algorithm-code}
+\lstinputlisting[
+caption={Serial Dictatorship Algorithm},
+label={lst:sd-algorithm-code}
+]{code/sd/sd_alg.py}
+
+\section{Main Script}\label{main-script}
+\lstinputlisting[
+caption={Main script},
+label={lst:main-script}
+]{code/main.py}
 
 \clearpage
 \renewcommand{\bibname}{References}
