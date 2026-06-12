@@ -850,7 +850,7 @@
 	
 	Any vector $x \in \mathbb{R}^n$ satisfying all constraints is called a \emph{feasible solution}. The set of all feasible solutions is called the \emph{feasible region} and in the case of a linear program, this region is a polyhedron. Any feasible solution that achieves the maximum possible value of the objective function is called an \emph{optimal solution}. There can be multiple optimal solutions, or none at all. If the objective function can attain arbitrarily large values, we say that the LP is \emph{unbounded}. Such a problem can be solved using known algorithms that are polynomial in the input size, for example, the ellipsoid method.
 	
-	We also recall the basic notion of linear programming duality. Consider the primal linear program of \ref{3.1}
+	We also recall the basic notion of linear programming duality. Consider the primal linear program of \eqref{3.1}
 	where $A \in \mathbb{R}^{m \times n}$, $b \in \mathbb{R}^{m}$ and $c \in \mathbb{R}^{n}$. The corresponding \emph{dual problem} is
 	\[
 	\begin{aligned}
@@ -1001,7 +1001,7 @@
 
 \section{The Bipartite Matching Polytope}
 
-	We solved the maximum bipartite matching problem algorithmically  in \ref{2.2}. In this section, we will solve the same problem using linear programming terminology. Let $G = (V_{1} \cup V_{2}, E)$ be a bipartite graph with $n$ vertices $v_{1}, \ldots, v_{n}$ and $m$ edges $e_{1}, \ldots, e_{m}$ and let $\delta(v)$ denote the set of edges incident to $v$. The IP describing the problem is the following:
+	We solved the maximum bipartite matching problem algorithmically  in \eqref{2.2}. In this section, we will solve the same problem using linear programming terminology. Let $G = (V_{1} \cup V_{2}, E)$ be a bipartite graph with $n$ vertices $v_{1}, \ldots, v_{n}$ and $m$ edges $e_{1}, \ldots, e_{m}$ and let $\delta(v)$ denote the set of edges incident to $v$. The IP describing the problem is the following:
 	
 	\begin{equation}
 		\label{matching-ip}
@@ -1045,7 +1045,7 @@
 	\end{cases}
 	\]
 	
-	In fact, $x$'s components can be $0$ or $1$ based on the constraint matrix, so we could simply write $x_{j} \in \{0, 1\}$. Consider now the LP relaxation of \ref{mbm-compact}.
+	In fact, $x$'s components can be $0$ or $1$ based on the constraint matrix, so we could simply write $x_{j} \in \{0, 1\}$. Consider now the LP relaxation of \eqref{mbm-compact}.
 	
 	\begin{equation} \label{mbm-compact}
 		\begin{array}{r@{\quad}l}
@@ -1058,7 +1058,7 @@
 		\end{array}
 	\end{equation}	
 	
-	Since the feasible region is non-empty and bounded, it is a polytope, guaranteeing that the LP relaxation has an optimal solution at a vertex. The polytope of \ref{mbm-compact-LP-Relaxation} is integral. To prove it, it's sufficient (see \ref{IntPolyTU}) to show that $A$ is totally unimodular, since the right-hand side vector $\mathbf{1}$ is integral.
+	Since the feasible region is non-empty and bounded, it is a polytope, guaranteeing that the LP relaxation has an optimal solution at a vertex. The polytope of \eqref{mbm-compact-LP-Relaxation} is integral. To prove it, it's sufficient (see \eqref{IntPolyTU}) to show that $A$ is totally unimodular, since the right-hand side vector $\mathbf{1}$ is integral.
 	
 	\begin{llemma}
 		Let $G=(V_{1}\cup V_{2},E)$ be a bipartite graph, and let $A$ be its vertex-edge incidence matrix. Then $A$ is totally unimodular.
@@ -1113,7 +1113,7 @@
 	\end{theorem}
 	
 	\begin{proof}
-		Let $A$ be the vertex-edge incidence matrix of $G$. Consider the LP relaxation \ref{mbm-compact} of the maximum matching problem. We have shown that, since $A$ is totally unimodular and the right-hand side vector is integral, the optimal value of this relaxation is equal to the maximum cardinality of a matching in $G$.
+		Let $A$ be the vertex-edge incidence matrix of $G$. Consider the LP relaxation \eqref{mbm-compact} of the maximum matching problem. We have shown that, since $A$ is totally unimodular and the right-hand side vector is integral, the optimal value of this relaxation is equal to the maximum cardinality of a matching in $G$.
 		
 		The dual of this LP relaxation is
 		\[
@@ -1201,11 +1201,11 @@
 	If none of these happens, then $m$ and $w$ prefer each other to their assigned partners. Therefore, $(m,w)$ is a blocking pair.
 	
 	\begin{llemma}
-		The feasible integer points of \ref{stable-marriage-ip} are exactly the incidence vectors of stable marriages.
+		The feasible integer points of \eqref{stable-marriage-ip} are exactly the incidence vectors of stable marriages.
 	\end{llemma}
 	
 	\begin{proof}
-		Let $x$ be a feasible integer point of \ref{stable-marriage-ip}. Since $x_{mw}\in\{0,1\}$, the first two families of constraints define a marriage. Let $N$ be this marriage.
+		Let $x$ be a feasible integer point of \eqref{stable-marriage-ip}. Since $x_{mw}\in\{0,1\}$, the first two families of constraints define a marriage. Let $N$ be this marriage.
 		
 		We show that $N$ is stable. Suppose for the sake of contradiction that there exists a blocking pair $(m,w)$. Then $m$ is not matched with $w$, so
 		\[
@@ -1244,7 +1244,7 @@
 	Thus, $P_{SM}$ is the convex hull of all incidence vectors of stable marriages. It contains all stable marriages as integral points, but it may also contain fractional points. For example, if $N_1$ and $N_2$ are two different stable marriages, then $\frac{1}{2}\chi^{N_1}+\frac{1}{2}\chi^{N_2}$
 	is usually fractional and also belongs to $P_{SM}$.
 	
-	Let $Q_{SM}$ be the polyhedron obtained from \ref{stable-marriage-ip} by replacing the constraints $x_{mw}\in\{0,1\}$
+	Let $Q_{SM}$ be the polyhedron obtained from \eqref{stable-marriage-ip} by replacing the constraints $x_{mw}\in\{0,1\}$
 	with $x_{mw}\geq 0.$
 	Since the first two families of constraints imply $x_{mw}\leq 1$, no separate upper bound is needed.
 	
@@ -1295,7 +1295,7 @@
 		\end{aligned}
 	\end{equation}
 
-	Because every extreme point of $Q_{SM}$ is integral, there exists an optimal extreme point of \ref{optimal-stable-marriage-lp} that is the incidence vector of a stable marriage. Therefore, the optimal stable marriage problem with a linear objective can be solved as LP.
+	Because every extreme point of $Q_{SM}$ is integral, there exists an optimal extreme point of \eqref{optimal-stable-marriage-lp} that is the incidence vector of a stable marriage. Therefore, the optimal stable marriage problem with a linear objective can be solved as LP.
 	
 	This section gives only a brief polyhedral view of the stable marriage problem. We introduced the natural integer formulation, defined the stable matching polytope, and stated the main result that its linear relaxation is integral. Together with the maximum bipartite matching formulation studied in the previous section, this gives another example where the natural linear relaxation is integral. However, this is not the case for many other matching problems. In the next chapter, we will study one such case.
 
@@ -1545,7 +1545,7 @@
 	matching. The third family enforces maximality, the fourth family enforces the
 	trade-in free property, and the fifth family excludes coalitions. Therefore, by the
 	characterization of Pareto optimal matchings, the feasible integer points of
-	\ref{pareto-matching-ip} are exactly the incidence vectors of Pareto optimal
+	\eqref{pareto-matching-ip} are exactly the incidence vectors of Pareto optimal
 	matchings. We refer to these as POM vectors.
 	
 	The formulation is written as a feasibility problem, since our goal is to describe
@@ -1555,9 +1555,9 @@
 
 \section{Linear Relaxation and the Separation Problem} \label{linear-relaxation}
 
-	The next step is to study the LP relaxation of \ref{pareto-matching-ip} as we similarly did for other known problems in chapter $3$. We saw that those problems had an integral feasible region, which means we could obtain an optimal value by solving their LP relaxation, and, for this reason, get our answer in polynomial time. Unfortunately, this is not the case for the house allocation problem. 
+	The next step is to study the LP relaxation of \eqref{pareto-matching-ip} as we similarly did for other known problems in chapter $3$. We saw that those problems had an integral feasible region, which means we could obtain an optimal value by solving their LP relaxation, and, for this reason, get our answer in polynomial time. Unfortunately, this is not the case for the house allocation problem. 
 	
-	Consider the LP relaxation of \ref{pareto-matching-ip} by removing the constraints $x_{ah} \in \{0,1\}, \forall a\in A,\ \forall h\in P(a)$ and adding $x_{ah} \geq 0, \forall a\in A,\ \forall h\in P(a)$. Because of the matching constraints, the feasible region is bounded. To prove that the polytope is not integral, it's sufficient to find a fractional vertex. To do this, we will actually do a brute force using the \Cref{hyperplane-th}. More specifically, we will generate random coefficients to construct an objective function and then solving the resulting LP using the simplex method (which \emph{guarantees} that we will get a vertex). We will repeat these steps until we find a fractional vertex. 
+	Consider the LP relaxation of \eqref{pareto-matching-ip} by removing the constraints $x_{ah} \in \{0,1\}, \forall a\in A,\ \forall h\in P(a)$ and adding $x_{ah} \geq 0, \forall a\in A,\ \forall h\in P(a)$. Because of the matching constraints, the feasible region is bounded. To prove that the polytope is not integral, it's sufficient to find a fractional vertex. To do this, we will actually do a brute force using the \Cref{hyperplane-th}. More specifically, we will generate random coefficients to construct an objective function and then solving the resulting LP using the simplex method (which \emph{guarantees} that we will get a vertex). We will repeat these steps until we find a fractional vertex. 
 	
  	Of course, the above method is really slow, since the polytope can be very large, with millions of integral vertices but only a few fractional ones. Nevertheless, we got to find one with the following input.
  
@@ -1618,7 +1618,7 @@
 	
 	\begin{pprop}
 		\label{prop:pareto-relaxation-not-integral}
-		The linear relaxation of \ref{pareto-matching-ip} is not integral in general.
+		The linear relaxation of \eqref{pareto-matching-ip} is not integral in general.
 	\end{pprop}
 	
 	The code used for this experiment is given in \Cref{lst:lp-relaxation}. The listing contains the final version of the experiment, where some additional constraints have already been included. Since these constraints have not yet been discussed, the output does not coincide with the above solution obtained from the basic relaxation. We explain why in the final section.
@@ -1836,7 +1836,7 @@
 
 	In this section, we study the polytope obtained from the POM vectors. The goal is not to give a general closed-form description of this polytope (which we think it's a hard task), but rather to examine it computationally for small instances. This allows us to compare the true convex hull of Pareto optimal matchings with the linear relaxation studied in the previous section.
 	
-	We start from a fixed house allocation instance with applicant set $A$, house set $H$, and preference lists $P(a)$ for every applicant $a\in A$. For this instance, we first generate Pareto optimal matchings using the Serial Dictatorship algorithm (code: \ref{sd-algorithm-code}). More precisely, we consider all possible permutations of the applicants. For each permutation, the applicants are processed one by one according to this order, and each applicant receives the most preferred house that is still available, if such a house exists.
+	We start from a fixed house allocation instance with applicant set $A$, house set $H$, and preference lists $P(a)$ for every applicant $a\in A$. For this instance, we first generate Pareto optimal matchings using the Serial Dictatorship algorithm (code: \eqref{sd-algorithm-code}). More precisely, we consider all possible permutations of the applicants. For each permutation, the applicants are processed one by one according to this order, and each applicant receives the most preferred house that is still available, if such a house exists.
 	
 	By the characterization theorem {\cite[Chapter 6, p. 13-14]{abraham2004pareto}} for Pareto optimal matchings in house allocation, every outcome of Serial Dictatorship is Pareto optimal, and every Pareto optimal matching can be obtained from Serial Dictatorship for some ordering of the applicants. Therefore, by running Serial Dictatorship over all permutations of $A$ and removing duplicate outcomes, we obtain exactly the set of Pareto optimal matchings of the instance.
 	
@@ -1856,11 +1856,11 @@
 	
 	For each instance, we record basic statistics of the resulting polytope. These include the number of variables, the number of distinct Pareto optimal matchings, the dimension of the polytope, the number of equations in the affine hull, and the number of inequalities in the $H$-description. These statistics give a first indication of the structure of the Pareto matching polytope for the instance under consideration.
 	
-	The $H$-description also allows us to test whether a given point belongs to the true convex hull. In particular, if $x^*$ is a feasible solution of the LP relaxation, we can evaluate all equations and inequalities of the $H$-description at $x^*$. If one of them is violated, then $x^*$ does not belong to $P_{\mathrm{POM}}$. This gives a direct way to compare the LP relaxation with the actual Pareto matching polytope. This part of the project's source code can be found in \ref{convex-hull-pareto-code}. 
+	The $H$-description also allows us to test whether a given point belongs to the true convex hull. In particular, if $x^*$ is a feasible solution of the LP relaxation, we can evaluate all equations and inequalities of the $H$-description at $x^*$. If one of them is violated, then $x^*$ does not belong to $P_{\mathrm{POM}}$. This gives a direct way to compare the LP relaxation with the actual Pareto matching polytope. This part of the project's source code can be found in \eqref{convex-hull-pareto-code}. 
 	
 	The purpose of this computational study is to understand the structure of $P_{\mathrm{POM}}$ on small instances. In the final chapter, we use these computations on concrete examples and analyze which inequalities of the true convex hull are violated by fractional solutions of the relaxation. 
 	
-	All the above computations can be found in \ref{convex-hull-pareto-code}.
+	All the above computations can be found in \eqref{convex-hull-pareto-code}.
 
 \section{Candidate Cutting Inequalities}
 
@@ -2042,7 +2042,7 @@
 	
 	We call these inequalities \emph{prefix-cover inequalities}. They say that, for every agent $a$ and every acceptable house $h$, either the house $h$ must be assigned to some agent, or $a$ must be assigned to a house that appears before $h$ in the preference list of $a$. When $h$ is the first choice of $a$, the set $B_a(h)$ is empty, and the inequality reduces exactly to the first-choice house covering inequality. 
 	
-	\paragraph{Cutting off a Fractional Vertex.} Consider now the basic relaxation. As previously shown, the vector \ref{first-fractional-solution} was a fractional vertex of the polytope. This fractional solution is cut off by the prefix-cover inequality corresponding to the house $h_3$. 
+	\paragraph{Cutting off a Fractional Vertex.} Consider now the basic relaxation. As previously shown, the vector \eqref{first-fractional-solution} was a fractional vertex of the relaxation. This fractional solution is cut off by the prefix-cover inequality corresponding to the house $h_3$. 
 	Indeed, $h_3$ is the first choice of both $a_3$ and $a_4$. 
 	Therefore, the prefix-cover inequality reduces to
 	\[
@@ -2396,7 +2396,7 @@
 	
 	The coalition-free constraints are handled differently. They may be exponentially many, so the program does not add all of them at the beginning. Instead, it solves the current relaxation and then searches for a violated coalition constraint. If one is found, it is added to the LP, and the LP is solved again. This is called separation.
 	
-	The separation procedure builds a directed graph whose vertices are acceptable pairs \((a,h)\). A directed cycle in this graph corresponds to a plausible coalition. For a coalition \(C\), the corresponding constraint is:
+	The separation procedure builds a directed graph whose vertices are acceptable pairs $(a,h)$. A directed cycle in this graph corresponds to a plausible coalition. For a coalition $C$, the corresponding constraint is:
 	
 	\[
 	\sum_{(a,h)\in C} x_{ah} \leq |C|-1.
@@ -2405,6 +2405,8 @@
 	The code searches for violated coalition constraints using shortest path computations. If the current LP solution violates a coalition constraint, that constraint is added to the model.
 	
 	The program also uses random objective functions in order to search for fractional vertices of the relaxation. If a fractional solution is found, the values are converted to exact rational numbers using SageMath.
+	
+	Since GLPK returns numerical values as floating-point numbers, the code converts them to exact rational numbers before comparing them with the H-description of the convex hull. This is done with the function \texttt{to\_QQ}. Values that are very close to 0 or 1 are rounded to exactly $0$ or $1$, while the remaining values are converted to rational numbers using bounded denominators. This is important because the polyhedral computations in SageMath use the rational field $\mathbb{Q}$. Therefore, after this conversion, equations and inequalities can be checked exactly, avoiding small numerical errors such as $0.999999999$ instead of $1$.
 	
 	\section{Output Files}
 	
@@ -2542,25 +2544,25 @@
 
 \section{Linear Programming Relaxation of House Allocation Problem}\label{LP-relaxation-solve}
 \lstinputlisting[
-	caption={LP relaxation of house allocation problem},
+	caption={LP relaxation of house allocation problem, file: lp\_relaxation\_separation.py},
 	label={lst:lp-relaxation}
 ]{code/lp_relaxation/lp_relaxation_separation.py}
 
 \section{Convex Hull of Pareto Optimal Vectors}\label{convex-hull-pareto-code}
 \lstinputlisting[
-caption={Description and statistics of the pareto matching polytope},
+caption={Description and statistics of the pareto matching polytope, file: ip\_h\_description.py},
 label={lst:convex-hull-pareto}
 ]{code/polyhedral_analysis/ip_h_description.py}
 
 \section{Serial Dictatorship Algorithm}\label{sd-algorithm-code}
 \lstinputlisting[
-caption={Serial Dictatorship Algorithm},
+caption={Serial Dictatorship Algorithm, file: sd\_alg.py},
 label={lst:sd-algorithm-code}
 ]{code/sd/sd_alg.py}
 
 \section{Main Script}\label{main-script}
 \lstinputlisting[
-caption={Main script},
+caption={Main script, file: main.py},
 label={lst:main-script}
 ]{code/main.py}
 
