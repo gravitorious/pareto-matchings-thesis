@@ -10,9 +10,15 @@ def to_QQ(v, max_den=1000000, tol=1e-8):
     if abs(vf - 1) <= tol: return QQ(1)
     return QQ(Fraction(vf).limit_denominator(max_den))
 
-#feasibility check - all constraints, with coalition constraints restricted
-#to the cuts already added by separation
-def check_exact_feasibility(vals_QQ, V, A, H, P, Q, coalition_constraints=None):
+def prefers(agent, rank, h1, h2):
+    #True iff agent strictly prefers h1 to h2.
+    if h1 not in rank[agent] or h2 not in rank[agent]:
+        return False
+    return rank[agent][h1] < rank[agent][h2]
+
+#feasibility check - all constraints
+#and the cuts already added by separation
+def check_exact_feasibility(vals_QQ, V, A, H, P, Q, rank, coalition_constraints=None):
     if coalition_constraints is None:
         coalition_constraints = []
     for v_item in V:
@@ -35,6 +41,33 @@ def check_exact_feasibility(vals_QQ, V, A, H, P, Q, coalition_constraints=None):
     for C in coalition_constraints:
         if sum(vals_QQ[(a, h)] for a, h in C) > QQ(len(C) - 1):
             return False
+    #prefix-cover strengthening cuts feasibility check
+    for a in A:
+        prefs = P.get(a, [])
+        for i, h in enumerate(prefs):
+            better_houses = prefs[:i]
+            lhs = (
+                sum(vals_QQ[(b, h)] for b in Q[h]) +
+                sum(vals_QQ[(a, g)] for g in better_houses)
+            )
+            if lhs < QQ(1):
+                return False
+    #safe-holder implication cuts feasibility check
+    for a in A:
+        prefs = P.get(a, [])
+        for i, h in enumerate(prefs):
+            better_houses = prefs[:i]
+            for g in better_houses:
+                safe_holders = []
+                for b in Q[g]:
+                    if b == a:
+                        continue
+                    if not prefers(b, rank, h, g):
+                        safe_holders.append(b)
+                lhs = vals_QQ[(a, h)]
+                rhs = sum(vals_QQ[(b, g)] for b in safe_holders)
+                if lhs > rhs:
+                    return False
     return True
 
 #separation
@@ -83,7 +116,12 @@ def separation(sol, G, eps=1e-8):
 def find_fractional_vertex(A, H, P):
     Q = {h: [a for a in A if h in P.get(a, [])] for h in H}
     V = [(a, h) for a in A for h in P.get(a, [])]
-    #create envy graph
+    # rank[a][h] = position of house h in agent a's preference list
+    rank = {
+        a: {h: i for i, h in enumerate(P.get(a, []))}
+        for a in A
+    }
+    #create auxiliary graph
     G = DiGraph()
     G.add_vertices(V)
     for a1, h1 in V:
@@ -100,12 +138,43 @@ def find_fractional_vertex(A, H, P):
         if P.get(a): lp.add_constraint(sum(x[a, h] for h in P[a]) <= 1)
     for h in H:
         if Q[h]: lp.add_constraint(sum(x[a, h] for a in Q[h]) <= 1)
+
+    #============================================================
     #first-choice-houses constraint - added later
+    #first_choice_houses = sorted({P[a][0] for a in A if P.get(a)})
+    #for h in first_choice_houses:
+    #lp.add_constraint(sum(x[a, h] for a in Q[h]) >= 1)
+    #prefix-cover constraint - added later, generalization of first-choice-houses constraint
+    for a in A:
+        for i, h in enumerate(P.get(a, [])):
+            better_houses = P[a][:i]
+            lp.add_constraint(
+                sum(x[b, h] for b in Q[h]) +
+                sum(x[a, g] for g in better_houses)
+                >= 1
+            )
+    # #============================================================
+    #
+    # #============================================================
+    # #safe-holder implication cuts
+    for a in A:
+        prefs = P.get(a, [])
+        for i, h in enumerate(prefs):
+            better_houses = prefs[:i]
+            for g in better_houses:
+                safe_holders = []
+                for b in Q[g]:
+                    if b == a:
+                        continue
+                    #b is unsafe iff b prefers h to g
+                    #so b is safe iff NOT(h preferred to g)
+                    if not prefers(b, rank, h, g):
+                        safe_holders.append(b)
+                lp.add_constraint(
+                    x[a, h] <= sum(x[b, g] for b in safe_holders)
+                )
     #============================================================
-    first_choice_houses = sorted({P[a][0] for a in A if P.get(a)})
-    for h in first_choice_houses:
-        lp.add_constraint(sum(x[a, h] for a in Q[h]) >= 1)
-    #============================================================
+
     for a in A:
         for h in P.get(a, []):
             lp.add_constraint(sum(x[a, h_p] for h_p in P[a]) +
@@ -134,7 +203,7 @@ def find_fractional_vertex(A, H, P):
             lp_vals_QQ = {v: to_QQ(sol[v]) for v in V}
             is_fractional = any(QQ(0) < val < QQ(1) for val in lp_vals_QQ.values())
             if is_fractional:
-                if check_exact_feasibility(lp_vals_QQ, V, A, H, P, Q, coalition_constraints):
+                if check_exact_feasibility(lp_vals_QQ, V, A, H, P, Q, rank, coalition_constraints):
                     print("=" * 60)
                     print(f"Found fractional vertex at trial: {trial}")
                     print("-" * 60)

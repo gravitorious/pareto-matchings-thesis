@@ -1,27 +1,35 @@
 Fractional relaxation vertex
 ================================================================================
-X11 = 1/7
-X12 = 6/7
-X21 = 1/7
+X11 = 1/2
+X12 = 1/2
+X21 = 1/2
+X22 = 1/2
 
 Summary
 ================================================================================
 Number of variables: 4
-Number of violated equations: 3
+Number of violated equations: 4
+Number of satisfied equations: 0
 Number of violated inequalities: 0
 Number of satisfied inequalities: 0
 
 Violated equations
 ================================================================================
+X22 = 0
+lhs - rhs = 1/2
+
 X11 = 0
-value = 1/7
+lhs - rhs = 1/2
 
 X12 = 1
-value = -1/7
+lhs - rhs = -1/2
 
 X21 = 1
-value = -6/7
+lhs - rhs = -1/2
 
+
+Satisfied equations
+================================================================================
 
 Violated inequalities
 ================================================================================

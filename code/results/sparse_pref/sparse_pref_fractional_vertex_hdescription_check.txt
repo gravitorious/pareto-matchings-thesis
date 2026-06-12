@@ -1,37 +1,49 @@
 Fractional relaxation vertex
 ================================================================================
-X11 = 1/2
-X12 = 1/2
-X21 = 1/2
+X11 = 1
 X32 = 1/2
+X33 = 1/2
+X43 = 1/2
+X54 = 1
+X65 = 1/2
+X66 = 1/2
 
 Summary
 ================================================================================
-Number of variables: 5
+Number of variables: 11
 Number of violated equations: 2
-Number of violated inequalities: 0
-Number of satisfied inequalities: 3
+Number of violated inequalities: 2
+Number of satisfied inequalities: 4
 
 Violated equations
 ================================================================================
-X22 + X32 = 1
+X12 + X32 = 1
 value = -1/2
 
-X12 = 0
-value = 1/2
+X55 = X66
+value = -1/2
 
 
 Violated inequalities
 ================================================================================
+X44 >= X66
+value = -1/2
+
+X12 >= X33
+value = -1/2
+
 
 Satisfied inequalities
 ================================================================================
-X32 <= 1
+X11 >= 0
+value = 1
+
+X66 >= 0
 value = 1/2
 
-X11 + X32 >= 1
+X33 >= X44
+value = 1/2
+
+X11 + X12 <= 1
 value = 0
-
-X11 <= 1
-value = 1/2
 

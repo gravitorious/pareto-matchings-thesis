@@ -28,8 +28,6 @@ def read_vector_csv(instance):
                 else:
                     vec.append(QQ(value))
             vertices.append(vector(QQ, vec))
-    #print(variables)
-    #print(vertices)
     return variables, vertices
 
 def variable_name(variable):
@@ -78,9 +76,8 @@ def readable_hrep(hrep, variables):
     if hrep.is_equation():
         return f"{lhs} = {rhs}"
     #1 >= X42 + X43 + X45 -> X42 + X43 + X45 <= 1
-    if not lhs_has_var and rhs != "0":
-        return f"{rhs} <= {lhs}"
-
+    #if not lhs_has_var and rhs != "0":
+    #    return f"{rhs} <= {lhs}"
     return f"{lhs} >= {rhs}"
 
 def print_h_description(polytope, variables, instance):
@@ -170,6 +167,7 @@ def check_fractional_vertex(
         f.write("=" * 80 + "\n")
         f.write(f"Number of variables: {len(variables)}\n")
         f.write(f"Number of violated equations: {len(violated_equations)}\n")
+        f.write(f"Number of satisfied equations: {len(satisfied_equations)}\n")
         f.write(f"Number of violated inequalities: {len(violated_inequalities)}\n")
         f.write(f"Number of satisfied inequalities: {len(satisfied_inequalities)}\n")
         f.write("\n")
@@ -177,16 +175,21 @@ def check_fractional_vertex(
         f.write("=" * 80 + "\n")
         for readable, value in violated_equations:
             f.write(f"{readable}\n")
-            f.write(f"value = {value}\n\n")
+            f.write(f"lhs - rhs = {value}\n\n")
+        f.write("\n")
+        f.write("Satisfied equations\n")
+        f.write("=" * 80 + "\n")
+        for readable, value in satisfied_equations:
+            f.write(f"{readable}\n")
         f.write("\n")
         f.write("Violated inequalities\n")
         f.write("=" * 80 + "\n")
         for readable, value in violated_inequalities:
             f.write(f"{readable}\n")
-            f.write(f"value = {value}\n\n")
+            f.write(f"lhs - rhs = {value}\n\n")
         f.write("\n")
         f.write("Satisfied inequalities\n")
         f.write("=" * 80 + "\n")
         for readable, value in satisfied_inequalities:
             f.write(f"{readable}\n")
-            f.write(f"value = {value}\n\n")
+            f.write(f"lhs - rhs = {value}\n\n")

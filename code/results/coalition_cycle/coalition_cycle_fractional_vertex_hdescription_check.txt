@@ -1,74 +1,82 @@
 Fractional relaxation vertex
 ================================================================================
 X11 = 1/2
-X15 = 1/2
-X22 = 1
-X33 = 1/2
+X12 = 1/2
+X23 = 1
 X34 = 1/2
+X36 = 1/2
 X41 = 1/2
 X45 = 1/2
-X54 = 1/2
+X52 = 1/2
 X56 = 1/2
-X63 = 1/2
-X66 = 1/2
+X64 = 1/2
+X65 = 1/2
 
 Summary
 ================================================================================
 Number of variables: 24
-Number of violated equations: 16
+Number of violated equations: 14
+Number of satisfied equations: 10
 Number of violated inequalities: 0
 Number of satisfied inequalities: 0
 
 Violated equations
 ================================================================================
 X66 = 1
-value = -1/2
+lhs - rhs = -1
 
 X11 = 0
-value = 1/2
+lhs - rhs = 1/2
 
 X12 = 1
-value = -1
-
-X15 = 0
-value = 1/2
-
-X22 = 0
-value = 1
-
-X23 = 1
-value = -1
+lhs - rhs = -1/2
 
 X31 = 1
-value = -1
-
-X33 = 0
-value = 1/2
+lhs - rhs = -1
 
 X34 = 0
-value = 1/2
+lhs - rhs = 1/2
+
+X36 = 0
+lhs - rhs = 1/2
 
 X41 = 0
-value = 1/2
+lhs - rhs = 1/2
 
 X44 = 1
-value = -1
+lhs - rhs = -1
 
 X45 = 0
-value = 1/2
+lhs - rhs = 1/2
 
-X54 = 0
-value = 1/2
+X52 = 0
+lhs - rhs = 1/2
 
 X55 = 1
-value = -1
+lhs - rhs = -1
 
 X56 = 0
-value = 1/2
+lhs - rhs = 1/2
 
+X64 = 0
+lhs - rhs = 1/2
+
+X65 = 0
+lhs - rhs = 1/2
+
+
+Satisfied equations
+================================================================================
+X14 = 0
+X15 = 0
+X22 = 0
+X23 = 1
+X25 = 0
+X26 = 0
+X33 = 0
+X46 = 0
+X54 = 0
 X63 = 0
-value = 1/2
-
 
 Violated inequalities
 ================================================================================

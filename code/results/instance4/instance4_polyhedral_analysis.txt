@@ -7,6 +7,6 @@ Equations:
   X12 = 0
 
 Inequalities:
-  X32 <= 1
+  1 >= X32
   X11 + X32 >= 1
-  X11 <= 1
+  1 >= X11

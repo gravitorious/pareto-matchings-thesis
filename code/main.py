@@ -10,6 +10,5 @@ if __name__ == "__main__":
     fractional_solution = relaxation.lp_solve(instance)
     if fractional_solution is None:
         print("No fractional vertex was found")
-
     else:
         ip_convex_hull.check_fractional_vertex(instance, convex_hull, variables, fractional_solution)
