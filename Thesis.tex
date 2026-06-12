@@ -31,6 +31,8 @@
 \usepackage{float}
 \usepackage[nameinlink]{cleveref}
 \usepackage{url}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta}
 \setlength{\parindent}{2em}
 \setmainfont{CMU Serif}
 
@@ -1578,40 +1580,39 @@
  	
  	In the above input we have the preference lists of $5$ applicants. There are $5$ houses in total. Each row $i$ is a preference list of the applicant $i$. With pref1 we mean the first preference of an applicant, pref2 the second one, etc. For example the applicant $4$ prefers the house $3$, than the house $2$. We need $15$ binary variables for this input, which means that each incidence vector will have $15$ components. 
  	
- 	To solve the linear relaxation we used the GLPK solver in SageMath \cite{sagemathGLPK}. The variables were declared as continuous and nonnegative. The
- 	program generated the following random objective function:
- 	
- 	\[
- 	\begin{aligned}
- 		\max \quad
- 		& -13x_{11}-17x_{12}-15x_{14}-x_{21}
- 		+12x_{23}+14x_{22} \\
- 		& +14x_{33}-8x_{35}-9x_{31}-16x_{34}
- 		+12x_{43}+4x_{42} \\
- 		& -14x_{45}+8x_{52}-16x_{51}.
- 	\end{aligned}
- 	\]
- 	Solving the linear relaxation with this objective function gives the following
- 	fractional optimal solution:
- 	\[
- 	\begin{aligned}
- 		x_{11}&=1, &
- 		x_{12}&=0, &
- 		x_{14}&=0, \\
- 		x_{21}&=0, &
- 		x_{23}&=0, &
- 		x_{22}&=1, \\
- 		x_{33}&=\frac{1}{2}, &
- 		x_{35}&=\frac{1}{2}, &
- 		x_{31}&=0, \\
- 		x_{34}&=0, &
- 		x_{43}&=\frac{1}{2}, &
- 		x_{42}&=0, \\
- 		x_{45}&=0, &
- 		x_{52}&=0, &
- 		x_{51}&=0.
- 	\end{aligned}
- 	\]
+ 	To solve the linear relaxation we used the GLPK solver in SageMath \cite{sagemathGLPK}. The variables were declared as continuous and nonnegative. The coefficients were:
+	\[
+	\begin{aligned}
+		\max \quad
+		& -12x_{11}-18x_{12}+14x_{14}
+		-9x_{21}-16x_{23}+17x_{22} \\
+		& -6x_{33}+7x_{35}+15x_{31}+8x_{34}
+		+7x_{43}+11x_{42} \\
+		& +19x_{45}+12x_{52}+10x_{51}.
+	\end{aligned}
+	\]
+	Solving the linear relaxation with this objective function gives the following
+	fractional optimal solution:
+	
+	\begin{equation} \label{first-fractional-solution}
+		\begin{aligned}
+			x_{11}&=0, &
+			x_{12}&=0, &
+			x_{14}&=1, \\
+			x_{21}&=0, &
+			x_{23}&=0, &
+			x_{22}&=\frac{2}{3}, \\
+			x_{33}&=\frac{1}{3}, &
+			x_{35}&=0, &
+			x_{31}&=\frac{2}{3}, \\
+			x_{34}&=0, &
+			x_{43}&=\frac{1}{3}, &
+			x_{42}&=0, \\
+			x_{45}&=\frac{2}{3}, &
+			x_{52}&=\frac{1}{3}, &
+			x_{51}&=\frac{1}{3}.
+		\end{aligned}
+	\end{equation}
 
 	which is a fractional vertex.
 	
@@ -1620,7 +1621,7 @@
 		The linear relaxation of \ref{pareto-matching-ip} is not integral in general.
 	\end{pprop}
 	
-	The code used for this experiment is given in \Cref{lst:lp-relaxation}. The listing contains the final version of the experiment, where some additional constraints have already been included. Since these constraints have not yet been discussed, the output does not coincide with the solution obtained from the basic relaxation. We explain this difference in the final section.
+	The code used for this experiment is given in \Cref{lst:lp-relaxation}. The listing contains the final version of the experiment, where some additional constraints have already been included. Since these constraints have not yet been discussed, the output does not coincide with the above solution obtained from the basic relaxation. We explain why in the final section.
 	
 	\paragraph{Separation.} Notice that the family of coalition constraints may be large. In fact, the size of $\mathcal C$ can be factorial (or even larger). 
 	Consider an instance with five applicants and twenty-five houses. Let the houses be divided into five blocks
@@ -1652,7 +1653,42 @@
 	\[
 	(a,h)\longrightarrow (a',h')
 	\]
-	whenever applicant $a$ strictly prefers $h'$ to $h$. Therefore, a directed cycle in this graph represents a possible cyclic improvement among assignment pairs, and hence corresponds to a plausible coalition.
+	whenever applicant $a$ strictly prefers $h'$ to $h$. Therefore, a directed cycle in this graph represents a possible cyclic improvement among assignment pairs, and hence corresponds to a plausible coalition. A small example of a coalition is illustrated in the following figure.
+	
+	\clearpage
+	\newpage
+	
+	\begin{figure}[ht]
+		\centering
+		\begin{tikzpicture}[
+			vertex/.style={draw, circle, minimum size=1.25cm},
+			edge/.style={->, thick},
+			edgelabel/.style={draw=none, fill=none, inner sep=1pt, font=\scriptsize},
+			>=Stealth
+			]
+			\node[vertex] (v1) at (0,0) {$(a_1,h_1)$};
+			\node[vertex] (v2) at (3.8,0) {$(a_2,h_2)$};
+			\node[vertex] (v3) at (7.6,0) {$(a_3,h_3)$};
+			\node[vertex] (v4) at (11.4,0) {$(a_4,h_4)$};
+			
+			\draw[edge] (v1) -- node[edgelabel, midway, above=1pt] {$1-x^*_{a_2h_2}$} (v2);
+			\draw[edge] (v2) -- node[edgelabel, midway, above=1pt] {$1-x^*_{a_3h_3}$} (v3);
+			\draw[edge] (v3) -- node[edgelabel, midway, above=1pt] {$1-x^*_{a_4h_4}$} (v4);
+			
+			\draw[edge] (v4) to[bend left=35]
+			node[edgelabel, midway, below=4pt] {$1-x^*_{a_1h_1}$}
+			(v1);
+		\end{tikzpicture}
+		\caption{A directed cycle in the auxiliary graph used for separation. Each vertex is an assignment pair $(a_i,h_i)$. The edge from $(a_i,h_i)$ to $(a_j,h_j)$ has weight $1-x^*_{a_jh_j}$.}
+		\label{fig:auxiliary-graph-separation}
+	\end{figure}
+	\noindent The directed cycle in the figure corresponds to the preference relations
+	\[
+	h_2 \succ_{a_1} h_1,\qquad
+	h_3 \succ_{a_2} h_2,\qquad
+	h_4 \succ_{a_3} h_3,\qquad
+	h_1 \succ_{a_4} h_4.
+	\]
 	
 	Let $x^*$ be the current solution of the LP relaxation. To separate the coalition-free constraints, we assign to each vertex $(a,h)$ the weight
 	\[
@@ -1794,7 +1830,7 @@
 		O(n^6).
 		\]
 	\end{proof}
-	
+
 
 \section{The Pareto Matching Polytope}
 
@@ -2004,7 +2040,23 @@
 		The inequality holds in both cases. Since it holds for every POM vector, it is valid for their convex hull.
 	\end{proof}
 	
-	We call these inequalities \emph{prefix-cover inequalities}. They say that, for every agent $a$ and every acceptable house $h$, either the house $h$ must be assigned to some agent, or $a$ must be assigned to a house that appears before $h$ in the preference list of $a$. When $h$ is the first choice of $a$, the set $B_a(h)$ is empty, and the inequality reduces exactly to the first-choice house covering inequality.
+	We call these inequalities \emph{prefix-cover inequalities}. They say that, for every agent $a$ and every acceptable house $h$, either the house $h$ must be assigned to some agent, or $a$ must be assigned to a house that appears before $h$ in the preference list of $a$. When $h$ is the first choice of $a$, the set $B_a(h)$ is empty, and the inequality reduces exactly to the first-choice house covering inequality. 
+	
+	\paragraph{Cutting off a Fractional Vertex.} Consider now the basic relaxation. As previously shown, the vector \ref{first-fractional-solution} was a fractional vertex of the polytope. This fractional solution is cut off by the prefix-cover inequality corresponding to the house $h_3$. 
+	Indeed, $h_3$ is the first choice of both $a_3$ and $a_4$. 
+	Therefore, the prefix-cover inequality reduces to
+	\[
+	x_{23}+x_{33}+x_{43}\ge 1.
+	\]
+	However, for the fractional solution above we have
+	\[
+	x_{23}+x_{33}+x_{43}
+	=
+	0+\frac{1}{3}+\frac{1}{3}
+	=
+	\frac{2}{3}<1.
+	\]
+	Thus the inequality is violated, and the fractional solution is removed after the prefix-cover cuts are added.
 	
 	\subsection{Safe-holder inequalities}
 	

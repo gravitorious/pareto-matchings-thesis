@@ -123,10 +123,10 @@ def check_fractional_vertex(
     """
     fractional_vertex = dict(fractional_vertex)
     #build vector in the same order as variables
-    #the polytope coordinates follow the variable order stored in `variables`,
+    #the polytope coordinates follow the variable order stored in variables,
     #which is the same order as the columns of the pom-vectors csv.
     #the solver output may be unordered and may omit zero-valued variables.
-    #therefore, we build x_vec by iterating over `variables` and retrieving
+    #therefore, we build x_vec by iterating over variables and retrieving
     #each value from the fractional solution dictionary. the missing entries are 0.
     x_vec = []
     for variable in variables:
