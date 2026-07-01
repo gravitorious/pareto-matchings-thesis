@@ -1430,8 +1430,8 @@
 	We denote by $\mathcal C$ the family of all plausible coalitions.
 	
 	Finally, for every acceptable pair $(a,h)\in E$, we define a binary variable
-	$x_{ah}$. For a matching $M$, its incidence vector is the vector $x^M\in
-	\{0,1\}^{E}$ given by
+	$x_{ah}$. For a matching $M$, its \emph{incidence vector} is the vector $x^M\in
+	\{0,1\}^{E}$,  given by
 	\[
 	x^M_{ah}=
 	\begin{cases}
@@ -1884,7 +1884,7 @@
 	
 	\subsection{First-choice and prefix-cover inequalities}
 	
-	We first consider a simple but important implication of Pareto optimality. Suppose that a house $h$ is the first choice of some agent $a$. Then, in every Pareto-optimal matching (i.e. in every POM vector), the house $h$ must be assigned. Indeed, if $h$ were unmatched, then either $a$ would be unmatched, contradicting maximality, or $a$ would be matched to a worse house, contradicting trade-in freeness.
+	\paragraph{First-choice inequalities.} We first consider a simple but important implication of Pareto optimality. Suppose that a house $h$ is the first choice of some agent $a$. Then, in every Pareto-optimal matching (i.e. in every POM vector), the house $h$ must be assigned. Indeed, if $h$ were unmatched, then either $a$ would be unmatched, contradicting maximality, or $a$ would be matched to a worse house, contradicting trade-in freeness.
 	
 	Therefore, for every house $h$ that appears as the first choice of at least one agent, the following inequality is valid for the Pareto-optimal matching polytope:
 	\[
@@ -1983,9 +1983,24 @@
 	x_{11}\ge 1
 	\]
 	cuts off this fractional solution.
+
+	\paragraph{Dimension.}
+	This observation implies an important result concerning the dimension of the polytope. Let $F$ be the set of houses
+	that appear as the first choice of at least one applicant. As shown above, every house $h\in F$ must be assigned in every Pareto-optimal matching. Therefore,
+	\[
+	\sum_{a\in Q(h)}x_{ah}=1,\qquad h\in F,
+	\]
+	is an affine equality for $P^{\mathrm{POM}}$. Each equality contains only variables corresponding to one house, and therefore all these equalities are linearly independent.
 	
-	This observation can be generalized. The first-choice inequality is only the special case of a broader family.
+	\begin{ccor}
+		Let $F$ be the set of houses that appear as the first choice of at least one
+		applicant. Then
+		\[
+		\dim(P^{\mathrm{POM}})\le |E|-|F|.
+		\]
+	\end{ccor}
 	
+	\paragraph{Prefix-cover inequalities.} The previous observation can be generalized. The first-choice inequality is only the special case of a broader family.
 	\begin{pprop}
 		For every agent $a\in A$ and every house $h\in P(a)$, the inequality
 		\[
