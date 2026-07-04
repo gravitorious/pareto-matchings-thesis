@@ -175,16 +175,8 @@
 
 %\input{frontmatter/frontmatter}
 
-\clearpage
-\tableofcontents
-
-\clearpage
-\printindex %Linear Programming (LP)\index{Linear Programming} gia na mpei sto eurethrio
-
-\pagenumbering{arabic}
-
-\chapter{Introduction}
-
+\chapter*{Preface}
+	
 	Matching theory is one of the central topics in graph theory and combinatorial optimization.
 	
 	Matchings appear in a wide range of problems in computer science, mathematics, economics, and operations research. It provides a natural way to model situations in which agents, objects, or resources must be paired under certain restrictions.
@@ -199,7 +191,7 @@
 	
 	In integer programming, many natural decision variables are restricted to take values of zero or one, representing whether an object is selected, an edge is used, or an assignment is made. However, solving integer programs directly is generally difficult. A common strategy is therefore to relax the integrality restrictions and study the corresponding linear program. When the relaxation has integral optimal solutions, the original discrete problem can be solved through linear programming.
 	
-	The purpose of this thesis is to study matching problems from both of these perspectives. We first present classical algorithmic results for two fundamental problems in matching theory and then study related formulations through linear and integer programming. The final part of the thesis focuses on a Pareto-optimal matching problem in a one-to-one house-allocation model, where the behavior of the linear relaxation is substantially more complicated.
+	The purpose of this thesis is to study matching problems on bipartite graphs from both of these perspectives. We first present classical algorithmic results for two fundamental problems in matching theory and then study related formulations through linear and integer programming. The final part of the thesis focuses on a Pareto-optimal matching problem in a one-to-one house-allocation model, where the behavior of the linear relaxation is substantially more complicated.
 	
 	Chapter $2$ is devoted to matching problems and algorithms. We begin with the maximum bipartite matching problem. After introducing the basic definitions, we present a classical augmenting-path implementation with running time $O(nm)$, where $n$ denotes the number of vertices and $m$ the number of edges. We then give an implementation of the Hopcroft--Karp algorithm, which improves the running time to $O(\sqrt{n}(n + m))$ by finding many shortest augmenting paths in phases. The chapter continues with the stable marriage problem and the Gale--Shapley algorithm, one of the most influential algorithms in matching theory.
 	
@@ -215,25 +207,36 @@
 	The computational part of the thesis compares the linear relaxation with the actual convex hull of Pareto optimal matching vectors. For several small instances, we enumerate Pareto optimal matchings, compute the corresponding convex hull, and inspect its linear description. This allows us to identify inequalities that are valid for the true Pareto optimal matching polytope but are not enforced by the original relaxation. Based on these experiments, we propose and prove two families of additional valid inequalities: prefix-cover inequalities and safe-holder inequalities. These constraints strengthen the relaxation by excluding fractional solutions that do not lie within the convex hull of Pareto-optimal matchings.
 	
 	The thesis therefore follows a progression from algorithms to polyhedra and then to computational polyhedral analysis. The first part explains in detail how classical matching algorithms work. The second part shows how linear programming can exactly capture some matching problems. The final part shows that for Pareto-optimal house allocation, the situation is not that simple. The natural relaxation is not sufficient, and additional valid inequalities are needed to obtain a tighter description. The implementation details and source code are included in the appendices, so that the computational experiments can be reproduced and extended.
+	
+	We assume a basic background in subjects typically covered in an undergraduate curriculum, such as graph theory, algorithms, computational complexity, and linear algebra. Familiarity with these areas is sufficient to follow the material presented in this thesis.
+	
+
+\clearpage
+\tableofcontents
+
+\clearpage
+\printindex %Linear Programming (LP)\index{Linear Programming} gia na mpei sto eurethrio
+
+\pagenumbering{arabic}
 
 \chapter{Matching Problems and Algorithms}
 
 \section{Definitions}
 
-	Let $G = (V,E)$ be an undirected graph with $|V| = n$ vertices and $|E| = m$ edges. We call $G$ bipartite if we can partition its vertex set into two sets $V_{1}, V_{2}$ such that for each edge $\{u,v\} \in E$, $u \in V_{1}$ and $v \in V_{2}$. If every vertex of $V_{1}$ is adjacent to every vertex of $V_{2}$ and $|V_{1}| = n_{1}, |V_{2}| = n_{2}$, then we call $G$ a complete bipartite graph and denote it by $K_{n_{1},n_{2}}$. By a path, we mean a simple path, i.e., a path in which no vertex is repeated. The length of a path is the number of edges it contains.
+	Let $G = (V,E)$ be a simple (without loops and parallel edges) undirected graph with $|V| = n$ vertices and $|E| = m$ edges. We call $G$ bipartite if we can partition its vertex set into two sets $V_{1}, V_{2}$ such that for each edge $\{u,v\} \in E$, one endpoint belongs to $V_{1}$ and the other to $V_{2}$. If every vertex of $V_{1}$ is adjacent to every vertex of $V_{2}$ and $|V_{1}| = n_{1}, |V_{2}| = n_{2}$, then we call $G$ a complete bipartite graph and denote it by $K_{n_{1},n_{2}}$. By a path, we mean a simple path, i.e., a path in which no vertex is repeated. The length of a path is the number of edges it contains.
 
-	From set theory, we recall that the symmetric difference of two sets $A$ and $B$, denoted by $A\bigtriangleup B$, is the set of elements that belong to $A$ or $B$ but not both. Thus, $A\bigtriangleup B = (A \setminus B) \cup (B \setminus A) = (A \cup B) \setminus (A \cap B)$. Also, if we want to add an element $x$ to set $A$, we will use the shorthand $A + x \coloneqq A \cup \{x\}$, and if we  to remove it $A - x \coloneqq A \setminus \{x\}$.
+	From set theory, we recall that the symmetric difference of two sets $A$ and $B$, denoted by $A\bigtriangleup B$, is the set of elements that belong to $A$ or $B$ but not both. Thus, $A\bigtriangleup B = (A \setminus B) \cup (B \setminus A) = (A \cup B) \setminus (A \cap B)$. Also, if we want to add an element $x$ to set $A$, we will use the shorthand $A + x \coloneqq A \cup \{x\}$, and if we want to remove it $A - x \coloneqq A \setminus \{x\}$.
 
-	We write $T(n) = O(f(n))$ if and only if there exist positive constants $c$ and $n_{0}$ such that $T(n) \leq c f(n)$ for all $n \geq n_{0}$. Most of the time, $T(n)$ will denote a bound on the worst-case running time of an algorithm defined on the positive integers. Similarly, we say that $T(n) = \Omega(f(n))$ if and only if there exist positive constants $c$ and $n_{0}$ such that $T(n) \geq cf(n)$ for all $n \geq n_{0}$. Finally, we say that $T(n) = \Theta(f(n))$ if and only if $T(n) = O(f(n))$ and $T(n) = \Omega(f(n))$.
+	For non-negative functions $T$ and $f$, we write $T(n) = O(f(n))$ if and only if there exist positive constants $c$ and $n_{0}$ such that $T(n) \leq c f(n)$ for all $n \geq n_{0}$. Most of the time, $T(n)$ will denote a bound on the worst-case running time of an algorithm defined on the positive integers. Similarly, we say that $T(n) = \Omega(f(n))$ if and only if there exist positive constants $c$ and $n_{0}$ such that $T(n) \geq cf(n)$ for all $n \geq n_{0}$. Finally, we say that $T(n) = \Theta(f(n))$ if and only if $T(n) = O(f(n))$ and $T(n) = \Omega(f(n))$.
 
-	A matching of a graph $G = (V,E)$ is a subset of $E$ such that each vertex is incident to at most one edge of the subset. The cardinality of a matching is the number of edges it contains. A vertex is called matched if it is incident to an edge of $M$. Otherwise, it is called unmatched or free. A matching is called maximal if no edge can be added without violating the matching property. A matching is maximum if no other matching has more edges. Clearly, every maximum matching is maximal (the converse is not always true). The following two definitions are fundamental in the study of matchings.
+	A matching $M$ of a graph $G = (V,E)$ is a subset of $E$ such that each vertex is incident to at most one edge of the subset. The cardinality of a matching is the number of edges it contains. A vertex is called matched if it is incident to an edge of $M$. Otherwise, it is called unmatched or free. A matching is called maximal if no edge from $E \setminus M$ can be added without violating the matching property. A matching is maximum if no other matching has more edges. Clearly, every maximum matching is maximal (the converse is not always true). The following two definitions are fundamental in the study of matchings.
 	
 	\begin{ddef}
-		A path $P$ in G with respect to a matching $M$ is called alternating if its edges are alternatingly out of and in $M$.
+		A path $P$ in $G$ with respect to a matching $M$ is called alternating if its edges are alternatingly out of and in $M$.
 	\end{ddef}
 	
 	\begin{ddef}
-		A path $P$ in G with respect to a matching $M$ is called augmenting if it is alternating and its endpoints are free.
+		A path $P$ in $G$ with respect to a matching $M$ is called augmenting if it has positive length, is alternating, and its endpoints are free.
 	\end{ddef}
 	
 	It is straightforward to see that every augmenting path has odd length. We will use the term $M$-augmenting whenever we want to emphasize the matching $M$.
@@ -247,14 +250,14 @@
 		Let $G = (V,E)$ be a graph and let $M$ be a matching in $G$. Then $M$ is maximum if and only if there is no $M$-augmenting path in $G$.
 	\end{ttheorem}
 	\begin{proof}
-		Suppose that $M$ is maximum. For the sake of contradiction, assume that there exists an M-augmenting path $P$ with $u$ and $v$ as its endpoints in $G$. Then we can see that the matching $M^{'} = M \bigtriangleup E(P)$ is a valid matching in $G$ and satisfies $|M^{'}| = |M| + 1$. Indeed, if we remove all edges of $P$ that belong to $M$ and add the remaining ones to $M$, we add one more edge to $M$ in total (because $P$ has odd length). The new matching is valid because $u$ and $v$ were free, and they were not incident to any matching edge, and every internal vertex of $P$ remains incident to exactly one edge. All vertices outside $P$ are unaffected. As a result, the new matching $M^{'}$ is valid and its cardinality is greater than that of $M$. This is a contradiction.
+		Suppose that $M$ is maximum. For the sake of contradiction, assume that there exists an $M$-augmenting path $P$ with $u$ and $v$ as its endpoints in $G$. Then we can see that the matching $M^{'} = M \bigtriangleup E(P)$ is a valid matching in $G$ and satisfies $|M^{'}| = |M| + 1$. Indeed, if we remove all edges of $P$ that belong to $M$ and add the remaining ones to $M$, we add one more edge to $M$ in total (because $P$ has odd length). The new matching is valid because $u$ and $v$ were free, and they were not incident to any matching edge, and every internal vertex of $P$ remains incident to exactly one edge of $M^{'}$. All vertices outside $P$ are unaffected. As a result, the new matching $M^{'}$ is valid and its cardinality is greater than that of $M$. This is a contradiction.
 
-		Now suppose that $G$ does not contain any M-augmenting path and that a matching $M^{'}$ exists in $G$ such that $|M^{'}| > |M|$. Consider the graph $M_{0} = M \bigtriangleup M^{'}$. Each vertex in $M_{0}$ may be matched in both matchings or in either one. So, every vertex has degree at most $2$. Hence, every component of $M_{0}$ is either a path or a cycle of even length (otherwise, there would exist a vertex that is incident to two edges in the same matching). Because $M_{0}$ has more edges of $M^{'}$ than of $M$, this also means that there exists a path $P$ with more edges of $M^{'}$ than of $M$, and because the edges are alternating, $P$ is an M-augmenting path, which contradicts our assumption that $G$ does not contain any M-augmenting path.
+		Now suppose that $G$ does not contain any $M$-augmenting path and that a matching $M^{'}$ exists in $G$ such that $|M^{'}| > |M|$. Consider the subgraph $G_{0} = (V, M_{0})$ where $M_{0} = M \bigtriangleup M^{'}$. Each vertex in $G_{0}$ may be matched in both matchings or in either one. So, every vertex has degree at most $2$. Hence, every component of $G_{0}$ is either a path or a cycle of even length (otherwise, there would exist a vertex that is incident to two edges in the same matching). Because $M_{0}$ has more edges of $M^{'}$ than of $M$, this also means that there exists a path $P$ with more edges of $M^{'}$ than of $M$. Necessarily, the edges of this path are alternating (otherwise a vertex would be incident to more than one edge of the same matching) and its endpoints are free with respect to $M$. Hence, $P$ is an $M$-augmenting path, which contradicts our assumption that $G$ does not contain any $M$-augmenting path.
 	\end{proof}
 
 %	 $N^{+}(v)$ and $N^{-}(v)$ (which correspond to the vertices that $v$ points to and the vertices that point to $v$, respectively)
 	
-	\paragraph{Augmenting-Path Algorithm.}
+	\subsection{Augmenting-Path Algorithm}
 
 	Based on the theorem above, we can write an algorithm that will try to find an augmenting path, alternate its edges (this will increase the size of the current matching by one), and repeat the whole process until we can't find any augmenting path. $N(v)$ represents all the vertices $u$ such that $\{v, u\} \in E(G)$. 
 
@@ -271,7 +274,7 @@
 		\State $\mathit{visited}[v]$ \gets \True;
 		\ForAll{$u \in N(v)$}
 		   \If{$\mathit{matched}[u] = \emptyset \textbf{ or } \Call{DfsAugmentingPath}{\mathit{matched}[u], \mathit{visited}, \mathit{matched}}$}
-				\State $matched[u] \gets v$;
+				\State $\mathit{matched}[u] \gets v$;
 		        \State \Return \True;
 		    \EndIf
 		\EndFor
@@ -280,21 +283,21 @@
 	\end{algorithmic}
 	\end{algorithm}
 	
-	\Cref{DfsAugmentingPath} is getting called from all vertices in the left part of bipartite graph (let's call it $V_{1}$). We will use an extra array called visited to track the vertices from $V_{1}$ that we have already visited across the path and we have to reset it to be false for all these vertices before the initial call. Array matched marks the matched vertices only from the right part of the bipartite graph (let's call it $V_{2}$).  To get the edges of the matching, we simply take all the edges $\{v, \mathit{matched[v]}\}$ such that $\mathit{matched[v]}$ is not empty and store them to set $\mathit{matching}$.
+	\Cref{DfsAugmentingPath} is getting called from all vertices in the left part of bipartite graph (let's call it $V_{1}$). We will use an extra array called $\mathit{visited}$ to track the vertices from $V_{1}$ that we have already visited across the path and we have to reset it to be false for all these vertices before the initial call. Array matched marks the matched vertices only from the right part of the bipartite graph (let's call it $V_{2}$).  To get the edges of the matching, we simply take all the edges $\{v, \mathit{matched}[v]\}$ such that $\mathit{matched}[v]$ is not empty and store them to set $\mathit{matching}$.
 
 	\begin{algorithm}[H]
 	\caption{Maximum Bipartite Matching in $O(nm)$}
 	\label{max-bm1}
 	\begin{algorithmic}[1]
 	\Require Bipartite graph $G=(V_1 \cup V_2,E)$
-	\Ensure Array $\mathit{matching}$ that corresponds to the edges of the maximum matching
-	\Function{MainAugmentingPath}{\texttt{int} $v$, \texttt{bool} $\mathit{visited}[]$, \texttt{set} $\mathit{matching}$}
+	\Ensure Set $\mathit{matching}$ that corresponds to the edges of the maximum matching
+	\Function{MainAugmentingPath}{\texttt{Graph} $G$, \texttt{set} $\mathit{matching}$}
 		\ForAll{$v \in V_{2}$}
 			\State $\mathit{matched}[v] \gets \emptyset$;
 		\EndFor
 		\ForAll{$v \in V_{1}$}
 			\ForAll{$u \in V_{1}$}
-				\State $\mathit{dist}[i] \gets \False$;
+				\State $\mathit{visited}[u] \gets \False$;
 			\EndFor
 			\State \Call{DfsAugmentingPath}{$v$, $\mathit{visited}$, $\mathit{matched}$};
 		\EndFor
@@ -312,11 +315,13 @@
 	The idea is that if the initial call is from a free vertex, say $v$, and we cannot find another free vertex $u$ such that the edge $\{v, u\}$ exists, then we simply try to find a path $(v,x,y)$ such that $\{v,x\}$ is not in the matching, but $\{x, y\}$ is, so we can start trying again from the vertex $y$, until we find a free vertex and then recursively alternate the path. 
 	
 	\begin{llemma} \label{callaugmdfs}
-    	If we call \Cref{DfsAugmentingPath} from a free vertex $v$ and augmenting path with endpoint $v$ exists, then it will return $\True$ and alternate its edges.
+		An initial call to \Cref{DfsAugmentingPath} from a free vertex $v \in V_{1}$ (assuming that $\mathit{visited}[w] = \False$ for every $w \in V_{1}$ before the call) returns $\True$ if and only if there exists an augmenting path with endpoint $v$. In this case, it alternates the edges of such a path.
 	\end{llemma}
-
+	
 	\begin{proof}
 		Suppose that a free vertex $u \in V_{2}$ exists such that $\{v,u\} \in E(G)$. Then from line $7$ the algorithm successfully finds an augmenting path. Now suppose that such a vertex doesn't exist and $P=(v,v_{1},v_{2},...,u)$ any augmenting path with the vertex $v$ as its endpoint. Since $P$ is alternating, the edge $\{v, v_{1}\}$ does not belong to the matching, while $\{v_{1}, v_{2}\}$ does. Because the algorithm checks all neighbors of $v$ (line $6$), it will eventually examine $v_{1}$ (assuming that all the other neighbors, if they exist, return false), and line $7$ does a recursive call for $\mathit{matched[v_{1}]} = v_{2}$ (note that $v_{2}$ is impossible to be visited, otherwise an alternative path $(v,...,v_{2})$ exists and the algorithm would have already found another augmenting path from that recursive call to $u$ or to another free vertex). Repeating the same argument along $P$, the algorithm eventually reaches the free vertex $u \in V_{2}$, where line $7$ is true since $\mathit{matched[u]} = \emptyset$. The recursive calls then return $\True$ and update the array matched accordingly, thus alternating the edges of $P$.
+		
+		Conversely, if the algorithm returns $\True$, then this can only happen because it reaches a free vertex of $V_{2}$, either directly or through recursive calls. Tracing these successful recursive calls backwards gives an alternating path from $v$ to a free vertex of $V_{2}$, and the updates of $\mathit{matched}$ alternate the edges of this path.
 	\end{proof}
 
 	From this, we get the following remark.
@@ -340,10 +345,7 @@
 	\end{ttheorem}
 
 	\begin{proof}
-		Let $v_{1},v_{2},\dots,v_{k}$ be the vertices of $V_{1}$ in the order in which \Cref{max-bm1} processes them. For each $i \in \{0,1,\dots,k\}$, let $M_{i}$ be the matching after the first $i$ iterations of the algorithm, with $M_{0} = \emptyset$. Also, let $G_{i}$ be the subgraph of $G$ induced by the vertex set
-		\[
-		\{v_{1},v_{2},\dots,v_{i}\} \cup V_{2}.
-		\]
+		Let $v_{1},v_{2},\dots,v_{k}$ be the vertices of $V_{1}$ in the order in which \Cref{max-bm1} processes them. For each $i \in \{0,1,\dots,k\}$, let $M_{i}$ be the matching after the first $i$ iterations of the algorithm, with $M_{0} = \emptyset$. Also, let $G_{i}$ be the subgraph of $G$ induced by the vertex set $\{v_{1},v_{2},\dots,v_{i}\} \cup V_{2}$.
 		We will prove by induction on $i$ that $M_{i}$ is a maximum matching of $G_{i}$.
 	
 		For $i=0$, the graph $G_{0}$ has no vertices in $V_{1}$, so the empty matching $M_{0}$ is trivially maximum.
@@ -368,13 +370,14 @@
 		In both cases, $M_{i+1}$ is a maximum matching of $G_{i+1}$. This completes the induction.
 	\end{proof}
 
-	Before each search, we initialize the visited array which takes $O(n)$ time. We call $\Call{DfsAugmentingPath}{}$ for each vertex $v \in V_{1}$ searching for an augmenting path. To find an augmenting path, we will visit each vertex and each edge at most once (similar to the classic DFS), so the total complexity is $O(nm)$ when $m = \Omega(n)$.
+	Before each search, we initialize the $\mathit{visited}$ array which takes $O(n)$ time. We call $\Call{DfsAugmentingPath}{}$ for each vertex $v \in V_{1}$ searching for an augmenting path. To find an augmenting path, we will visit each vertex and each edge at most once (similar to the classic DFS), so the total complexity is $O(nm)$ when $m = \Omega(n)$.
 
-	\paragraph{Hopcroft-Karp Algorithm} Hopcroft and Karp \cite{hopcroft1973n} provided a faster algorithm, again based on finding augmenting paths, but in a smarter way. The algorithm runs in phases. In each phase, we find a maximal set of vertex-disjoint shortest $M$-augmenting paths and take the symmetric difference of the current matching $M$ with the union of these paths. The process stops when no augmenting path can be found. 
+	\newpage 
+	\subsection{Hopcroft-Karp Algorithm} Hopcroft and Karp provided a faster algorithm \cite{hopcroft1973n}, again based on finding augmenting paths, but in a smarter way. The algorithm runs in phases. In each phase, we find a maximal set of vertex-disjoint shortest $M$-augmenting paths and take the symmetric difference of the current matching $M$ with the union of these paths. The process stops when no augmenting path can be found. 
 
 	Our implementation is based on the version of Shimon Even and Alon Itai, who made significant modifications to Dinic's algorithm for the maximum flow problem \cite{dinitz1970,dinitz2006}. As we will see at the end of this section, maximum flow and maximum bipartite matching are closely connected problems.
 
-	The key idea of the algorithm is to efficiently find these paths and alternate their edges. To do that, we construct a new graph called the layered network. We describe this graph with an array called level, defined on the vertices of $V_{1}$. Initially, every free vertex of $V_{1}$ gets level $1$. Then, if a vertex $u \in V_{1}$ has level $i$, every vertex of $V_{1}$ that can be reached from $u$ by first taking an unmatched edge to a vertex of $V_{2}$ and then a matched edge back to  $V_{1}$ gets level $i+1$, provided it has not already received a level. The vertices are visited in Breadth-First Search (BFS) order, starting from all free vertices of $V_{1}$. In this way, $\mathit{level}[v]$ represents the minimum alternating distance of $v \in V_{1}$ from the set of free vertices of $V_{1}$ in the current phase. If all edges in the layered network are directed from a source vertex in $V_{1}$ to a destination vertex in $V_{2}$, it is clear that the resulting graph is a dag (directed acyclic graph).
+	The key idea of the algorithm is to efficiently find these paths and alternate their edges. To do that, we construct a new graph called the layered network. We describe this graph with an array called $\mathit{level}$, defined on the vertices of $V_{1}$. Initially, every free vertex of $V_{1}$ gets level $1$. Then, if a vertex $u \in V_{1}$ has level $i$, every vertex of $V_{1}$ that can be reached from $u$ by first taking an unmatched edge to a vertex of $V_{2}$ and then a matched edge back to  $V_{1}$ gets level $i+1$, provided it has not already received a level. The vertices are visited in Breadth-First Search (BFS) order, starting from all free vertices of $V_{1}$. In this way, $\mathit{level}[v]$ represents the minimum alternating distance of $v \in V_{1}$ from the set of free vertices of $V_{1}$ in the current phase. All edges in the layered network are directed with a source vertex in $V_{1}$ and a destination vertex in $V_{2}$, which means that the resulting graph is a dag (directed acyclic graph).
 
 	\begin{algorithm}[H]
 	\caption{BFS Layered Network Construction}
@@ -425,7 +428,7 @@
 	We define an array $\mathit{next}$ for every $v \in V_{1}$ such that $\mathit{next}[v] = u$ if and only if the edge $\{v,u\}$ belongs to the current matching; otherwise, $\mathit{next}[v] = \emptyset$. Similarly, for every $u \in V_{2}$, we define $\mathit{prev}[u] = v$ if and only if the edge $\{u,v\}$ belongs to the current matching; otherwise, $\mathit{prev}[u] = \emptyset$. Thus, the arrays $\mathit{next}$ and $\mathit{prev}$ represent the current matching and are updated whenever we find an augmenting path and alternate its edges.
 
 	\begin{ttheorem}
-		\Cref{layeredNetwork} correctly computes the array $\mathit{level}$ of the layered network of the current matching $M$. More precisely, if it returns $\False$, then no $M$-augmenting path exists in $G$. Otherwise, for every vertex $v \in V_{1}$, we have $\mathit{level}[v] \neq 0$ if and only if there exists an $M$-alternating path from a free vertex of $V_{1}$ to $v$. Moreover, if $\mathit{level}[v] \neq 0$, then the length of a shortest such path is $2 \cdot \mathit{level}[v] - 2$.
+		\Cref{layeredNetwork} correctly computes the array $\mathit{level}$ of the layered network () of the current matching $M$. More precisely, if it returns $\False$, then no $M$-augmenting path exists in $G$. Otherwise, for every vertex $v \in V_{1}$, we have $\mathit{level}[v] \neq 0$ if and only if there exists an $M$-alternating path from a free vertex of $V_{1}$ to $v$. Moreover, if $\mathit{level}[v] \neq 0$, then the length of a shortest such path is $2 \cdot \mathit{level}[v] - 2$.
 	\end{ttheorem}
 	\begin{proof}
 		For every free vertex $v \in V_{1}$, the algorithm sets $\mathit{level}[v] = 1$, and the corresponding alternating path has length $0$. Now suppose that a vertex $u \in V_{1}$ is popped from the queue and that the statement already holds for $u$. Let $x \in V_{2}$ be a neighbor of $u$.
@@ -474,8 +477,7 @@
 	\end{algorithmic}
 	\end{algorithm}
 
-	\Cref{mainHK} and lines $9$-$21$ run the phases of the algorithm. In each phase, we call \Cref{layeredNetwork} (line $9$) to construct the layered network, find all augmenting paths of this graph by calling \Cref{DfsHK} for each free vertex of $V_{1}$ (lines $13$-$17$), and repeat the whole process. Note that we have to initialize the $\mathit{ptr}$ array to $0$ before starting the search, because all vertices will check their first neighbor first. We also have to initialize the $\mathit{level}$ array to zero before building the layered network. The set $\mathit{matching}$ contains the edges of the maximum matching.
-	
+	\Cref{mainHK} and lines $9$-$21$ run the phases of the algorithm. In each phase, we call \Cref{layeredNetwork} (line $9$) to construct the layered network, find a maximal set of vertex-disjoint shortest augmenting paths in this graph by calling \Cref{DfsHK} for each free vertex of $V_{1}$ (lines $13$-$17$), and repeat the whole process. Note that we have to initialize the $\mathit{ptr}$ array to $0$ before starting the search, because all vertices will check their first neighbor first. We also have to initialize the $\mathit{level}$ array to zero before building the layered network. The set $\mathit{matching}$ contains the edges of the maximum matching.
 
 	\begin{algorithm}[H]
 	\caption{Hopcroft--Karp Algorithm}
@@ -527,7 +529,7 @@
 			$M \bigtriangleup M^{'}$ contains at least $|M^{'}|-|M|$ vertex-disjoint $M$-augmenting paths.
 	\end{llemma}
 	\begin{proof}
-		We follow the same logic as in \Cref{BergeTheorem}. We consider the graph $M^{*} = M \bigtriangleup M^{'}$. We can see that the graph contains components, each of which is an alternating path or an even-length cycle. Cycles have the same number of edges from $M$ and $M^{'}$, and the same holds for alternating paths of even length. Each component that represents an augmenting path has one more edge from one matching than from the other. In fact, every $M$-augmenting path has one more edge from $M^{'}$ than $M$. From $|M^{'}| > |M|$, we can see that we have more $M$-augmenting paths than $M^{'}$-augmenting paths, and there must be at least $|M^{'}| - |M|$ such paths. This completes the proof.
+		We follow the same logic as in \Cref{BergeTheorem}. We consider the graph $G = (V, M^{*})$ with $M^{*} = M \bigtriangleup M^{'}$. We can see that the graph contains components, each of which is an alternating path or an even-length cycle. Cycles have the same number of edges from $M$ and $M^{'}$, and the same holds for alternating paths of even length. Each component that represents an augmenting path has one more edge from one matching than from the other. In fact, every $M$-augmenting path has one more edge from $M^{'}$ than $M$. From $|M^{'}| > |M|$, we can see that we have more $M$-augmenting paths than $M^{'}$-augmenting paths, and there must be at least $|M^{'}| - |M|$ such paths. This completes the proof.
 	\end{proof}
 
 	The following is a special case of \Cref{generalAPlemma}.
@@ -537,7 +539,7 @@
 	\end{llemma}
 
 	\begin{llemma} \label{setRfromHKAlg}
-		Let $P = \{P_{1}, P_{2}, \cdots, P_{t}\}$ be a maximal set of vertex-disjoint shortest $M$-augmenting paths with length $x$ obtained during a single phase of \Cref{mainHK} and $M^{'} = M \bigtriangleup (P_{1} \cup P_{2} \cup \cdots \cup P_{t}) = M \bigtriangleup P_{1} \bigtriangleup P_{2} \bigtriangleup \cdots \bigtriangleup P_{t}$ with $Q$ be an $M^{'}$-augmenting path. The set $R = (P_{1} \cup P_{2} \cup \cdots \cup P_{t}) \bigtriangleup Q$ has at least $x(t + 1)$ edges.
+		Let $P = \{P_{1}, P_{2}, \cdots, P_{t}\}$ be a maximal set of vertex-disjoint shortest $M$-augmenting paths with length $x$ obtained during a single phase of \Cref{mainHK} and $M^{'} = M \bigtriangleup (P_{1} \cup P_{2} \cup \cdots \cup P_{t}) = M \bigtriangleup P_{1} \bigtriangleup P_{2} \bigtriangleup \cdots \bigtriangleup P_{t}$ and let $Q$ be an $M^{'}$-augmenting path. The set $R = (P_{1} \cup P_{2} \cup \cdots \cup P_{t}) \bigtriangleup Q$ has at least $x(t + 1)$ edges.
 	\end{llemma}
 	\begin{proof}
 		From $M^{'} = M \bigtriangleup (P_{1} \cup P_{2} \cup \cdots \cup P_{t})$, we have
@@ -548,14 +550,14 @@
 		\[
 			R= (M \bigtriangleup M^{'}) \bigtriangleup Q = M \bigtriangleup (M^{'} \bigtriangleup Q)
 		\]
-		As $Q$ is an $M^{'}$-augmented path, $M^{'} \bigtriangleup Q$ has size of $|M^{'}| + 1 = |M| + t + 1$ (plus $t + 1$ because it will get $t + 1$ more edges from alternating the paths of $P$ and the path $Q$). By \Cref{generalAPlemma}, there is at least $|M^{'} \bigtriangleup Q| - |M| = t + 1$ $M$-augmenting paths. Because every $M$-augmenting path has length at least $x$, it follows that $R$ has at least $x(t + 1)$ edges.
+		Since $Q$ is an $M^{'}$-augmenting path, $M^{'} \bigtriangleup Q$ (which is obviously a valid matching) has size of $|M^{'}| + 1 = |M| + t + 1$ (plus $t + 1$ because it will get $t + 1$ more edges from alternating the paths of $P$ and the path $Q$). By \Cref{generalAPlemma}, there is at least $|M^{'} \bigtriangleup Q| - |M| = t + 1$ $M$-augmenting paths. Because every $M$-augmenting path has length at least $x$, it follows that $R$ has at least $x(t + 1)$ edges.
 	\end{proof}
 
 	\begin{llemma} \label{lengthAugmInHK}
-		The length of the shortest augmenting path increases in every phase.
+		The length of the shortest augmenting path (if exists) increases in every phase.
 	\end{llemma}
 	\begin{proof}
-		Let’s assume that the current matching is $M$ and denote by $P = \{P_{1}, P_{2}, \cdots, P_{t}\}$ the maximal set of vertex-disjoint shortest $M$-augmenting paths  of length $x$ in one phase of \Cref{mainHK}. Moreover, suppose that we take $M^{'} = M \bigtriangleup (P_{1} \cup P_{2} \cup \cdots \cup P_{t})$ (the matching that we get at the end of phase) and let $Q$ be an $M^{'}$-augmenting path. Obviously, $Q$ has a common vertex $v$ with at least one path from $P$, otherwise, it would mean that $Q$ is also in $M$ and either $|Q| > x$ (in this case we are done) or it would contradict the maximality of the set. Let $R = (P_{1} \cup P_{2} \cup \cdots \cup P_{t}) \bigtriangleup Q$. From \Cref{setRfromHKAlg}, $R$ has at least $x(t+1)$ edges. Let $P_{i} \in P$ such that $v \in P_{i}$. We observe that $v$ is incident with a matched edge in $M^{'}$ because at the end of the phase we alternate the edges of each path in $P$. The endpoints of $Q$ do not belong to $M^{'}$ because they are free, so it is guaranteed that $v$ is an internal vertex of $Q$ and therefore it is also incident with a matched edge in $M^{'}$. Obviously, it's impossible for $v$ to be incident with two different matched edges from $M^{'}$, so $P_{i}$ and $Q$ have at least one edge from $M^{'}$ in common. It follows that
+		Let’s assume that the current matching is $M$ and denote by $P = \{P_{1}, P_{2}, \cdots, P_{t}\}$ the maximal set of vertex-disjoint shortest $M$-augmenting paths  of length $x$ in one phase of \Cref{mainHK}. Moreover, suppose that we take $M^{'} = M \bigtriangleup (P_{1} \cup P_{2} \cup \cdots \cup P_{t})$ (the matching that we get at the end of phase) and let $Q$ be an $M^{'}$-augmenting path. Obviously, $Q$ has a common vertex $v$ with at least one path from $P$, otherwise, $Q$ would also be an $M$-augmenting path and either $|Q| > x$ (in this case we are done) or it would contradict the maximality of the set. Let $R = (P_{1} \cup P_{2} \cup \cdots \cup P_{t}) \bigtriangleup Q$. From \Cref{setRfromHKAlg}, $R$ has at least $x(t+1)$ edges. Let $P_{i} \in P$ such that $v \in P_{i}$. We observe that $v$ is incident with a matched edge in $M^{'}$ because at the end of the phase we alternate the edges of each path in $P$. The endpoints of $Q$ do not belong to $M^{'}$ because they are free, so it is guaranteed that $v$ is an internal vertex of $Q$ and therefore it is also incident with a matched edge in $M^{'}$. Obviously, it's impossible for $v$ to be incident with two different matched edges from $M^{'}$, so $P_{i}$ and $Q$ have at least one edge from $M^{'}$ in common. It follows that
 		\[
 			xt + x \leq |R| \leq |P_{1} \cup P_{2} \cup \cdots \cup P_{t} \cup Q| \leq xt + |Q| - 1
 		\]
@@ -566,7 +568,7 @@
 		\Cref{mainHK} performs at most $O(\sqrt{n})$ phases.
 	\end{llemma}
 	\begin{proof}
-		Assume that we have already performed $\sqrt{n}$ phases and the current matching is $M$. From \Cref{specialCaseAPLemma}, we know that there exist exactly $|M^{*}| - |M|$ vertex-disjoint $M$-augmenting paths for a maximum matching $M^{*}$.
+		Assume that we have already performed $\sqrt{n}$ phases and the current matching is $M$. From \Cref{specialCaseAPLemma}, we know that there exist at least $|M^{*}| - |M|$ vertex-disjoint $M$-augmenting paths for a maximum matching $M^{*}$.
 		From \Cref{lengthAugmInHK} all these augmenting paths will have length at least $\sqrt{n}$, so there cannot be more than $\sqrt{n}$ (we would need more than $n$ vertices) of them, which means that, $|M^{*}| - |M| \leq \sqrt{n}$. It follows from this that we can't perform more than $\sqrt{n}$ phases from that point. We conclude that the total phases can't be more than $2\sqrt{n} = O(\sqrt{n})$.
 	\end{proof}
 	
@@ -576,14 +578,11 @@
 		\Cref{mainHK} returns a maximum matching in $O((n+m)\sqrt{n})$ time.
 	\end{ttheorem}
 
-	\paragraph{Maximum Bipartite Matching from Max-Flows} 
-	We can reduce the bipartite maximum matching problem to the maximum flow problem by adding two extra nodes to the initial graph. The first vertex is called the source and will point to all vertices in $V_{1}$ with directed edges, and the second vertex is called the sink, with all vertices from $V_{2}$ pointing to it. Moreover, all the edges of the initial graph will turn into directed edges, pointing to $V_{2}$ from a vertex of $V_{1}$. Assuming capacities of one for each edge (so there exists an integral maximum flow, that is every edge will have flow of $0$ or $1$), the maximum flow from source to sink is equal to the maximum bipartite matching. Actually, it is easy to see this because all paths that carry flow from source to sink should be edge-disjoint, and each path will have exactly one edge from $V_{1}$ to $V_{2}$, so no other path can use this edge again. We can get a maximum flow in the resulting graph from a maximum matching in the initial graph by just taking all the edges of matching and picking the edge from source to the $V_{1}$ vertex, and the edge from $V_{2}$ to the sink.
+	\paragraph{Maximum Bipartite Matching from Max-Flows.} We can reduce the bipartite maximum matching problem to the maximum flow problem by adding two extra nodes to the initial graph. The first vertex is called the source and will point to all vertices in $V_{1}$ with directed edges, and the second vertex is called the sink, with all vertices from $V_{2}$ pointing to it. Moreover, all the edges of the initial graph will turn into directed edges, pointing to $V_{2}$ from a vertex of $V_{1}$. Assuming capacities of one for each edge (so there exists an integral maximum flow, that is every edge will have flow of $0$ or $1$), the maximum flow from source to sink is equal to the maximum bipartite matching. Actually, this is easy to see, because all paths that carry flow from the source to the sink should be edge-disjoint and use exactly one edge from $V_{1}$ to $V_{2}$, while the flow passing through each vertex of these paths is exactly one (which means that no vertex is repeated). We can get a maximum flow in the resulting graph from a maximum matching in the initial graph by just taking all the edges of matching and picking the edges from the source to the corresponding $V_{1}$ vertices, and the edges from the corresponding $V_{2}$ vertices to the sink.
 	
-	Consequently, someone could make the above reduction and use a famous flow algorithm, like Dinic \cite{dinitz1970} to solve the maximum bipartite problem with $O(n^{2}m)$. It turns out, that using some kind of the arguments we talked before, that Dinic's algorithm will perform with the same complexity as Hopcroft-Karp algorithm.
+	Consequently, someone could make the above reduction and use a famous flow algorithm, like Dinic \cite{dinitz1970} to solve the maximum bipartite problem with $O(n^{2}m)$. It turns out, that using some kind of the arguments we talked before, Dinic's algorithm will perform with the same complexity as Hopcroft-Karp algorithm.
 
-	\paragraph{Recent Research}
-	
-	Maximum flow is well-known problems in computer science and has been studied extensively over the years. Finding faster algorithms for the maximum flow problem, and and especially for the minimum-cost flow problem (to which maximum flow can be reduced), could lead to breakthroughs in many areas. For a long time, algorithms based primarily on combinatorial methods were far from the almost-linear-time bounds achieved by more recent continuous techniques. In 2023, a deterministic $m^{1+o(1)}$-time algorithm for exact maximum flow and minimum-cost flow was discovered \cite{brand2023deterministic}. This line of work also implies an $m^{1+o(1)}$-time algorithm for the maximum bipartite matching problem. On the other hand, randomized combinatorial algorithms were later obtained independently for exact maximum flow \cite{maxFlowBernstein} and for maximum bipartite matching \cite{MBMChuzhoy}.
+	\paragraph{Recent Research.} Maximum flow is well-known problem in computer science and has been studied extensively over the years. Finding faster algorithms for the maximum flow problem, and  especially for the minimum-cost flow problem (to which maximum flow can be reduced), could lead to breakthroughs in many areas. For a long time, algorithms based primarily on combinatorial methods were far from the almost-linear-time bounds achieved by more recent continuous techniques. In 2023, a deterministic $m^{1+o(1)}$-time algorithm for exact maximum flow and minimum-cost flow on directed graphs with polynomially bounded integral demands, costs, and capacities was discovered \cite{brand2023deterministic}. This line of work also implies an $m^{1+o(1)}$-time algorithm for the maximum bipartite matching problem. On the other hand, randomized combinatorial algorithms were later obtained independently for exact maximum flow \cite{maxFlowBernstein} and for maximum bipartite matching \cite{MBMChuzhoy}.
 	
 
 \clearpage 
@@ -591,58 +590,57 @@
 	
 \section{The Stable Marriage Problem}\label{sec:stable-marriage}
 
-	Assume that we are given a set of $n$ men $\{m_{1}, m_{2}, \dots, m_{n}\}$ and $n$ women $\{w_{1}, w_{2}, \dots, w_{n}\}$, where each man has a strict preference ranking over all $n$ women, and each woman also has a strict preference ranking over all $n$ men. We say that a $\mathit{matching}$ is a set of unordered pairs consisting of a man and a woman (similarly to the previous section, where we considered the undirected edges of a bipartite graph) and each of them appears at most once. A $\mathit{marriage}$ is a perfect matching between men and women, meaning that every man and every woman is matched exactly once. A marriage is $\mathit{unstable}$ if there exists a pair $\{m_{i}, w_{j}\}$ that does not belong to the matching such that $m_{i}$ prefers $w_{j}$ over his actual partner, and $w_{j}$ prefers $m_{i}$ over her actual partner. We call such a pair a $\mathit{blocking}$ $\mathit{pair}$. Otherwise, we say that it is $\mathit{stable}$.
+	Assume that we are given a set of $n$ men $\{m_{1}, m_{2}, \dots, m_{n}\}$ and $n$ women $\{w_{1}, w_{2}, \dots, w_{n}\}$, where each man has a strict preference ranking over all $n$ women, and each woman also has a strict preference ranking over all $n$ men. We say that a $\mathit{matching}$ is a set of unordered pairs consisting of a man and a woman (similarly to the previous section, where we considered the undirected edges of a bipartite graph), where each man and each woman appears in at most one pair. A $\mathit{marriage}$ is a perfect matching between men and women, meaning that every man and every woman is matched exactly once. A marriage is $\mathit{unstable}$ if there exists a pair $\{m_{i}, w_{j}\}$ that does not belong to the matching such that $m_{i}$ prefers $w_{j}$ over his actual partner, and $w_{j}$ prefers $m_{i}$ over her actual partner. We call such a pair a $\mathit{blocking}$ $\mathit{pair}$. Otherwise, we say that it is $\mathit{stable}$.
 
 	The following example shows a stable marriage.
 	\begin{eexample}
 		Consider an instance of four men
 		\[
-		\{m_1,m_2,m_3,m_4\}
+		\{m_{1},m_{2},m_{3},m_{4}\}
 		\]
 		and four women
 		\[
-		\{w_1,w_2,w_3,w_4\}.
+		\{w_{1},w_{2},w_{3},w_{4}\}.
 		\]
 		
 		The preference lists of the men are given by
 		\[
 		\begin{array}{c|cccc}
-		\text{man} & 1^{\text{st}} & 2^{\text{nd}} & 3^{\text{rd}} & 4^{\text{th}} \\ \hline
-		m_1 & w_1 & w_2 & w_3 & w_4 \\
-		m_2 & w_2 & w_1 & w_3 & w_4 \\
-		m_3 & w_3 & w_4 & w_1 & w_2 \\
-		m_4 & w_4 & w_3 & w_1 & w_2
+			\text{man} & 1^{\text{st}} & 2^{\text{nd}} & 3^{\text{rd}} & 4^{\text{th}} \\ \hline
+			m_{1} & w_{1} & w_{2} & w_{3} & w_{4} \\
+			m_{2} & w_{2} & w_{1} & w_{3} & w_{4} \\
+			m_{3} & w_{3} & w_{4} & w_{1} & w_{2} \\
+			m_{4} & w_{4} & w_{3} & w_{1} & w_{2}
 		\end{array}
 		\]
 		and the preference lists of the women are
 		\[
 		\begin{array}{c|cccc}
-		\text{woman} & 1^{\text{st}} & 2^{\text{nd}} & 3^{\text{rd}} & 4^{\text{th}} \\ \hline
-		w_1 & m_2 & m_1 & m_3 & m_4 \\
-		w_2 & m_1 & m_2 & m_3 & m_4 \\
-		w_3 & m_4 & m_3 & m_1 & m_2 \\
-		w_4 & m_3 & m_4 & m_1 & m_2
+			\text{woman} & 1^{\text{st}} & 2^{\text{nd}} & 3^{\text{rd}} & 4^{\text{th}} \\ \hline
+			w_{1} & m_{2} & m_{1} & m_{3} & m_{4} \\
+			w_{2} & m_{1} & m_{2} & m_{3} & m_{4} \\
+			w_{3} & m_{4} & m_{3} & m_{1} & m_{2} \\
+			w_{4} & m_{3} & m_{4} & m_{1} & m_{2}
 		\end{array}
 		\]
-		
 		Now consider the matching
 		\[
-		M=\{\{m_1,w_2\},\{m_2,w_1\},\{m_3,w_4\},\{m_4,w_3\}\}.
+		M=\{\{m_{1},w_{2}\},\{m_{2},w_{1}\},\{m_{3},w_{4}\},\{m_{4},w_{3}\}\}.
 		\]
 		
-		We can see that \(M\) is stable. Indeed, each woman is matched to her first choice:
+		We can see that $M$ is stable. Indeed, each woman is matched to her first choice:
 		\[
-		w_1 \text{ is matched with } m_2,\quad
-		w_2 \text{ is matched with } m_1,\quad
-		w_3 \text{ is matched with } m_4,\quad
-		w_4 \text{ is matched with } m_3.
+		w_{1} \text{ is matched with } m_{2},\quad
+		w_{2} \text{ is matched with } m_{1},\quad
+		w_{3} \text{ is matched with } m_{4},\quad
+		w_{4} \text{ is matched with } m_{3}.
 		\]
-		Hence, no woman prefers any other man to her assigned partner. Therefore, no blocking pair can exist, since a blocking pair would require both to prefer each other over their current partners. Consequently, \(M\) is a stable matching.
+		Hence, no woman prefers any other man to her assigned partner. Therefore, no blocking pair can exist, since a blocking pair would require both to prefer each other over their current partners. Consequently, $M$ is a stable matching.
 		Moreover, this stable matching is not unique, since
 		\[
-		M'=\{\{m_1,w_1\},\{m_2,w_2\},\{m_3,w_3\},\{m_4,w_4\}\}
+		M^{'}=\{\{m_{1},w_{1}\},\{m_{2},w_{2}\},\{m_{3},w_{3}\},\{m_{4},w_{4}\}\}
 		\]
-	is also stable.
+		is also stable.
 	\end{eexample}
 		
 	\clearpage
@@ -650,44 +648,44 @@
 	\begin{eexample}
 		Consider an instance of four men
 		\[
-		\{m_1,m_2,m_3,m_4\}
+		\{m_{1},m_{2},m_{3},m_{4}\}
 		\]
 		and four women
 		\[
-		\{w_1,w_2,w_3,w_4\}.
+		\{w_{1},w_{2},w_{3},w_{4}\}.
 		\]
 		
 		The preference lists of the men are given by
 		\[
 		\begin{array}{c|cccc}
-		\text{man} & 1^{\text{st}} & 2^{\text{nd}} & 3^{\text{rd}} & 4^{\text{th}} \\ \hline
-		m_1 & w_1 & w_2 & w_3 & w_4 \\
-		m_2 & w_2 & w_3 & w_1 & w_4 \\
-		m_3 & w_2 & w_1 & w_4 & w_3 \\
-		m_4 & w_3 & w_4 & w_1 & w_2
+			\text{man} & 1^{\text{st}} & 2^{\text{nd}} & 3^{\text{rd}} & 4^{\text{th}} \\ \hline
+			m_{1} & w_{1} & w_{2} & w_{3} & w_{4} \\
+			m_{2} & w_{2} & w_{3} & w_{1} & w_{4} \\
+			m_{3} & w_{2} & w_{1} & w_{4} & w_{3} \\
+			m_{4} & w_{3} & w_{4} & w_{1} & w_{2}
 		\end{array}
 		\]
 		and the preference lists of the women are
 		\[
 		\begin{array}{c|cccc}
-		\text{woman} & 1^{\text{st}} & 2^{\text{nd}} & 3^{\text{rd}} & 4^{\text{th}} \\ \hline
-		w_1 & m_3 & m_1 & m_2 & m_4 \\
-		w_2 & m_1 & m_2 & m_3 & m_4 \\
-		w_3 & m_2 & m_4 & m_1 & m_3 \\
-		w_4 & m_4 & m_3 & m_1 & m_2
+			\text{woman} & 1^{\text{st}} & 2^{\text{nd}} & 3^{\text{rd}} & 4^{\text{th}} \\ \hline
+			w_{1} & m_{3} & m_{1} & m_{2} & m_{4} \\
+			w_{2} & m_{1} & m_{2} & m_{3} & m_{4} \\
+			w_{3} & m_{2} & m_{4} & m_{1} & m_{3} \\
+			w_{4} & m_{4} & m_{3} & m_{1} & m_{2}
 		\end{array}
 		\]
 		
 		Now consider the matching
 		\[
-		M=\{\{m_1,w_1\},\{m_2,w_2\},\{m_3,w_4\},\{m_4,w_3\}\}.
+		M=\{\{m_{1},w_{1}\},\{m_{2},w_{2}\},\{m_{3},w_{4}\},\{m_{4},w_{3}\}\}.
 		\]
 		
-		We claim that \(M\) is not stable. Indeed, the pair $\{m_{3}, w_{1}\}$ is a blocking pair, since
-		$ m_3 \text{ prefers } w_1 \text{ to } w_4, $
+		We claim that $M$ is not stable. Indeed, the pair $\{m_{3}, w_{1}\}$ is a blocking pair, since
+		$ m_{3} \text{ prefers } w_{1} \text{ to } w_{4}, $
 		while
-		$ w_1 \text{ prefers } m_3 \text{ to } m_1.$
-		Thus, both \(m_3\) and \(w_1\) prefer each other to their assigned partners under \(M\). Hence, \(M\) admits a blocking pair and therefore it is not a stable matching.
+		$ w_{1} \text{ prefers } m_{3} \text{ to } m_{1}.$
+		Thus, both $m_{3}$ and $w_{1}$ prefer each other to their assigned partners under $M$. Hence, $M$ admits a blocking pair and therefore it is not a stable matching.
 	\end{eexample}
 
 	Gale and Shapley \cite{Gale01011962} provided an algorithm that always outputs a stable marriage. The algorithm is quite simple. In each iteration of the algorithm, we try to match a man who is not matched to any woman by proposing to the woman he currently prefers most, and the woman accepts the best proposal she receives. If a man is matched with a woman and she later receives a better proposal, then she will leave her current partner and accept that proposal. The man will become unmatched again, and we will try to match him again in a later iteration, starting from the next woman in his preference list.
@@ -734,9 +732,9 @@
 	\end{algorithmic}
 	\end{algorithm}
 
-	The input of the algorithm is the size $n$ and the preference lists $\mathit{women}$ and $\mathit{men}$. $\mathit{women}[i]$ is the preference list of woman $i$ and $\mathit{men}[j]$ is the preference list of man $j$. Arrays $\mathit{womanPartner}$ and $\mathit{manPartner}$ represent the current matching. We will use two extra arrays that will help us see if a proposal can be made and whether it benefits us. Array $\mathit{ptr}$ will store, for a man $i$, the most highly preferred woman that he has not proposed to yet. With this array, we will be able to know the answer immediately. Array $\mathit{rank}$ will help us determine, for a woman, whether she prefers the current matched man or the proposing one in $O(1)$. Specifically, for a woman $i$, we store at $\mathit{rank}[i][j]$ the position of the man $j$ in her preference list. This (lines $9$-$13$), requires $O(n^{2})$ preprocessing. In lines $14-31$ we perform the proposals. 
+	The input of the algorithm is the size $n$ and the preference lists $\mathit{women}$ and $\mathit{men}$. $\mathit{women}[i]$ is the preference list of woman $i$ and $\mathit{men}[j]$ is the preference list of man $j$. Arrays $\mathit{womanPartner}$ and $\mathit{manPartner}$ represent the current matching. We will use two extra arrays that will help us see if a proposal can be made and whether it benefits us. Array $\mathit{ptr}$ will store, for a man $i$, the most highly preferred woman that he has not proposed to yet. Using this array, we will be able to know the answer immediately. Array $\mathit{rank}$ will help us determine, for a woman, whether she prefers the current matched man or the proposing one in $O(1)$. Specifically, for a woman $i$, we store at $\mathit{rank}[i][j]$ the position of the man $j$ in her preference list. This (lines $9$-$13$), requires $O(n^{2})$ preprocessing. In lines $14-31$ we perform the proposals. 
 	
-	See that if a woman receives a proposal, then she will either accept it or stay with her current matching. This leads to the following lemma.
+	See that if a woman receives a proposal, then she will either accept it or stay with her current partner. This leads to the following lemma.
 	\begin{llemma} \label{GaleWomanMatching}
 		After a woman receives a match, she never becomes unmatched again.
 	\end{llemma}
@@ -750,7 +748,7 @@
 		Assume that a man gets popped in line $15$, which means that he is unmatched, but has already proposed to all women. Then every woman has rejected him for some other man and, by \Cref{GaleWomanMatching}, all women are matched. This is a contradiction, because this would mean that a man appears in more than one match, so necessarily an unmatched woman exists. Consequently, every time we pop a man from the queue, there will always exist a woman who is unmatched. Since each man proposes to each woman at most once, there exist at most $n^{2}$ proposals, so the algorithm halts. Finally, when the algorithm halts, no man is unmatched, hence the output is a marriage.
 	\end{proof}
 
-	Now are going to prove the output of the algorithm is stable.
+	Now we are going to prove the output of the algorithm is stable.
 
 	\begin{llemma}
 	\Cref{stableMarriageAlgorithm} produces a stable marriage.
@@ -763,10 +761,10 @@
 		In the second case, the man $m_{i}$ never proposed to $w_{j}$, which means that he matched with a woman who is higher on his preference list. Also a contradiction.
 	\end{proof}
 
-	As we perform at most $O(n^{2})$ proposals and we can decide whether to accept a proposal or not in $O(1)$ (using $O(n^{2})$ preprocessing), the total complexity is $O(n^{2})$.
+	As we perform $O(n^{2})$ proposals and we can decide whether to accept a proposal or not in $O(1)$ time (using $O(n^{2})$ preprocessing), the total time complexity is $O(n^{2})$.
 
 	\begin{ttheorem}
-		\Cref{stableMarriageAlgorithm} computes a stable marriage in $O(n^{2})$.
+		\Cref{stableMarriageAlgorithm} computes a stable marriage in $O(n^{2})$ time.
 	\end{ttheorem}
 
 	\begin{ddef}
@@ -789,7 +787,7 @@
 		Similar to the previous proof, assume to the contrary that woman $w_{j}$ is matched with man $m_{i}$ in the marriage output $M$ of \Cref{stableMarriageAlgorithm} and that there exists another stable marriage $M^{'}$ such that $w_{j}$ is matched with a man $m_{z}$ whom she prefers less than $m_{i}$ and $m_{i}$ is matched with a woman $w_{k}$. Because $M$ is man-optimal by \Cref{stableMarriage-man-optimal}, $m_{i}$ prefers $w_{j}$ to $w_{k}$. The pair $\{m_{i}, w_{j}\}$ is a blocking pair for $M^{'}$. This is a contradiction, since $M^{'}$ is stable.
 	\end{proof}
 
-	\paragraph{Further Variants of the Model} The Gale and Shapley algorithm focuses on a one-to-one matching model, which means that each element from one set can be matched to exactly one element from the other set. Also, the sizes of the sets and the preference lists are the same. These assumptions are actually rare. In real-life scenarios, we may have many-to-one or even many-to-many assignments, incomplete lists, and preferences with ties. Additionally, stability is just one of many criteria used to evaluate the quality of a matching. In a later chapter, we will study some of these extended scenarios.
+	\paragraph{Further Variants of the Model.} The Gale and Shapley algorithm focuses on a one-to-one matching model, which means that each element from one set can be matched to exactly one element from the other set. Also, the sizes of the sets and the preference lists are the same. These assumptions are actually rare. In real-life scenarios, we may have many-to-one or even many-to-many assignments, incomplete lists, and preferences with ties. Additionally, stability is just one of many criteria used to evaluate the quality of a matching. In a later chapter, we will study some of these extended scenarios.
 
 
 \chapter{Polyhedral Approaches to Matching Problems}
@@ -2224,9 +2222,8 @@
 	
 	Together, the prefix-cover inequalities and the safe-holder inequalities capture two different implications of Pareto optimality. The prefix-cover inequalities come from maximality and trade-in freeness, while the safe-holder inequalities combine trade-in freeness with coalition freeness. Both families are valid for the Pareto-optimal matching polytope and can be added to the linear relaxation as candidate cutting inequalities.
 
-	
 
-\chapter{Conclusion and Future Work}
+\chapter{Conclusions and Future Work}
 
 \appendix
 
