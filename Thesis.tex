@@ -377,7 +377,7 @@
 
 	Our implementation is based on the version of Shimon Even and Alon Itai, who made significant modifications to Dinic's algorithm for the maximum flow problem \cite{dinitz1970,dinitz2006}. As we will see at the end of this section, maximum flow and maximum bipartite matching are closely connected problems.
 
-	The key idea of the algorithm is to efficiently find these paths and alternate their edges. To do that, we construct a new graph called the layered network. We describe this graph with an array called $\mathit{level}$, defined on the vertices of $V_{1}$. Initially, every free vertex of $V_{1}$ gets level $1$. Then, if a vertex $u \in V_{1}$ has level $i$, every vertex of $V_{1}$ that can be reached from $u$ by first taking an unmatched edge to a vertex of $V_{2}$ and then a matched edge back to  $V_{1}$ gets level $i+1$, provided it has not already received a level. The vertices are visited in Breadth-First Search (BFS) order, starting from all free vertices of $V_{1}$. In this way, $\mathit{level}[v]$ represents the minimum alternating distance of $v \in V_{1}$ from the set of free vertices of $V_{1}$ in the current phase. All edges in the layered network are directed with a source vertex in $V_{1}$ and a destination vertex in $V_{2}$, which means that the resulting graph is a dag (directed acyclic graph).
+	The key idea of the algorithm is to efficiently find these paths and alternate their edges. To do that, we construct a new graph called the layered network. We describe this graph with an array called $\mathit{level}$, defined on the vertices of $V_{1}$. Initially, every free vertex of $V_{1}$ gets level $1$. Then, if a vertex $u \in V_{1}$ has level $i$, every vertex of $V_{1}$ that can be reached from $u$ by first taking an unmatched edge to a vertex of $V_{2}$ and then a matched edge back to  $V_{1}$ gets level $i+1$, provided it has not already received a level. The vertices are visited in Breadth-First Search (BFS) order, starting from all free vertices of $V_{1}$. In this way, $\mathit{level}[v]$ represents the minimum alternating distance of $v \in V_{1}$ from the set of free vertices of $V_{1}$ in the current phase. The edges in the layered network are directed according to the BFS levels, so the resulting graph is a directed acyclic graph (DAG).
 
 	\begin{algorithm}[H]
 	\caption{BFS Layered Network Construction}
@@ -428,7 +428,7 @@
 	We define an array $\mathit{next}$ for every $v \in V_{1}$ such that $\mathit{next}[v] = u$ if and only if the edge $\{v,u\}$ belongs to the current matching; otherwise, $\mathit{next}[v] = \emptyset$. Similarly, for every $u \in V_{2}$, we define $\mathit{prev}[u] = v$ if and only if the edge $\{u,v\}$ belongs to the current matching; otherwise, $\mathit{prev}[u] = \emptyset$. Thus, the arrays $\mathit{next}$ and $\mathit{prev}$ represent the current matching and are updated whenever we find an augmenting path and alternate its edges.
 
 	\begin{ttheorem}
-		\Cref{layeredNetwork} correctly computes the array $\mathit{level}$ of the layered network () of the current matching $M$. More precisely, if it returns $\False$, then no $M$-augmenting path exists in $G$. Otherwise, for every vertex $v \in V_{1}$, we have $\mathit{level}[v] \neq 0$ if and only if there exists an $M$-alternating path from a free vertex of $V_{1}$ to $v$. Moreover, if $\mathit{level}[v] \neq 0$, then the length of a shortest such path is $2 \cdot \mathit{level}[v] - 2$.
+		\Cref{layeredNetwork} correctly computes the array $\mathit{level}$ of the layered network of the current matching $M$. More precisely, if it returns $\False$, then no $M$-augmenting path exists in $G$. Otherwise, for every vertex $v \in V_{1}$, we have $\mathit{level}[v] \neq 0$ if and only if there exists an $M$-alternating path from a free vertex of $V_{1}$ to $v$. Moreover, if $\mathit{level}[v] \neq 0$, then the length of a shortest such path is $2 \cdot \mathit{level}[v] - 2$.
 	\end{ttheorem}
 	\begin{proof}
 		For every free vertex $v \in V_{1}$, the algorithm sets $\mathit{level}[v] = 1$, and the corresponding alternating path has length $0$. Now suppose that a vertex $u \in V_{1}$ is popped from the queue and that the statement already holds for $u$. Let $x \in V_{2}$ be a neighbor of $u$.
@@ -446,7 +446,7 @@
 		If \Cref{layeredNetwork} returns $\True$, then the length of a shortest $M$-augmenting path is $2 \cdot \mathit{treeDepth} - 1$.
 	\end{ccor}
 
-	The searching step, \Cref{DfsHK}, is almost the same as \Cref{DfsAugmentingPath}, so we will omit the proof. This time, we move across the layered network based on the $\mathit{level}$ array. We also use an array $\mathit{ptr}$ for all vertices in $V_{1}$. This array, holds for each vertex a counter that indicates the first neighbor that has not been checked yet. Hence, if we return to the same vertex in the same phase, we do not examine again the neighbors that have already returned $\False$. In particular, if $\mathit{ptr}[u]$ reaches the end of the adjacency list of $u$, then no augmenting path can be found through $u$ in the current phase. 
+	The searching step, \Cref{DfsHK}, is almost the same as \Cref{DfsAugmentingPath}, so we will omit the proof. This time, we move across the layered network based on the $\mathit{level}$ array. We also use an array $\mathit{ptr}$ for all vertices in $V_{1}$. This array holds for each vertex a counter that indicates the first neighbor that has not been checked yet. Hence, if we return to the same vertex in the same phase, we do not examine again the neighbors that have already returned $\False$. In particular, if $\mathit{ptr}[u]$ reaches the end of the adjacency list of $u$, then no augmenting path can be found through $u$ in the current phase. 
 
 	We could of course combine the two $\mathit{if}$ statements into one.
 
@@ -516,11 +516,94 @@
 	\EndFunction
 	\end{algorithmic}
 	\end{algorithm}
+	
+	The figure below illustrates a possible instance of a phase of the layered network.
+		
+	\begin{figure}[H]
+		\centering
+		\begin{tikzpicture}[
+			v1node/.style={circle, draw=blue!70, fill=blue!5, very thick, minimum size=10mm, font=\Large},
+			v2node/.style={circle, draw=red!70, fill=red!5, very thick, minimum size=10mm, font=\Large},
+			unmatched/.style={->, >=Stealth, thick, draw=black!80},
+			matched/.style={->, >=Stealth, ultra thick, draw=orange!90!red},
+			labelstyle/.style={font=\footnotesize\ttfamily, align=center, text=black!80}
+			]
+			
+			%LAYER 1: V1 Free
+			\node[v1node] (u1) at (0, 3.5) {$u_{1}$};
+			\node[labelstyle, left=0.3cm of u1] {$\mathit{level}[u_{1}]=1$\\$\mathit{next}[u_{1}]=\emptyset$};
+			
+			\node[v1node] (u4) at (0, -1.5) {$u_{4}$};
+			\node[labelstyle, left=0.3cm of u4] {$\mathit{level}[u_{4}]=1$\\$\mathit{next}[u_{4}]=\emptyset$};
+			
+			\node[v1node] (u6) at (0, -4.5) {$u_{6}$};
+			\node[labelstyle, left=0.3cm of u6] {$\mathit{level}[u_{6}]=1$\\$\mathit{next}[u_{6}]=\emptyset$};
+			
+			%LAYER 2: V2 Reached
+			\node[v2node] (v1) at (4, 5) {$v_{1}$};
+			\node[labelstyle, above=0.2cm of v1] {$\mathit{prev}[v_{1}]=u_{2}$};
+			
+			\node[v2node] (v2) at (4, 2) {$v_{2}$};
+			\node[labelstyle, above=0.2cm of v2] {$\mathit{prev}[v_{2}]=u_{3}$};
+			
+			\node[v2node] (v5) at (4, -1.5) {$v_{5}$};
+			\node[labelstyle, above=0.2cm of v5] {$\mathit{prev}[v_{5}]=u_{5}$};
+			
+			\node[v2node] (v6) at (4, -4.5) {$v_{6}$};
+			\node[labelstyle, above=0.2cm of v6] {$\mathit{prev}[v_{6}]=u_{7}$};
+			
+			%LAYER 3: V1 Matched
+			\node[v1node] (u2) at (8, 5) {$u_{2}$};
+			\node[labelstyle, above=0.2cm of u2] {$\mathit{level}[u_{2}]=2$\\$\mathit{next}[u_{2}]=v_{1}$};
+			
+			\node[v1node] (u3) at (8, 2) {$u_{3}$};
+			\node[labelstyle, above=0.2cm of u3] {$\mathit{level}[u_{3}]=2$\\$\mathit{next}[u_{3}]=v_{2}$};
+			
+			\node[v1node] (u5) at (8, -1.5) {$u_{5}$};
+			\node[labelstyle, above=0.2cm of u5] {$\mathit{level}[u_{5}]=2$\\$\mathit{next}[u_{5}]=v_{5}$};
+			
+			\node[v1node] (u7) at (8, -4.5) {$u_{7}$};
+			\node[labelstyle, above=0.2cm of u7] {$\mathit{level}[u_{7}]=2$\\$\mathit{next}[u_{7}]=v_{6}$};
+			
+			%LAYER 4: V2 Free
+			\node[v2node] (v3) at (12, 5) {$v_{3}$};
+			\node[labelstyle, right=0.3cm of v3] {$\mathit{prev}[v_{3}]=\emptyset$\\(\text{Free})};
+			
+			\node[v2node] (v4) at (12, 2) {$v_{4}$};
+			\node[labelstyle, right=0.3cm of v4] {$\mathit{prev}[v_{4}]=\emptyset$\\(\text{Free})};
+			
+			\node[v2node] (v7) at (12, -4.5) {$v_{7}$};
+			\node[labelstyle, right=0.3cm of v7] {$\mathit{prev}[v_{7}]=\emptyset$\\(\text{Free})};
+			
+			%EDGES
+			\draw[unmatched] (u1) -- (v1);
+			\draw[unmatched] (u1) -- (v2);
+			\draw[unmatched] (u4) -- (v5);
+			\draw[unmatched] (u6) -- (v6);
+			
+			\draw[matched] (v1) -- (u2);
+			\draw[matched] (v2) -- (u3);
+			\draw[matched] (v5) -- (u5);
+			\draw[matched] (v6) -- (u7);
+			
+			\draw[unmatched] (u2) -- (v3);
+			\draw[unmatched] (u3) -- (v4);
+			\draw[unmatched] (u7) -- (v7);
+			
+			\node[font=\footnotesize, text=green!50!black, align=center] at (11.2, 6.2) {Augmenting Path 1\\(Conflicts with Path 2)};
+			\node[font=\footnotesize, text=green!50!black, align=center] at (11.2, 3.2) {Augmenting Path 2\\(Conflicts with Path 1)};
+			\node[font=\footnotesize, text=red!70!black, align=center] at (10.4, -1.2) {Dead End\\(No free vertex)};
+			\node[font=\footnotesize, text=green!50!black, align=center] at (11.2, -3.4) {Augmenting Path 3\\(Independent)};
+			
+		\end{tikzpicture}
+		\caption{A phase of the Hopcroft-Karp algorithm. The BFS starts from free vertices $u_{1}, u_{4}, u_{6} \in V_{1}$. The layered network reveals three augmenting paths of length 3. However, the paths ending at $v_{3}$ and $v_{4}$ share the vertex $u_{1}$, so only one can be selected in the maximal vertex-disjoint set. The path $u_{6}-v_{6}-u_{7}-v_{7}$ is vertex-disjoint from the others and will be included alongside whichever path is chosen from $u_{1}$. The path starting at $u_{4}$ is a dead end.}
+		\label{fig:hk-layered-network}
+	\end{figure}
 
 	It is evident that constructing the layered network takes no more than $O(n + m)$. Moreover, lines $13$-$17$ take no more than $O(n + m)$ as each edge is examined at most once (with the help of $\mathit{ptr}$ array) and as a result when vertex returns $\False$, we are not going to process it again  in the current phase.
 
 	\begin{llemma} \label{phaseHKComplexity}
-		Each phase, that is calculating the maximal set of vertex-disjoint shortest $M$-augmenting paths and take the symmetric difference with current matching $M$ takes no more than $O(n + m)$ time.
+		Each phase, that is calculating the maximal set of vertex-disjoint shortest $M$-augmenting paths and taking the symmetric difference with current matching $M$ takes no more than $O(n + m)$ time.
 	\end{llemma}
 	
 	We shall show that we need at most $O(\sqrt{n})$ phases, but before that, we have to prove some important lemmas.
@@ -569,7 +652,7 @@
 	\end{llemma}
 	\begin{proof}
 		Assume that we have already performed $\sqrt{n}$ phases and the current matching is $M$. From \Cref{specialCaseAPLemma}, we know that there exist at least $|M^{*}| - |M|$ vertex-disjoint $M$-augmenting paths for a maximum matching $M^{*}$.
-		From \Cref{lengthAugmInHK} all these augmenting paths will have length at least $\sqrt{n}$, so there cannot be more than $\sqrt{n}$ (we would need more than $n$ vertices) of them, which means that, $|M^{*}| - |M| \leq \sqrt{n}$. It follows from this that we can't perform more than $\sqrt{n}$ phases from that point. We conclude that the total phases can't be more than $2\sqrt{n} = O(\sqrt{n})$.
+		From \Cref{lengthAugmInHK} all these augmenting paths will have length at least $\sqrt{n}$, so there cannot be more than $\sqrt{n}$ (we would need more than $n$ vertices) of them, which means that $|M^{*}| - |M| \leq \sqrt{n}$. It follows from this that we can't perform more than $\sqrt{n}$ phases from that point. We conclude that the total phases can't be more than $2\sqrt{n} = O(\sqrt{n})$.
 	\end{proof}
 	
 	From \Cref{phaseHKComplexity} and \Cref{HKTotalPhases} we get the complexity of Hopcroft-Karp algorithm.
@@ -583,6 +666,7 @@
 	Consequently, someone could make the above reduction and use a famous flow algorithm, like Dinic \cite{dinitz1970} to solve the maximum bipartite problem with $O(n^{2}m)$. It turns out, that using some kind of the arguments we talked before, Dinic's algorithm will perform with the same complexity as Hopcroft-Karp algorithm.
 
 	\paragraph{Recent Research.} Maximum flow is well-known problem in computer science and has been studied extensively over the years. Finding faster algorithms for the maximum flow problem, and  especially for the minimum-cost flow problem (to which maximum flow can be reduced), could lead to breakthroughs in many areas. For a long time, algorithms based primarily on combinatorial methods were far from the almost-linear-time bounds achieved by more recent continuous techniques. In 2023, a deterministic $m^{1+o(1)}$-time algorithm for exact maximum flow and minimum-cost flow on directed graphs with polynomially bounded integral demands, costs, and capacities was discovered \cite{brand2023deterministic}. This line of work also implies an $m^{1+o(1)}$-time algorithm for the maximum bipartite matching problem. On the other hand, randomized combinatorial algorithms were later obtained independently for exact maximum flow \cite{maxFlowBernstein} and for maximum bipartite matching \cite{MBMChuzhoy}.
+
 	
 
 \clearpage 
@@ -1654,30 +1738,31 @@
 	\clearpage
 	\newpage
 	
-	\begin{figure}[ht]
+	\begin{figure}[H]
 		\centering
 		\begin{tikzpicture}[
-			vertex/.style={draw, circle, minimum size=1.25cm},
-			edge/.style={->, thick},
-			edgelabel/.style={draw=none, fill=none, inner sep=1pt, font=\scriptsize},
-			>=Stealth
+			cnode/.style={circle, draw=black, thin, minimum size=1.6cm, font=\normalsize},
+			edge/.style={->, >=Stealth, thick}
 			]
-			\node[vertex] (v1) at (0,0) {$(a_1,h_1)$};
-			\node[vertex] (v2) at (3.8,0) {$(a_2,h_2)$};
-			\node[vertex] (v3) at (7.6,0) {$(a_3,h_3)$};
-			\node[vertex] (v4) at (11.4,0) {$(a_4,h_4)$};
 			
-			\draw[edge] (v1) -- node[edgelabel, midway, above=1pt] {$1-x^*_{a_2h_2}$} (v2);
-			\draw[edge] (v2) -- node[edgelabel, midway, above=1pt] {$1-x^*_{a_3h_3}$} (v3);
-			\draw[edge] (v3) -- node[edgelabel, midway, above=1pt] {$1-x^*_{a_4h_4}$} (v4);
+			% Nodes
+			\node[cnode] (n1) at (0, 0) {$(a_{1}, h_{1})$};
+			\node[cnode] (n2) at (3.8, 0) {$(a_{2}, h_{2})$};
+			\node[cnode] (n3) at (7.6, 0) {$(a_{3}, h_{3})$};
+			\node[cnode] (n4) at (11.4, 0) {$(a_{4}, h_{4})$};
 			
-			\draw[edge] (v4) to[bend left=35]
-			node[edgelabel, midway, below=4pt] {$1-x^*_{a_1h_1}$}
-			(v1);
+			% Forward Edges
+			\draw[edge] (n1) -- (n2) node[midway, above, font=\small] {$1 - x^{*}_{a_{2}h_{2}}$};
+			\draw[edge] (n2) -- (n3) node[midway, above, font=\small] {$1 - x^{*}_{a_{3}h_{3}}$};
+			\draw[edge] (n3) -- (n4) node[midway, above, font=\small] {$1 - x^{*}_{a_{4}h_{4}}$};
+			
+			% Return Edge (curved below)
+			\draw[edge] (n4) to[bend left=35] node[midway, below=0.15cm, font=\small] {$1 - x^{*}_{a_{1}h_{1}}$} (n1);
 		\end{tikzpicture}
 		\caption{A directed cycle in the auxiliary graph used for separation. Each vertex is an assignment pair $(a_i,h_i)$. The edge from $(a_i,h_i)$ to $(a_j,h_j)$ has weight $1-x^*_{a_jh_j}$.}
-		\label{fig:auxiliary-graph-separation}
+		\label{fig:directed-cycle}
 	\end{figure}
+	
 	\noindent The directed cycle in the figure corresponds to the preference relations
 	\[
 	h_2 \succ_{a_1} h_1,\qquad
