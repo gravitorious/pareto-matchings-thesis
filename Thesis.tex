@@ -808,11 +808,11 @@
 	
 	The dimension of an affine subspace $S$, denoted by $\operatorname{dim}(S)$, is defined to be $\operatorname{dim}(V)$. Using affine combinations, we can generate a line, a plane, or a \emph{hyperplane}, which is an affine subspace of dimension $n - 1$. Similarly to the definition of a convex hull, given a set $S \subseteq \mathbb{R}^{n}$, the \emph{affine hull} of $S$ ($\operatorname{aff}(S)$)  is the intersection of all affine subspaces containing $S$, or equivalently, the set of all possible affine combinations of a finite number of elements of $S$. 
 	
-	We are also interested in knowing which points contribute to  ``extending" the affine hull (i.e., increasing its dimension). For example, in $\mathbb{R}^{2}$, the points $(1, 0)$, $(0, 1)$, and $(1, 1)$ are affinely independent because the first two define a line, and by adding $(1, 1)$, we extend the affine hull to all of $\mathbb{R}^{2}$. We say that the points $v_{1}, \ldots, v_{k} \in \mathbb{R}^{n}$ are \emph{affinely independent} if them can be written as an affine combination of the remaining points. It can be proved that $v_{1}, \ldots, v_{k} \in \mathbb{R}^{n}$ are affinely independent if and only if the vectors $v_{2} - v_{1}, \ldots, v_{k} - v_{1}$ are linearly independent.
+	We are also interested in knowing which points contribute to  ``extending" the affine hull (i.e., increasing its dimension). For example, in $\mathbb{R}^{2}$, the points $(1, 0)$, $(0, 1)$, and $(1, 1)$ are affinely independent because the first two define a line, and by adding $(1, 1)$, we extend the affine hull to all of $\mathbb{R}^{2}$. We say that the points $v_{1}, \ldots, v_{k} \in \mathbb{R}^{n}$ are \emph{affinely independent} if none of them can be written as an affine combination of the remaining points. It can be proved that $v_{1}, \ldots, v_{k} \in \mathbb{R}^{n}$ are affinely independent if and only if the vectors $v_{2} - v_{1}, \ldots, v_{k} - v_{1}$ are linearly independent.
 	
 	A hyperplane in $\mathbb{R}^{n}$ describes all the solutions $x \in \mathbb{R}^{n}$ of a single linear equation of the form $a_{1}x_{1} + a_{2}x_{2} + \ldots + a_{n}x_{n} = b$ where at least one $a_{i}$ is not zero and $b \in \mathbb{R}$. We can also express it using two inequalities $a_{1}x_{1} + a_{2}x_{2} + \ldots + a_{n}x_{n} \leq b$ and $a_{1}x_{1} + a_{2}x_{2} + \ldots + a_{n}x_{n} \geq b$. These inequalities are called \emph{half-spaces} (and more specifically \emph{closed} half-spaces because they contain their boundary). 
 	
-	A \emph{polyhedron} $P \subseteq \mathbb{R}^{n}$ is the intersection of a finite number of halfspaces. This means that we could write $P = \{x \in \mathbb{R}^{n} : Ax \leq b\}$ where $A \in \mathbb{R}^{m \times n}$ and $b \in \mathbb{R}^{m}$. It is easy to see that polyhedra is convex because halfspaces are convex. We call $z$ an \emph{extreme point} (or \emph{vertex}) of $P$ if $z \in P$ and there do not exist distinct $x,y \in P$ and $\lambda \in (0,1)$ such that $z = (1 - \lambda)x + \lambda y$ (which means that $z$ is not an internal point of any segment from $x$ to $y$ such that $x,y \in P$). The \emph{dimension} of a polyhedron $P$, denoted by $\operatorname{dim}(P)$, is the minimum dimension of an affine subspace containing $P$.
+	A \emph{polyhedron} $P \subseteq \mathbb{R}^{n}$ is the intersection of a finite number of halfspaces. This means that we could write $P = \{x \in \mathbb{R}^{n} : Ax \leq b\}$ where $A \in \mathbb{R}^{m \times n}$ and $b \in \mathbb{R}^{m}$. It is easy to see that polyhedra are convex because halfspaces are convex. We call $z$ an \emph{extreme point} (or \emph{vertex}) of $P$ if $z \in P$ and there do not exist distinct $x,y \in P$ and $\lambda \in (0,1)$ such that $z = (1 - \lambda)x + \lambda y$ (which means that $z$ is not an internal point of any segment from $x$ to $y$ such that $x,y \in P$). The \emph{dimension} of a polyhedron $P$, denoted by $\operatorname{dim}(P)$, is the minimum dimension of an affine subspace containing $P$.
 	
 	Let $P = \{x \in \mathbb{R}^{n} : Ax \leq b\}$ and denote $a_i^T$ to be the $i$-th row of $A$. For a point $x^{*} \in P$, we say that the inequality $a_i^Tx \leq b_i$ is \emph{active} at $x^{*}$ if $a_i^Tx^{*} = b_i$. Let $A^{=}x \leq b^{=}$ be the subsystem of $Ax \leq b$ active at $x^{*}$. A point $x^{*} \in P$ is an extreme point of $P$ if and only if the active constraint vectors at $x^{*}$ contain $n$ linearly independent rows, i.e., $\operatorname{rank}(A^{=}) = n. $
 	In general, if a polyhedron is described by both equalities and inequalities,
@@ -837,7 +837,7 @@
 	A polyhedron $P \subseteq \mathbb{R}^{n}$ with at least one vertex is called \emph{integral} if all of its vertices are integral. In particular, a polytope is integral if and only if
 	$P = \operatorname{conv}(P \cap \mathbb{Z}^{n})$.
 	
-	Let $c : \{1, \ldots, n\} \rightarrow \mathbb{R}\ $. In linear programming (LP) we are interested to maximize a function $c^{T}x$ (which is often called an \emph{objective function}) over a polyhedron. This is a linear optimization problem, which we call it a \emph{primal problem}. The \emph{constraints} of that problem are the linear description of it. In this thesis, we will mostly use maximization problems with nonnegative variables. Unless stated otherwise, the variables of a linear program are assumed to be real-valued. Hence, the primal problem can be expressed as
+	Let $c \in \mathbb{R}^{n}$. In linear programming (LP) we are interested to maximize a function $c^{T}x$ (which is often called an \emph{objective function}) over a polyhedron. This is a linear optimization problem, which we call it a \emph{primal problem}. The \emph{constraints} of that problem are the linear description of it. In this thesis, we will mostly use maximization problems with nonnegative variables. Unless stated otherwise, the variables of a linear program are assumed to be real-valued. Hence, the primal problem can be expressed as
 	\begin{equation} \label{3.1}
 		\begin{aligned}
 			\max \ & c^T x \\
@@ -892,15 +892,15 @@
 		Let $A$ be a totally unimodular matrix and let $A^{'}$ be the matrix obtained from $A$ by appending a unit vector \(e_i\) as a new column. Then $A^{'}$ is totally unimodular.
 	\end{llemma}
 	\begin{proof}
-		Let \(B\) be an arbitrary square submatrix of \(A'\). If \(B\) does not contain the appended column \(e_i\), then \(B\) is a square submatrix of \(A\), and therefore \(\det(B)\in\{-1,0,1\}\).
+		Let $B$ be an arbitrary square submatrix of $A'$. If $B$ does not contain the appended column $e_i$, then $B$ is a square submatrix of $A$, and therefore $\det(B)\in\{-1,0,1\}$.
 		
-		Suppose now that \(B\) contains the appended column. The restriction of \(e_i\) to the rows of \(B\) is either the zero vector or a unit vector. In the first case, \(B\) has a zero column, so \(\det(B)=0\). In the second case, expanding along this column gives
+		Suppose now that $B$ contains the appended column. The restriction of $e_i$ to the rows of $B$ is either the zero vector or a unit vector. In the first case, $B$ has a zero column, so $\det(B)=0$. In the second case, expanding along this column gives
 		\[
 		\det(B)=\pm \det(C),
 		\]
-		where \(C\) is a square submatrix of \(A\). Since \(A\) is totally unimodular, \(\det(C)\in\{-1,0,1\}\), and hence \(\det(B)\in\{-1,0,1\}\).
+		where $C$ is a square submatrix of $A$. Since $A$ is totally unimodular, $\det(C)\in\{-1,0,1\}$, and hence $\det(B)\in\{-1,0,1\}$.
 		
-		Thus every square submatrix of \(A'\) has determinant in \(\{-1,0,1\}\), so \(A'\) is totally unimodular.
+		Thus every square submatrix of $A'$ has determinant in $\{-1,0,1\}$, so $A'$ is totally unimodular.
 	\end{proof}
 	
 	An \emph{LP relaxation} of an IP is obtained by removing the integrality constraints on the variables and allowing them to take arbitrary real values within the feasible region.
@@ -991,7 +991,7 @@
 	Consequently, we can deduce the following corollary.
 	
 	\begin{ccor} \label{IntPolyTU}
-		The feasible region of a linear program with totally unimodular constraint matrix and integral right-hand size forms an integral polyhedron.
+		The feasible region of a linear program with totally unimodular constraint matrix and integral right-hand side forms an integral polyhedron.
 	\end{ccor}
 	
 	To see why, suppose for contradiction, that $P$ has a non-integral vertex $v$. Since $v$ is a vertex, there exists a vector $c$ such that $v$ is the unique optimal solution of $\max\{c^Tx : x\in P\}$. Since the constraint matrix is totally unimodular and the right-hand side is integral, the above linear program admits an integral optimal solution $x^*$. However, the optimal solution is unique, and therefore $x^*=v$. This implies that $v$ is integral, which contradicts our assumption. Hence every vertex of $P$ is integral, and so $P$ is integral.
@@ -999,7 +999,7 @@
 
 \section{The Bipartite Matching Polytope}
 
-	We solved the maximum bipartite matching problem algorithmically  in \eqref{2.2}. In this section, we will solve the same problem using linear programming terminology. Let $G = (V_{1} \cup V_{2}, E)$ be a bipartite graph with $n$ vertices $v_{1}, \ldots, v_{n}$ and $m$ edges $e_{1}, \ldots, e_{m}$ and let $\delta(v)$ denote the set of edges incident to $v$. The IP describing the problem is the following:
+	We solved the maximum bipartite matching problem algorithmically  in \Cref{2.2}. In this section, we will solve the same problem using linear programming terminology. Let $G = (V_{1} \cup V_{2}, E)$ be a bipartite graph with $n$ vertices $v_{1}, \ldots, v_{n}$ and $m$ edges $e_{1}, \ldots, e_{m}$ and let $\delta(v)$ denote the set of edges incident to $v$. The IP describing the problem is the following:
 	
 	\begin{equation}
 		\label{matching-ip}
@@ -1045,7 +1045,7 @@
 	
 	In fact, $x$'s components can be $0$ or $1$ based on the constraint matrix, so we could simply write $x_{j} \in \{0, 1\}$. Consider now the LP relaxation of \eqref{mbm-compact}.
 	
-	\begin{equation} \label{mbm-compact}
+	\begin{equation} \label{mbm-compact-LP-Relaxation}
 		\begin{array}{r@{\quad}l}
 			\max & \displaystyle\sum_{j=1}^{m} x_j \\[2mm]
 			\text{s.t.} &
@@ -1056,7 +1056,7 @@
 		\end{array}
 	\end{equation}	
 	
-	Since the feasible region is non-empty and bounded, it is a polytope, guaranteeing that the LP relaxation has an optimal solution at a vertex. The polytope of \eqref{mbm-compact-LP-Relaxation} is integral. To prove it, it's sufficient (see \eqref{IntPolyTU}) to show that $A$ is totally unimodular, since the right-hand side vector $\mathbf{1}$ is integral.
+	Since the feasible region is non-empty and bounded, it is a polytope, guaranteeing that the LP relaxation has an optimal solution at a vertex. The polytope of \eqref{mbm-compact-LP-Relaxation} is integral. To prove it, it's sufficient (see \Cref{IntPolyTU}) to show that $A$ is totally unimodular, since the right-hand side vector $\mathbf{1}$ is integral.
 	
 	\begin{llemma}
 		Let $G=(V_{1}\cup V_{2},E)$ be a bipartite graph, and let $A$ be its vertex-edge incidence matrix. Then $A$ is totally unimodular.
@@ -1104,14 +1104,14 @@
 	
 	Since the polytope of the LP relaxation contains all feasible solutions of the IP, the LP relaxation can only have an optimal value at least as large as that of the IP. However, the polytope of the LP relaxation is integral and since it has an optimal solution at a vertex, this optimal solution is also integral. This optimal solution is feasible for the original IP as well, since each component of the solution is either $0$ or $1$. Consequently, the LP relaxation and the IP have the same optimal value, so we can solve the LP instead of the IP to obtain a maximum matching.
 	
-	Another famous problem in graph theory, is the \emph{minimum vertex cover}. A vertex cover of graph $G$ is a minimum set of nodes such that each edge of the graph has at least one endpoint in the set. This problem is NP-hard in a general graph. However, if the graph is bipartite, we can solve it in polynomial time. In fact, the following theorem holds.
+	Another famous problem in graph theory, is the \emph{minimum vertex cover}. A \emph{vertex cover} of a graph $G$ is a set of nodes such that each edge of the graph has at least one endpoint in the set. The minimum vertex cover problem asks for a vertex cover of minimum cardinality. This problem is NP-hard in a general graph. However, if the graph is bipartite, we can solve it in polynomial time. In fact, the following theorem holds.
 	
-	\begin{theorem}[K\"onig's Theorem]
+	\begin{ttheorem}[K\"onig's Theorem]
 		Let $G=(V_1\cup V_2,E)$ be a bipartite graph. Then the maximum cardinality of a matching in $G$ is equal to the minimum cardinality of a vertex cover in $G$.
-	\end{theorem}
+	\end{ttheorem}
 	
 	\begin{proof}
-		Let $A$ be the vertex-edge incidence matrix of $G$. Consider the LP relaxation \eqref{mbm-compact} of the maximum matching problem. We have shown that, since $A$ is totally unimodular and the right-hand side vector is integral, the optimal value of this relaxation is equal to the maximum cardinality of a matching in $G$.
+		Let $A$ be the vertex-edge incidence matrix of $G$. Consider the LP relaxation \eqref{mbm-compact-LP-Relaxation} of the maximum matching problem. We have shown that, since $A$ is totally unimodular and the right-hand side vector is integral, the optimal value of this relaxation is equal to the maximum cardinality of a matching in $G$.
 		
 		The dual of this LP relaxation is
 		\[
@@ -1143,7 +1143,7 @@
 	
 	In Section 2.3, we studied the stable marriage problem from an algorithmic point of view. In particular, the Gale--Shapley algorithm computes a stable marriage in polynomial time \cite{Gale01011962}. In this section, we study the same problem from a polyhedral point of view.
 	
-	We keep the same assumptions as before. There are \(n\) men and \(n\) women, all preference lists are complete and strict, and every feasible solution is a marriage. Let
+	We keep the same assumptions as before. There are $n$ men and $n$ women, all preference lists are complete and strict, and every feasible solution is a marriage. Let
 	\[
 	U=\{m_1,m_2,\dots,m_n\}
 	\]
@@ -1151,9 +1151,9 @@
 	\[
 	V=\{w_1,w_2,\dots,w_n\}
 	\]
-	be the set of women. For a man \(m\), we write \(w'\succ_m w\) if \(m\) prefers woman \(w'\) to woman \(w\). Similarly, for a woman \(w\), we write \(m'\succ_w m\) if \(w\) prefers man \(m'\) to man \(m\).
+	be the set of women. For a man $m$, we write $w'\succ_m w$ if $m$ prefers woman $w'$ to woman $w$. Similarly, for a woman $w$, we write $m'\succ_w m$ if $w$ prefers man $m'$ to man $m$.
 	
-	For every pair \((m,w)\in U\times V\), define a variable
+	For every pair $(m,w)\in U\times V$, define a variable
 	\[
 	x_{mw}=
 	\begin{cases}
@@ -1256,8 +1256,6 @@
 		Equivalently, every extreme point of $Q_{SM}$ is the incidence vector of a stable marriage.
 	\end{ttheorem}
 	
-	The nontrivial part of the theorem is that the polyhedron $Q_{SM}$ has no fractional extreme points. Therefore, every fractional feasible point of $Q_{SM}$ is only a convex combination of stable marriages, and not a new vertex of the relaxation.
-	
 	The nontrivial part of the theorem is that the polyhedron $Q_{SM}$ has no fractional extreme points, so $Q_{SM}$ is \emph{integral}. Therefore, every fractional feasible point of $Q_{SM}$ can be written as a convex combination of incidence vectors of stable marriages, and is not a new vertex of the relaxation.
 	
 	This gives a complete linear description of the stable matching polytope:
@@ -1293,7 +1291,7 @@
 		\end{aligned}
 	\end{equation}
 
-	Because every extreme point of $Q_{SM}$ is integral, there exists an optimal extreme point of \eqref{optimal-stable-marriage-lp} that is the incidence vector of a stable marriage. Therefore, the optimal stable marriage problem with a linear objective can be solved as LP.
+	Because every extreme point of $Q_{SM}$ is integral, there exists an optimal extreme point of \eqref{optimal-stable-marriage-lp} that is the incidence vector of a stable marriage. Therefore, the optimal stable marriage problem with a linear objective can be solved as an LP.
 	
 	This section gives only a brief polyhedral view of the stable marriage problem. We introduced the natural integer formulation, defined the stable matching polytope, and stated the main result that its linear relaxation is integral. Together with the maximum bipartite matching formulation studied in the previous section, this gives another example where the natural linear relaxation is integral. However, this is not the case for many other matching problems. In the next chapter, we will study one such case.
 
