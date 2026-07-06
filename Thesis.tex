@@ -378,6 +378,7 @@
 	Our implementation is based on the version of Shimon Even and Alon Itai, who made significant modifications to Dinic's algorithm for the maximum flow problem \cite{dinitz1970,dinitz2006}. As we will see at the end of this section, maximum flow and maximum bipartite matching are closely connected problems.
 
 	The key idea of the algorithm is to efficiently find these paths and alternate their edges. To do that, we construct a new graph called the layered network. We describe this graph with an array called $\mathit{level}$, defined on the vertices of $V_{1}$. Initially, every free vertex of $V_{1}$ gets level $1$. Then, if a vertex $u \in V_{1}$ has level $i$, every vertex of $V_{1}$ that can be reached from $u$ by first taking an unmatched edge to a vertex of $V_{2}$ and then a matched edge back to  $V_{1}$ gets level $i+1$, provided it has not already received a level. The vertices are visited in Breadth-First Search (BFS) order, starting from all free vertices of $V_{1}$. In this way, $\mathit{level}[v]$ represents the minimum alternating distance of $v \in V_{1}$ from the set of free vertices of $V_{1}$ in the current phase. The edges in the layered network are directed according to the BFS levels, so the resulting graph is a directed acyclic graph (DAG).
+	So, we can say that the algorithm has two essential steps. The first one is to build the layered network based on the current matching, and the second one is to find a maximal set of vertex-disjoint shortest augmenting paths in this graph and alternate their edges. We then construct the layered network again based on the updated matching and repeat the whole process.
 
 	\begin{algorithm}[H]
 	\caption{BFS Layered Network Construction}
@@ -1083,7 +1084,7 @@
 
 \section{The Bipartite Matching Polytope}
 
-	We solved the maximum bipartite matching problem algorithmically  in \Cref{2.2}. In this section, we will solve the same problem using linear programming terminology. Let $G = (V_{1} \cup V_{2}, E)$ be a bipartite graph with $n$ vertices $v_{1}, \ldots, v_{n}$ and $m$ edges $e_{1}, \ldots, e_{m}$ and let $\delta(v)$ denote the set of edges incident to $v$. The IP describing the problem is the following:
+	We solved the maximum bipartite matching problem algorithmically  in \Cref{2.2}. In this section, we will solve the same problem in terms of linear programming. Let $G = (V_{1} \cup V_{2}, E)$ be a bipartite graph with $n$ vertices $v_{1}, \ldots, v_{n}$ and $m$ edges $e_{1}, \ldots, e_{m}$ and let $\delta(v)$ denote the set of edges incident to $v$. The IP describing the problem is the following:
 	
 	\begin{equation}
 		\label{matching-ip}
@@ -1218,7 +1219,7 @@
 		\]
 		Here $y_v=1$ means that the vertex $v$ is chosen in the vertex cover. The constraint $A^Ty\geq \mathbf{1}$ says that for every edge, at least one of its endpoints must be chosen.
 		
-		Since $A$ is totally unimodular, it is easy to see that $A^T$ is also totally unimodular. Therefore, again by the total unimodularity result, the LP relaxation of the minimum vertex cover problem has an integral optimal solution. Moreover, in an optimal integral solution we may assume that every component is either $0$ or $1$, since if $y_v>1$, replacing $y_v$ by $1$ keeps all constraints feasible and does not increase the objective value. Hence, the optimal value of the vertex cover LP relaxation is equal to the minimum cardinality of a vertex cover in $G$.
+		Since $A$ is totally unimodular, it is easy to see that $A^T$ is also totally unimodular. Therefore, again by the total unimodularity result, the LP relaxation of the minimum vertex cover problem has an integral optimal solution. Moreover, in an optimal integral solution we may assume that every component is either $0$ or $1$, since if $y_v>1$, replacing $y_v$ by $1$ keeps all constraints feasible and does not increase the objective value (in fact, it is impossible to happen, since this would strictly decreases the objective value, contradicting optimality). Hence, the optimal value of the vertex cover LP relaxation is equal to the minimum cardinality of a vertex cover in $G$.
 		
 		Finally, by strong duality, the optimal values of the two LP relaxations are equal. The first one is equal to the maximum cardinality of a matching in $G$, and the second one is equal to the minimum cardinality of a vertex cover in $G$. Therefore, these two quantities are equal.
 	\end{proof}
