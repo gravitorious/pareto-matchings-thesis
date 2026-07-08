@@ -1407,7 +1407,7 @@
 	$P(a)$ the preference list of applicant $a$. The list $P(a)$ is strict, so no ties are
 	allowed. If $h,h'\in P(a)$, then
 	\[
-	h >_a h'
+	h \succ_{a} h'
 	\]
 	means that applicant $a$ prefers house $h$ to house $h'$.
 	
@@ -1464,7 +1464,7 @@
 	$h\in P(a)$ such that
 	\[
 	M(a)\neq \emptyset,\qquad M(h)=\emptyset,
-	\qquad\text{and}\qquad h>_a M(a).
+	\qquad\text{and}\qquad h \succ_{a} M(a).
 	\]
 	Thus, no matched applicant can improve the current assignment by replacing the
 	assigned house with an unmatched house.
@@ -1477,7 +1477,7 @@
 	\]
 	such that
 	\[
-	M(a_{i_{c+1}})>_{a_{i_c}} M(a_{i_c}),
+	M(a_{i_{c+1}}) \succ_{a_{i_c}} M(a_{i_c}),
 	\quad c=0,\ldots,k-1,
 	\]
 	where the indices are taken modulo $k$. If such a sequence exists, then the
@@ -1503,7 +1503,7 @@
 	\]
 	such that, for every \(c=0,\ldots,k-1\),
 	\[
-	h_{i_{c+1}}>_{a_{i_c}} h_{i_c},
+	h_{i_{c+1}} \succ_{a_{i_c}} h_{i_c},
 	\qquad
 	\{h_{i_c},h_{i_{c+1}}\}\subseteq P(a_{i_c}),
 	\]
@@ -1579,12 +1579,12 @@
 	\[
 	\sum_{a'\in Q(h)} x_{a'h}
 	-
-	\sum_{\substack{h'\in P(a)\\ h>_a h'}} x_{ah'}
+	\sum_{\substack{h'\in P(a)\\ h \succ_{a} h'}} x_{ah'}
 	\geq 0,
 	\qquad \forall a\in A,\ \forall h\in P(a).
 	\]
 	Indeed, if house $h$ is unmatched, then the first sum is equal to $0$. The
-	constraint then forces all variables $x_{ah'}$ with $h>_a h'$ to be equal to $0$.
+	constraint then forces all variables $x_{ah'}$ with $h \succ_{a} h'$ to be equal to $0$.
 	Thus, applicant $a$ cannot be assigned to a worse house while $h$ is free.
 	
 	Finally, we need to exclude coalitions. Let $C\in\mathcal C$ be a plausible
@@ -1613,7 +1613,7 @@
 			&& \forall a\in A,\ \forall h\in P(a),\\
 			\sum_{a'\in Q(h)} x_{a'h}
 			-
-			\sum_{\substack{h'\in P(a)\\ h>_a h'}} x_{ah'}
+			\sum_{\substack{h'\in P(a)\\ h \succ_{a} h'}} x_{ah'}
 			&\geq 0,
 			&& \forall a\in A,\ \forall h\in P(a),\\
 			\sum_{(a,h)\in C} x_{ah} &\leq |C|-1,
@@ -1727,7 +1727,7 @@
 	
 	The envy graph used in {\cite[Chapter 2, p. 6]{abraham2004pareto}} is defined with respect to a fixed matching $M$. In that graph, the vertices are the applicants, and an edge from $a_i$ to $a_j$ means that $a_i$ would prefer the house assigned to $a_j$ in $M$. Thus, for a matching $M$, coalitions can be detected by looking for directed cycles in this graph.
 	
-	In our separation procedure, we use a slightly different auxiliary graph, since the current solution of the LP relaxation need not correspond to a matching. The vertices of this graph are the assignment pairs
+	In our separation procedure, we use a slightly different \emph{auxiliary graph}, since the current solution of the LP relaxation need not correspond to a matching. The vertices of this graph are the assignment pairs
 	\[
 	V=\{(a,h): h\in P(a)\}.
 	\]
@@ -1735,7 +1735,9 @@
 	\[
 	(a,h)\longrightarrow (a',h')
 	\]
-	whenever applicant $a$ strictly prefers $h'$ to $h$. Therefore, a directed cycle in this graph represents a possible cyclic improvement among assignment pairs, and hence corresponds to a plausible coalition. A small example of a coalition is illustrated in the following figure.
+	whenever applicant $a$ strictly prefers $h'$ to $h$. 
+	
+	A plausible coalition corresponds to a directed cycle in the auxiliary. A small example of a coalition is illustrated in the following figure.
 	
 	\clearpage
 	\newpage
@@ -1777,7 +1779,7 @@
 	\[
 	w(a,h)=1-x^*_{ah}.
 	\]
-	For a directed cycle $C$, the corresponding coalition inequality is
+	For a plausible coalition $C$, the corresponding coalition inequality is
 	\[
 	\sum_{(a,h)\in C} x_{ah}\leq |C|-1.
 	\]
@@ -1880,11 +1882,10 @@
 		=
 		O(n^2L^2).
 		\]
-		Equivalently, since $r\leq nL$, we can write
+		Also, since the auxiliary graph has $r$ vertices and no parallel edges, we know that
 		\[
-		|E_G|=O(r^2).
+		|E_G|\leq r(r-1)=O(r^2).
 		\]
-		
 		After the graph has been constructed, one separation call consists of the
 		following steps. First, we assign weights to the vertices, which takes $O(r)$
 		time. Then we convert these vertex weights into edge weights, which takes
@@ -1913,6 +1914,9 @@
 		O(n^6).
 		\]
 	\end{proof}
+	
+	\paragraph{Directed cycles that do not correspond to plausible coalitions.} The auxiliary graph may also contain directed cycles that do not correspond to plausible coalitions, because an applicant or a house may appear more than once. However, such cycles cannot lead to violated inequalities for any point satisfying the matching constraints. Indeed, if a directed cycle $C$ contains two vertices with the same applicant, then the applicant matching constraint implies that the sum of the corresponding variables is at most $1$, while all remaining variables in the cycle have value at most $1$. Hence, $\sum_{(a,h)\in C} x^*_{ah}\leq |C|-1$ holds.
+	The same argument applies if a house appears more than once, using the house matching constraint. Therefore, every directed cycle with weight less than $1$ corresponds to a valid plausible coalition constraint that is violated by $x^*$.
 
 
 \section{The Pareto Matching Polytope}
@@ -1923,7 +1927,7 @@
 	
 	By the characterization theorem {\cite[Chapter 6, p. 13-14]{abraham2004pareto}} for Pareto optimal matchings in house allocation, every outcome of Serial Dictatorship is Pareto optimal, and every Pareto optimal matching can be obtained from Serial Dictatorship for some ordering of the applicants. Therefore, by running Serial Dictatorship over all permutations of $A$ and removing duplicate outcomes, we obtain exactly the set of Pareto optimal matchings of the instance.
 	
-	Each Pareto optimal matching for a given matching $M$ is represented by its incidence vector $x^M_{ah}$ as we defined in \Cref{def-pareto}.
+	Each Pareto optimal matching $M$ is represented by its incidence vector $x^M$ as defined in \Cref{def-pareto}.
 	
 	After generating all Pareto optimal matchings, we obtain a finite set of binary vectors. The Pareto matching polytope of the instance is then defined as
 	\[
@@ -1931,7 +1935,7 @@
 	\]
 	This is the exact convex hull of all Pareto optimal matchings for the given instance.
 	
-	For small instances, we can compute this convex hull explicitly. Starting from the vertex description, given by the POM vectors, we use compute SageMath to generate the $H$-description of $P_{\mathrm{POM}}$. In other words, we obtain a description of the form
+	For small instances, we can compute this convex hull explicitly. Starting from the vertex description, given by the POM vectors, we use SageMath to compute the $H$-description of $P_{\mathrm{POM}}$. In other words, we obtain a description of the form
 	\[
 	P_{\mathrm{POM}}=\{x : Bx\leq d,\ Ex=f\},
 	\]
@@ -1957,19 +1961,19 @@
 	\]
 	Thus $y_h$ represents whether the house $h$ is assigned. Also, for $a\in A$ and $h\in P(a)$, we define
 	\[
-	B_a(h)=\{g\in P(a):g\succ_a h\},
+	B_a(h)=\{g\in P(a):g\succ_{a} h\},
 	\]
 	that is, the set of houses that agent $a$ prefers to $h$. Similarly, we define
 	\[
-	W_a(h)=\{r\in P(a):h\succ_a r\},
+	W_a(h)=\{r\in P(a):h\succ_{a} r\},
 	\]
 	the set of houses that are worse than $h$ according to the preferences of $a$.
 	
 	\subsection{First-choice and prefix-cover inequalities}
 	
-	\paragraph{First-choice inequalities.} We first consider a simple but important implication of Pareto optimality. Suppose that a house $h$ is the first choice of some agent $a$. Then, in every Pareto-optimal matching (i.e. in every POM vector), the house $h$ must be assigned. Indeed, if $h$ were unmatched, then either $a$ would be unmatched, contradicting maximality, or $a$ would be matched to a worse house, contradicting trade-in freeness.
+	\paragraph{First-choice inequalities.} We first consider a simple but important implication of Pareto optimality. Suppose that a house $h$ is the first choice of some applicant $a$. Then, in every Pareto-optimal matching (i.e. in every POM vector), the house $h$ must be assigned. Indeed, if $h$ were unmatched, then either $a$ would be unmatched, contradicting maximality, or $a$ would be matched to a worse house, contradicting trade-in freeness.
 	
-	Therefore, for every house $h$ that appears as the first choice of at least one agent, the following inequality is valid for the Pareto-optimal matching polytope:
+	Therefore, for every house $h$ that appears as the first choice of at least one applicant, the following inequality is valid for the Pareto-optimal matching polytope:
 	\[
 	\sum_{b\in Q(h)}x_{bh}\ge 1.
 	\]
@@ -1982,7 +1986,7 @@
 	\sum_{b\in Q(h)}x_{bh}=1.
 	\]
 	
-	The reason why this inequality is useful is that the original relaxation does not necessarily enforce it. To see this, fix an agent $a$ whose first choice is $h$. Since $h$ is the first choice of $a$, we have $B_a(h)=\varnothing$. The maximality constraint for the pair $(a,h)$ can be written as
+	The reason why this inequality is useful is that the original relaxation does not necessarily enforce it. To see this, fix an applicant $a$ whose first choice is $h$. Since $h$ is the first choice of $a$, we have $B_a(h)=\varnothing$. The maximality constraint for the pair $(a,h)$ can be written as
 	\[
 	y_h+\sum_{r\in W_a(h)}x_{ar}\ge 1.
 	\]
@@ -2073,19 +2077,19 @@
 	\[
 	\sum_{a\in Q(h)}x_{ah}=1,\qquad h\in F,
 	\]
-	is an affine equality for $P^{\mathrm{POM}}$. Each equality contains only variables corresponding to one house, and therefore all these equalities are linearly independent.
+	is an affine equality for $P_{\mathrm{POM}}$. Each equality contains only variables corresponding to one house, and therefore all these equalities are linearly independent.
 	
 	\begin{ccor}
 		Let $F$ be the set of houses that appear as the first choice of at least one
 		applicant. Then
 		\[
-		\dim(P^{\mathrm{POM}})\le |E|-|F|.
+		\dim(P_{\mathrm{POM}})\le |E|-|F|.
 		\]
 	\end{ccor}
 	
 	\paragraph{Prefix-cover inequalities.} The previous observation can be generalized. The first-choice inequality is only the special case of a broader family.
 	\begin{pprop}
-		For every agent $a\in A$ and every house $h\in P(a)$, the inequality
+		For every applicant $a\in A$ and every house $h\in P(a)$, the inequality
 		\[
 		\sum_{b\in Q(h)}x_{bh}
 		+
@@ -2117,11 +2121,11 @@
 		\[
 		\sum_{b\in Q(h)}x_{bh}=0.
 		\]
-		Since $h\in P(a)$, if agent $a$ were unmatched, then the pair $(a,h)$ could be added to the matching, contradicting maximality. Therefore, $a$ must be matched to some house in $P(a)$.
+		Since $h\in P(a)$, if applicant $a$ were unmatched, then the pair $(a,h)$ could be added to the matching, contradicting maximality. Therefore, $a$ must be matched to some house in $P(a)$.
 		
 		Moreover, $a$ cannot be matched to a house worse than $h$. If $a$ were matched to some $r\in W_a(h)$, then $h$ would be an unmatched house preferred by $a$ to the current assignment. This would contradict trade-in freeness.
 		
-		Thus, when $h$ is unmatched, agent $a$ must be matched to a house $g\in B_a(h)$. Hence
+		Thus, when $h$ is unmatched, applicant $a$ must be matched to a house $g\in B_a(h)$. Hence
 		\[
 		\sum_{g\in B_a(h)}x_{ag}=1.
 		\]
@@ -2138,7 +2142,7 @@
 		The inequality holds in both cases. Since it holds for every POM vector, it is valid for their convex hull.
 	\end{proof}
 	
-	We call these inequalities \emph{prefix-cover inequalities}. They say that, for every agent $a$ and every acceptable house $h$, either the house $h$ must be assigned to some agent, or $a$ must be assigned to a house that appears before $h$ in the preference list of $a$. When $h$ is the first choice of $a$, the set $B_a(h)$ is empty, and the inequality reduces exactly to the first-choice house covering inequality. 
+	We call these inequalities \emph{prefix-cover inequalities}. They say that, for every applicant $a$ and every acceptable house $h$, either the house $h$ must be assigned to some applicant, or $a$ must be assigned to a house that appears before $h$ in the preference list of $a$. When $h$ is the first choice of $a$, the set $B_a(h)$ is empty, and the inequality reduces exactly to the first-choice house covering inequality. 
 	
 	\paragraph{Cutting off a Fractional Vertex.} Consider now the basic relaxation. As previously shown, the vector \eqref{first-fractional-solution} was a fractional vertex of the relaxation. This fractional solution is cut off by the prefix-cover inequality corresponding to the house $h_3$. 
 	Indeed, $h_3$ is the first choice of both $a_3$ and $a_4$. 
@@ -2160,13 +2164,13 @@
 	
 	The second family of inequalities comes from combining trade-in freeness with coalition freeness.
 	
-	Suppose that agent $a$ is assigned to a house $h$, and let $g\in P(a)$ be a house such that
+	Suppose that applicant $a$ is assigned to a house $h$, and let $g\in P(a)$ be a house such that
 	\[
-	g\succ_a h.
+	g\succ_{a} h.
 	\]
-	In a Pareto-optimal matching, the house $g$ must be assigned. Otherwise, agent $a$ could leave $h$ and take the unmatched house $g$, contradicting trade-in freeness.
+	In a Pareto-optimal matching, the house $g$ must be assigned. Otherwise, applicant $a$ could leave $h$ and take the unmatched house $g$, contradicting trade-in freeness.
 	
-	However, it is not enough that $g$ is assigned to some agent. The holder of $g$ must be compatible with the fact that $a$ is assigned to $h$. If $g$ is assigned to an agent $b$ who prefers $h$ to $g$, then $a$ and $b$ form a two-agent coalition: agent $a$ wants $g$, while agent $b$ wants $h$. Such a matching is not coalition-free.
+	However, it is not enough that $g$ is assigned to some applicant. The holder of $g$ must be compatible with the fact that $a$ is assigned to $h$. If $g$ is assigned to an applicant $b$ who prefers $h$ to $g$, then $a$ and $b$ form a two-applicant coalition: applicant $a$ wants $g$, while applicant $b$ wants $h$. Such a matching is not coalition-free.
 	
 	This motivates the following definition. For $a\in A$, $h\in P(a)$, and $g\in B_a(h)$, define the set of safe holders of $g$ with respect to the assignment $(a,h)$ by
 	\[
@@ -2174,7 +2178,7 @@
 	=
 	\{b\in Q(g)\setminus\{a\}: h\notin P(b)\ \text{or}\ g\succ_b h\}.
 	\]
-	Thus $b\in S(a,h,g)$ if $b$ can hold $g$ without creating a two-agent exchange with $a$. If $h\notin P(b)$, then $b$ does not find $h$ acceptable, so no such exchange can occur. If $h\in P(b)$, then $b$ is safe precisely when $b$ prefers $g$ to $h$.
+	Thus $b\in S(a,h,g)$ if $b$ can hold $g$ without creating a two-applicant exchange with $a$. If $h\notin P(b)$, then $b$ does not find $h$ acceptable, so no such exchange can occur. If $h\in P(b)$, then $b$ is safe precisely when $b$ prefers $g$ to $h$.
 	
 	The corresponding inequality is
 	\[
@@ -2202,17 +2206,17 @@
 	\[
 	M=\{(a_1,h_1),(a_2,h_2)\},
 	\]
-	where both agents receive their first choice. The other perfect matching,
+	where both applicants receive their first choice. The other perfect matching,
 	\[
 	M'=\{(a_1,h_2),(a_2,h_1)\},
 	\]
-	is not Pareto optimal, because the two agents can exchange houses and both improve.
+	is not Pareto optimal, because the two applicants can exchange houses and both improve.
 	
 	Consider the fractional point
 	\[
 	x_{11}=x_{12}=x_{21}=x_{22}=\frac{1}{2}.
 	\]
-	This point satisfies the assignment constraints. It also satisfies the coalition-free inequality corresponding to the two-agent coalition $\{(a_1,h_2),(a_2,h_1)\}$, because
+	This point satisfies the assignment constraints. It also satisfies the coalition-free inequality corresponding to the two-applicant coalition $\{(a_1,h_2),(a_2,h_1)\}$, because
 	\[
 	x_{12}+x_{21}
 	=
@@ -2230,7 +2234,7 @@
 	\qquad
 	g=h_1.
 	\]
-	Agent $a_1$ prefers $h_1$ to $h_2$. The only other agent who can hold $h_1$ is $a_2$. But $a_2$ prefers $h_2$ to $h_1$. Therefore, $a_2$ is not a safe holder of $h_1$ with respect to the assignment $(a_1,h_2)$. Hence
+	applicant $a_1$ prefers $h_1$ to $h_2$. The only other applicant who can hold $h_1$ is $a_2$. But $a_2$ prefers $h_2$ to $h_1$. Therefore, $a_2$ is not a safe holder of $h_1$ with respect to the assignment $(a_1,h_2)$. Hence
 	\[
 	S(a_1,h_2,h_1)=\varnothing.
 	\]
@@ -2272,13 +2276,13 @@
 		\[
 		x_{ah}=1.
 		\]
-		Thus, in $M$, agent $a$ is assigned to $h$. Since $g\in B_a(h)$, we have
+		Thus, in $M$, applicant $a$ is assigned to $h$. Since $g\in B_a(h)$, we have
 		\[
-		g\succ_a h.
+		g\succ_{a} h.
 		\]
-		If $g$ were unmatched, agent $a$ could leave $h$ and take $g$. This would contradict trade-in freeness. Therefore, $g$ must be assigned in $M$.
+		If $g$ were unmatched, applicant $a$ could leave $h$ and take $g$. This would contradict trade-in freeness. Therefore, $g$ must be assigned in $M$.
 		
-		Let $b$ be the agent assigned to $g$. Since $a$ is already assigned to $h$, we have $b\ne a$. Therefore,
+		Let $b$ be the applicant assigned to $g$. Since $a$ is already assigned to $h$, we have $b\ne a$. Therefore,
 		\[
 		b\in Q(g)\setminus\{a\}.
 		\]
@@ -2287,7 +2291,7 @@
 		\[
 		h\succ_b g.
 		\]
-		But then $a$ and $b$ form a two-agent coalition: agent $a$, currently assigned to $h$, prefers $g$, while agent $b$, currently assigned to $g$, prefers $h$. This contradicts coalition freeness.
+		But then $a$ and $b$ form a two-applicant coalition: applicant $a$, currently assigned to $h$, prefers $g$, while applicant $b$, currently assigned to $g$, prefers $h$. This contradicts coalition freeness.
 		
 		Therefore, the holder $b$ of $g$ must belong to $S(a,h,g)$. Hence
 		\[
@@ -2303,7 +2307,7 @@
 		Thus, the inequality holds for every Pareto-optimal matching vector, and therefore it is valid for the Pareto-optimal matching polytope.
 	\end{proof}
 	
-	The safe-holder inequalities strengthen the relaxation by enforcing, in a linear way, a condition that is automatic in the integer model. In an integral matching, if $a$ receives $h$ and prefers $g$ to $h$, then $g$ must be assigned to an agent who does not create a two-agent coalition with $a$. In the linear relaxation, the original constraints may allow $g$ to be assigned fractionally to unsafe holders. The safe-holder inequalities exclude such fractional configurations.
+	The safe-holder inequalities strengthen the relaxation by enforcing, in a linear way, a condition that is automatic in the integer model. In an integral matching, if $a$ receives $h$ and prefers $g$ to $h$, then $g$ must be assigned to an applicant who does not create a two-applicant coalition with $a$. In the linear relaxation, the original constraints may allow $g$ to be assigned fractionally to unsafe holders. The safe-holder inequalities exclude such fractional configurations.
 	
 	Together, the prefix-cover inequalities and the safe-holder inequalities capture two different implications of Pareto optimality. The prefix-cover inequalities come from maximality and trade-in freeness, while the safe-holder inequalities combine trade-in freeness with coalition freeness. Both families are valid for the Pareto-optimal matching polytope and can be added to the linear relaxation as candidate cutting inequalities.
 
