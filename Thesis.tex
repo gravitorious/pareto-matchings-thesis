@@ -2427,7 +2427,7 @@
 	P(1) = [1,2,4].
 	\]
 	
-	The function \texttt{serial\_dictatorship} considers all permutations of the applicants. For each permutation, the applicants are processed in that order. Each applicant receives the best available house in her preference list. This produces one Pareto-optimal matching for each ordering of the applicants.
+	The function \texttt{serial\_dictatorship} considers all permutations of the applicants. For each permutation, the applicants are processed in that order. Each applicant receives the best available house in the applicant's preference list, if such a house exists. If there is no such house, the applicant remains unmatched. This produces one Pareto-optimal matching for each ordering of the applicants.
 	
 	Since different permutations may produce the same matching, the function \texttt{get\_unique\_matchings} removes duplicates. The unique matchings are then written to the results folder.
 	
@@ -2495,9 +2495,11 @@
 	
 	The model also contains maximality constraints and trade-in-free constraints. These are part of the original model for Pareto-optimal matchings.
 	
+	In the final version of the implementation, the LP relaxation is also strengthened with the prefix-cover inequalities and the safe-holder inequalities introduced in the previous chapter. These inequalities are valid for the Pareto-optimal matching polytope and are added before the separation procedure for coalition-free constraints is applied.
+	
 	The coalition-free constraints are handled differently. They may be exponentially many, so the program does not add all of them at the beginning. Instead, it solves the current relaxation and then searches for a violated coalition constraint. If one is found, it is added to the LP, and the LP is solved again. This is called separation.
 	
-	The separation procedure builds a directed graph whose vertices are acceptable pairs $(a,h)$. A directed cycle in this graph corresponds to a plausible coalition. For a coalition $C$, the corresponding constraint is:
+	The separation procedure builds a directed graph whose vertices are acceptable pairs $(a,h)$. Every plausible coalition corresponds to a directed cycle in this graph. The graph may also contain additional directed cycles that do not correspond to plausible coalitions, because an applicant or a house may appear more than once. However, such cycles cannot produce violated inequalities for points satisfying the matching constraints. For a plausible coalition $C$, the corresponding constraint is:
 	
 	\[
 	\sum_{(a,h)\in C} x_{ah} \leq |C|-1.
@@ -2535,6 +2537,8 @@
 		\item \texttt{order}: the order in which the applicants were processed;
 		\item \texttt{matching}: the matching produced by that order.
 	\end{itemize}
+	
+	The entries in \texttt{matching} are written in the same order as the applicants in \texttt{order}. Thus, the first entry of \texttt{matching} is the house assigned to the first applicant in \texttt{order}, the second entry is the house assigned to the second applicant in \texttt{order}, etc. The value $-1$ means that the corresponding applicant is unmatched.
 	
 	This file may contain duplicate matchings, because different applicant orders can lead to the same matching.
 	
