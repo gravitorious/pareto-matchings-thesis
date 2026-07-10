@@ -175,35 +175,31 @@
 
 \chapter*{Preface}
 	
-	Matching theory is a central topic in graph theory and combinatorial optimization. It provides a natural way to model situations where agents, objects, or resources must be paired under specific restrictions, leading to broad applications in computer science, mathematics, economics, and operations research.
-	
-	Consider the case where there are $n$ teachers and we have to decide which schools to assign them to based on some criteria. Criteria may vary; for example, each teacher may have preferences over the available schools, while schools may have specific ranking criteria based on their teaching needs. Similarly, $n$ applicants may have preferences over houses they want to buy. There is only one side with preferences, but we still have two sides we want to match. An example with more than two sides is when we have a set of professors, projects, and students, and our purpose is to assign each project to a professor and then assign students to each project. Here, each assignment is a triplet, and there could be many criteria. Despite the preferences of each side, we may instead be interested in maximizing or minimizing a different criterion. For example, in the teacher assignment problem, we may want to maximize the number of schools that receive a teacher without taking the teachers' preferences into account. These examples illustrate that matching problems arise in many different forms and that the underlying requirements may vary significantly depending on the application.
+	Consider the case where there are $n$ teachers and we have to decide which schools to assign them to based on some criteria. For example, each teacher may have preferences over the available schools, while schools may have specific ranking criteria based on their teaching needs. Similarly, $n$ applicants may have preferences over houses they want to buy. There is only one side with preferences, but we still have two sides we want to match. An example with more than two sides is when we have a set of professors, projects, and students, and our purpose is to assign each project to a professor and then assign students to each project. Here, each assignment is a triplet, and there could be many criteria. Despite the preferences of each side, we may instead be interested in maximizing or minimizing a different criterion. For example, in the teacher assignment problem, we may want to maximize the number of schools that receive a teacher without taking the teachers' preferences into account. Matching problems arise in many different forms and areas, and the underlying requirements may vary depending on the application.
 	
 	The algorithmic study of matchings has played an important role in the development of combinatorial optimization. While some matching problems admit elegant strongly polynomial algorithms, even small modifications of the underlying model may lead to computationally difficult problems.
 	
-	The profound impact of matching theory on real-world economics and society was notably recognized in $2012$, when Alvin E. Roth and Lloyd S. Shapley were awarded the Nobel Prize in Economic Sciences. Their recognition was rooted in the theory of stable allocations, which originated in the foundational $1962$ work by David Gale and Lloyd Shapley.
+	The big effect of matching theory on real-world economics and society was notably recognized in $2012$, when Alvin E. Roth and Lloyd S. Shapley were awarded the Nobel Prize in Economic Sciences. Their recognition was rooted in the theory of stable allocations, which originated in the foundational $1962$ work by David Gale and Lloyd Shapley.
 	
-	Linear and integer programming provide another fundamental approach to optimization. Many problems in Economics, Engineering, and Computer Science can be modeled exactly or approximately using linear functions. Consequently, Linear Programming has numerous applications across these areas, making it one of the most widely applied branches of Mathematics. It is a relatively new science, born to meet the demands of the Second World War. During the early years of its development, the simplex algorithm dominated. Later, polynomial-time methods, such as the ellipsoid method and interior-point algorithms, were developed, providing important theoretical and practical advances, particularly for large-scale optimization problems.
+	Many problems in Economics, Engineering, and Computer Science can be modeled exactly or approximately using linear functions. Linear Programming has numerous applications across these areas, making it one of the most widely applied branches of Mathematics. It is a relatively new science, born to meet the demands of the Second World War. During the early years of its development, the simplex algorithm dominated. Later, polynomial-time methods, such as the ellipsoid method and interior-point algorithms, were developed, providing important theoretical and practical advances, particularly for large-scale optimization problems.
 	
 	In integer programming, many natural decision variables are restricted to take values of zero or one, representing whether an object is selected, an edge is used, or an assignment is made. However, solving integer programs directly is generally difficult. A common strategy is therefore to relax the integrality restrictions and study the corresponding linear program. When the feasible region of the relaxation is integral, an optimal integer solution can be obtained by solving the corresponding linear program.
 	
-	The purpose of this thesis is to study matching problems on bipartite graphs from both of these perspectives. We first present classical algorithmic results for two fundamental problems in matching theory and then study related formulations through linear and integer programming. The final part of the thesis focuses on a Pareto-optimal matching problem in a one-to-one house-allocation model, where the behavior of the linear relaxation is substantially more complicated.
+	The purpose of this thesis is to study matching problems on bipartite graphs from both of these perspectives. We first present classical algorithmic results for two fundamental problems in matching theory and then study related formulations through linear and integer programming. The final part of the thesis focuses on a Pareto optimal matching problem in a one-to-one house-allocation model, where the behavior of the linear relaxation is substantially more complicated.
 	
-	Chapter $2$ is devoted to matching problems and algorithms. We begin with the maximum bipartite matching problem. After introducing the basic definitions, we present a classical augmenting-path implementation with running time $O(nm)$, where $n$ denotes the number of vertices and $m$ the number of edges. We then give an implementation of the Hopcroft--Karp algorithm, which improves the running time to $O(\sqrt{n}(n + m))$ by finding many shortest augmenting paths in phases. The chapter continues with the stable marriage problem and the Gale--Shapley algorithm, one of the most influential algorithms in matching theory.
+	Chapter $1$ is about matching problems and algorithms. After introducing the basic definitions, we present a classical augmenting-path implementation with running time $O(nm)$, where $n$ denotes the number of vertices and $m$ the number of edges. We then give an implementation of the Hopcroft--Karp algorithm, which improves the running time to $O(\sqrt{n}(n + m))$ by finding many shortest augmenting paths in phases. We continue with the stable marriage problem and the Gale--Shapley algorithm, one of the most famous algorithms in matching theory.
 	
-	A particular emphasis of this chapter is the presentation of the algorithms. The pseudocode is written in a detailed form, so that their translation into an actual programming language is almost immediate. Moreover, the proofs are adapted to the implementations rather than being presented only at a high conceptual level. This makes the connection between the code, the algorithmic idea and the correctness argument explicit.
+	The main focus of this chapter is the presentation of the algorithms. The above algorithms are often described in the texts without the implementation details. Our pseudocode is written in a detailed form, so that their translation into an actual programming language is almost straightforward. Moreover, the proofs are adapted to the implementations rather than being presented only at a high conceptual level. This makes the connection between the code, the algorithmic idea and the correctness argument explicit.
 	
-	Chapter $3$ introduces the polyhedral point of view. We first recall the basic language of linear programming, integer programming, polyhedra, polytopes, and integrality. We then return to the matching problems studied in Chapter 2 and examine them through linear and integer programming formulations. For the maximum bipartite matching problem, the linear relaxation captures the integer structure of the problem, and optimal matching solutions can be obtained through linear programming. A similar phenomenon appears in the stable marriage problem, where the corresponding stable matching polytope has an integral linear description. These examples illustrate how polyhedral structure can explain why certain discrete optimization problems admit efficient linear programming approaches.
+	Chapter $2$ introduces the polyhedral point of view. We first recall the basic language of linear programming, integer programming, polyhedra, polytopes, and integrality. We then return to the matching problems studied in Chapter 2 and examine them through linear and integer programming formulations. For the maximum bipartite matching problem, the linear relaxation captures the integer structure of the problem, and as a result we can get the optimal matching solutions through linear programming. A similar phenomenon appears in the stable marriage problem, where the corresponding stable matching polytope has an integral linear description. 
 	
-	Chapter $4$ studies Pareto-optimal matchings in a one-to-one house allocation model. In this setting, applicants have strict preference lists over houses, and the aim is to describe Pareto-optimal matchings. We present an integer programming formulation for this problem and then study its linear relaxation. Unlike the classic examples in Chapter $3$, the relaxation is not generally integral. We demonstrate this by constructing fractional solutions that satisfy the relaxation but do not correspond to convex combinations of Pareto optimal matching vectors.
+	Chapter $3$ studies Pareto optimal matchings in a one-to-one house allocation model. Here, applicants have strict preference lists over houses, and the aim is to describe Pareto optimal matchings. We present the known integer programming formulation for this problem and then study its linear relaxation. Unlike the classic examples in Chapter $3$, the relaxation is not generally integral. With the help of a software, we construct a fractional optimal solution of the relaxation that does not correspond to a convex combination of Pareto optimal matching vectors.
 	
-	A further difficulty is that one family of constraints in the formulation can be very large. To handle this, we use a separation approach. So, instead of listing all such constraints in advance, we search for violated constraints only when they are needed. This allows the relaxation to be solved more efficiently in practice and enables computational experiments on small instances.
+	We show that a family of constraints in the formulation can be very large. To handle this, we use a separation approach. So, instead of listing all such constraints in advance, we search for violated constraints only when they are needed. This allows the relaxation to be solved more efficiently in practice and enables computational experiments on small instances.
 	
-	The computational part of the thesis compares the linear relaxation with the actual convex hull of Pareto optimal matching vectors. For several small instances, we enumerate Pareto optimal matchings, compute the corresponding convex hull, and inspect its linear description. This allows us to identify inequalities that are valid for the true Pareto optimal matching polytope but are not enforced by the original relaxation. Based on these experiments, we propose and prove two families of additional valid inequalities: prefix-cover inequalities and safe-holder inequalities. These constraints strengthen the relaxation by excluding fractional solutions that do not lie within the convex hull of Pareto-optimal matchings.
+	One of the main focuses is to compare the linear relaxation with the actual convex hull of Pareto optimal matching vectors. We construct some small instances, we enumerate Pareto optimal matchings, compute the corresponding convex hull, and derive its linear description. With this, we are able to identify which inequalities are valid for the true Pareto optimal matching polytope but are not enforced by the original relaxation. From these experiments, we prove two families of additional valid inequalities: prefix-cover inequalities and safe-holder inequalities. These constraints strengthen the relaxation and specifically the first one gives us an upper bound for the dimension of Pareto optimal matching polytope.
 	
-	The thesis therefore follows a progression from algorithms to polyhedra and then to computational polyhedral analysis. The first part explains in detail how classical matching algorithms work. The second part shows how linear programming can exactly capture some matching problems. The final part shows that for Pareto-optimal house allocation, the situation is not that simple. The natural relaxation is not sufficient, and additional valid inequalities are needed to obtain a tighter description. The implementation details and source code are included in the appendices, so that the computational experiments can be reproduced and extended.
-	
-	We assume a basic background in subjects typically covered in an undergraduate curriculum, such as graph theory, algorithms, computational complexity, and linear algebra. Familiarity with these areas is sufficient to follow the material presented in this thesis.
+	The prerequisites for this thesis are typically covered in an undergraduate curriculum, such as graph theory, algorithms, computational complexity, and linear algebra. Basic knowledge of these fields is enough to follow the content of this thesis.
 	
 
 \clearpage
@@ -1943,7 +1939,7 @@
 	
 	We start from a fixed house allocation instance with applicant set $A$, house set $H$, and preference lists $P(a)$ for every applicant $a\in A$. For this instance, we first generate Pareto optimal matchings using the Serial Dictatorship algorithm (code: \eqref{sd-algorithm-code}). More precisely, we consider all possible permutations of the applicants. For each permutation, the applicants are processed one by one according to this order, and each applicant receives the most preferred house that is still available, if such a house exists.
 	
-	By the characterization theorem {\cite[Chapter 6, p. 13-14]{abraham2004pareto}} for Pareto optimal matchings in house allocation, every outcome of Serial Dictatorship is Pareto optimal, and every Pareto optimal matching can be obtained from Serial Dictatorship for some ordering of the applicants. Therefore, by running Serial Dictatorship over all permutations of $A$ and removing duplicate outcomes, we obtain exactly the set of Pareto optimal matchings of the instance.
+	By the characterization theorem {\cite[Chapter 6, p. 13-14]{abraham2004pareto}} for Pareto optimal matchings in house allocation, every outcome of Serial Dictatorship is Pareto optimal, and every Pareto optimal matching can be obtained from Serial Dictatorship for some ordering of the applicants. Therefore, by running Serial Dictatorship over all permutations of $A$ and removing duplicate outcomes, we get the set of Pareto optimal matchings of the instance.
 	
 	Each Pareto optimal matching $M$ is represented by its incidence vector $x^M$ as defined in \Cref{def-pareto}.
 	
@@ -1971,7 +1967,7 @@
 
 	After relaxing the binary restrictions to $0\le x_{ah}\le 1, a\in A,\ h\in P(a),$ some of the implications that are enforced by integrality are lost. As a result, the linear relaxation may contain fractional points which do not belong to the convex hull of POM vectors.
 	
-	In this section we introduce two families of valid inequalities that strengthen the linear relaxation. These inequalities are not claimed to give a complete description of the Pareto-optimal matching polytope. Instead, they are candidate cutting inequalities motivated by the structure of Pareto optimality and by the fractional solutions that appear in the relaxation.
+	In this section we introduce two families of valid inequalities that strengthen the linear relaxation. These inequalities are not claimed to give a complete description of the Pareto optimal matching polytope. Instead, they are candidate cutting inequalities motivated by the structure of Pareto optimality and by the fractional solutions that appear in the relaxation.
 	
 	We define
 	\[
@@ -1989,9 +1985,9 @@
 	
 	\subsection{First-choice and prefix-cover inequalities}
 	
-	\paragraph{First-choice inequalities.} We first consider a simple but important implication of Pareto optimality. Suppose that a house $h$ is the first choice of some applicant $a$. Then, in every Pareto-optimal matching (i.e. in every POM vector), the house $h$ must be assigned. Indeed, if $h$ were unmatched, then either $a$ would be unmatched, contradicting maximality, or $a$ would be matched to a worse house, contradicting trade-in freeness.
+	\paragraph{First-choice inequalities.} We first consider a simple but important implication of Pareto optimality. Suppose that a house $h$ is the first choice of some applicant $a$. Then, in every Pareto optimal matching (i.e. in every POM vector), the house $h$ must be assigned. Indeed, if $h$ were unmatched, then either $a$ would be unmatched, contradicting maximality, or $a$ would be matched to a worse house, contradicting trade-in freeness.
 	
-	Therefore, for every house $h$ that appears as the first choice of at least one applicant, the following inequality is valid for the Pareto-optimal matching polytope:
+	Therefore, for every house $h$ that appears as the first choice of at least one applicant, the following inequality is valid for the Pareto optimal matching polytope:
 	\[
 	\sum_{b\in Q(h)}x_{bh}\ge 1.
 	\]
@@ -2044,7 +2040,7 @@
 	\qquad
 	P(a_2)=\langle h_2\rangle.
 	\]
-	The unique Pareto-optimal matching is
+	The unique Pareto optimal matching is
 	\[
 	M=\{(a_1,h_1),(a_2,h_2)\}.
 	\]
@@ -2091,7 +2087,7 @@
 
 	\paragraph{Dimension.}
 	This observation implies an important result concerning the dimension of the polytope. Let $F$ be the set of houses
-	that appear as the first choice of at least one applicant. As shown above, every house $h\in F$ must be assigned in every Pareto-optimal matching. Therefore,
+	that appear as the first choice of at least one applicant. As shown above, every house $h\in F$ must be assigned in every Pareto optimal matching. Therefore,
 	\[
 	\sum_{a\in Q(h)}x_{ah}=1,\qquad h\in F,
 	\]
@@ -2114,11 +2110,11 @@
 		\sum_{g\in B_a(h)}x_{ag}
 		\ge 1
 		\]
-		is valid for the Pareto-optimal matching polytope.
+		is valid for the Pareto optimal matching polytope.
 	\end{pprop}
 	
 	\begin{proof}
-		Let $M$ be a Pareto-optimal matching, and let $x$ be its incidence vector. We prove that
+		Let $M$ be a Pareto optimal matching, and let $x$ be its incidence vector. We prove that
 		\[
 		\sum_{b\in Q(h)}x_{bh}
 		+
@@ -2186,7 +2182,7 @@
 	\[
 	g\succ_{a} h.
 	\]
-	In a Pareto-optimal matching, the house $g$ must be assigned. Otherwise, applicant $a$ could leave $h$ and take the unmatched house $g$, contradicting trade-in freeness.
+	In a Pareto optimal matching, the house $g$ must be assigned. Otherwise, applicant $a$ could leave $h$ and take the unmatched house $g$, contradicting trade-in freeness.
 	
 	However, it is not enough that $g$ is assigned to some applicant. The holder of $g$ must be compatible with the fact that $a$ is assigned to $h$. If $g$ is assigned to an applicant $b$ who prefers $h$ to $g$, then $a$ and $b$ form a two-applicant coalition: applicant $a$ wants $g$, while applicant $b$ wants $h$. Such a matching is not coalition-free.
 	
@@ -2220,7 +2216,7 @@
 	\qquad
 	P(a_2)=\langle h_2,h_1\rangle.
 	\]
-	The unique Pareto-optimal matching is
+	The unique Pareto optimal matching is
 	\[
 	M=\{(a_1,h_1),(a_2,h_2)\},
 	\]
@@ -2244,7 +2240,7 @@
 	\]
 	Thus the coalition inequality is tight, but not violated.
 	
-	However, this fractional point is not in the convex hull of POM vectors, since the only Pareto-optimal matching is $M$. The safe-holder inequality identifies this issue. Take
+	However, this fractional point is not in the convex hull of POM vectors, since the only Pareto optimal matching is $M$. The safe-holder inequality identifies this issue. Take
 	\[
 	a=a_1,
 	\qquad
@@ -2273,11 +2269,11 @@
 		\le
 		\sum_{b\in S(a,h,g)}x_{bg}
 		\]
-		is valid for the Pareto-optimal matching polytope.
+		is valid for the Pareto optimal matching polytope.
 	\end{pprop}
 	
 	\begin{proof}
-		Let $M$ be a Pareto-optimal matching, and let $x$ be its incidence vector. We prove that
+		Let $M$ be a Pareto optimal matching, and let $x$ be its incidence vector. We prove that
 		\[
 		x_{ah}
 		\le
@@ -2322,77 +2318,57 @@
 		\sum_{b'\in S(a,h,g)}x_{b'g}.
 		\]
 		
-		Thus, the inequality holds for every Pareto-optimal matching vector, and therefore it is valid for the Pareto-optimal matching polytope.
+		Thus, the inequality holds for every Pareto optimal matching vector, and therefore it is valid for the Pareto optimal matching polytope.
 	\end{proof}
 	
 	The safe-holder inequalities strengthen the relaxation by enforcing, in a linear way, a condition that is automatic in the integer model. In an integral matching, if $a$ receives $h$ and prefers $g$ to $h$, then $g$ must be assigned to an applicant who does not create a two-applicant coalition with $a$. In the linear relaxation, the original constraints may allow $g$ to be assigned fractionally to unsafe holders. The safe-holder inequalities exclude such fractional configurations.
 	
-	Together, the prefix-cover inequalities and the safe-holder inequalities capture two different implications of Pareto optimality. The prefix-cover inequalities come from maximality and trade-in freeness, while the safe-holder inequalities combine trade-in freeness with coalition freeness. Both families are valid for the Pareto-optimal matching polytope and can be added to the linear relaxation as candidate cutting inequalities.
-	
-
+	Together, the prefix-cover inequalities and the safe-holder inequalities capture two different implications of Pareto optimality. The prefix-cover inequalities come from maximality and trade-in freeness, while the safe-holder inequalities combine trade-in freeness with coalition freeness. Both families are valid for the Pareto optimal matching polytope and can be added to the linear relaxation as candidate cutting inequalities.
 
 \chapter{Conclusions and Future Work}
 
 	This thesis studied matching problems from two complementary perspectives, the design and analysis of combinatorial algorithms, and the formulation of discrete problems through linear and integer programming.
 	
-	In Chapter $1$, we considered two classical problems of matching theory from an
-	algorithmic perspective. We first studied the maximum bipartite matching
+	In Chapter $1$, we considered two classical problems of matching theory from an algorithmic perspective. We first studied the maximum bipartite matching
 	problem, beginning with the classical augmenting-path algorithm and then
 	presenting the Hopcroft–Karp algorithm, which achieves a significantly better
 	running time by processing several shortest augmenting paths in each phase.
 	We then examined the stable marriage problem and the Gale–Shapley algorithm.
-	Particular attention was given to the presentation of the algorithms. The
-	pseudocodes were written in a detailed and implementation-oriented form, while
-	the correctness proofs were adapted to the corresponding implementations.
-	This makes the connection between the theoretical argument and the actual
-	execution of each algorithm explicit.
+	We paid special attention on the presentation of the algorithms.
 	
-	In Chapter $2$, we revisited the same problems from the perspective of linear and integer programming. We studied natural integer programming formulations for the maximum bipartite matching and stable marriage problems. In both cases, the corresponding linear relaxations are integral. Consequently, the original discrete problems can be solved through linear programming without explicitly enforcing the binary restrictions on the variables.
+	In Chapter $2$, we revisited the same problems but now using linear and integer programming. We studied the standard integer programming formulations for the maximum bipartite matching and stable marriage problems. In both cases, the corresponding linear relaxations are integral. Hence, the original discrete problems can be solved through linear programming without explicitly enforcing the binary restrictions on the variables.
 	
-	Chapter $3$ focused on Pareto-optimal matchings in the one-to-one house allocation
-	model. Starting from an integer programming formulation of the problem, we
-	constructed an explicit fractional vertex of its linear relaxation and thereby
-	showed that, unlike the formulations studied in Chapter $3$, the relaxation is not
-	integral. Since the family of coalition-free constraints may be factorial in
-	size, we developed a separation procedure based on an auxiliary directed graph
-	and the Floyd–Warshall algorithm. The resulting procedure has running time
-	$O(|E|^{3})$ time, where $|E|$ is the number of acceptable applicant - house pairs. In particular, this becomes $O(n^{6})$ when there are $n$ applicants and $n$ houses. We also performed computational experiments on several small instances. For each instance, the Pareto-optimal matching vectors were generated and their convex hull was constructed using SageMath. Its linear description was then compared with fractional vertices of the original relaxation. This analysis made it possible to identify relations that are valid for the Pareto-optimal matching polytope but are not enforced by the relaxation. We further showed that $\dim(P_{\mathrm{POM}})\le |E|-|F|$ where $E$ is the set of acceptable applicant–house pairs and $F$ is the set of houses that appear as the first choice of at least one applicant. Finally, we derived and proved the validity of two families of problem-specific inequalities, the prefix-cover inequalities and the safe-holder inequalities. Both families strengthen the relaxation by removing fractional solutions that do not belong to the convex hull of Pareto-optimal matching vectors.
+	Chapter $3$ focused on Pareto optimal matchings in the one-to-one house allocation model. Starting from an integer programming formulation of the problem, we constructed an explicit fractional vertex of its linear relaxation and thereby showed that, unlike the formulations studied in Chapter $3$, the relaxation is not integral. Since the family of coalition-free constraints may be factorial in size, we developed a separation procedure based on an auxiliary directed graph and the Floyd–Warshall algorithm. The resulting procedure has running time $O(|E|^{3})$, where $|E|$ is the number of acceptable applicant - house pairs. In particular, this becomes $O(n^{6})$ when there are $n$ applicants and $n$ houses. We also performed computational experiments on several small instances. For each instance, the Pareto optimal matching vectors were generated and their convex hull was constructed using SageMath. Its linear description was then compared with fractional vertices of the original relaxation. This analysis made it possible to identify relations that are valid for the Pareto optimal matching polytope but are not enforced by the relaxation. We further showed that $\dim(P_{\mathrm{POM}})\le |E|-|F|$ where $E$ is the set of acceptable applicant–house pairs and $F$ is the set of houses that appear as the first choice of at least one applicant. Finally, we derived and proved the validity of two families of problem-specific inequalities, the prefix-cover inequalities and the safe-holder inequalities. Both families strengthen the relaxation by removing fractional solutions that do not belong to the convex hull of Pareto optimal matching vectors.
 	
-	Taken together, these results demonstrate a clear difference between the
-	classical matching problems studied in Chapters 2 and 3 and the Pareto-optimal
-	house allocation problem. In the former cases, the combinatorial structure is
-	captured exactly by the corresponding linear relaxations. In the latter case,
-	integrality is lost, and the relaxation contains fractional points that cannot
-	be expressed as convex combinations of Pareto-optimal matching vectors. The
-	separation procedure, the computational experiments, and the additional valid
-	inequalities developed in this thesis provide a first step towards a tighter
-	polyhedral description of this convex hull.
 	
-    The next step is to determine whether the proposed
+	
+	From the above results, we see that some integer programming formulations have integral linear relaxations, and therefore an integral optimal solution can be obtained by solving the corresponding linear program. In other cases, integrality is lost, and the relaxation contains fractional vertices that cannot be expressed as convex combinations of the incidence vectors of feasible integer solutions. The separation procedure, the computational experiments, and the additional valid inequalities developed in this thesis provide a first step towards a tighter polyhedral description of the Pareto optimal matching polytope.
+	
+	
+	The next step is to determine whether the proposed
 	inequalities (or other relevant inequalities), are facet-defining under certain restrictions. Such a study would first require a more
-	complete characterization of the affine hull of the Pareto-optimal matching
+	complete characterization of the affine hull of the Pareto optimal matching
 	polytope. In several of the examined instances, its dimension was strictly
-	smaller than the bound $|E|-|F|$, indicating the presence of additional
+	smaller than the bound $|E|-|F|$, demonstrating the existence of additional
 	independent affine equalities. Further research could also investigate new
 	families of valid inequalities, develop efficient separation procedures for
 	them, and evaluate their computational effect on larger instances.
 	
 	The computational framework developed in this thesis provides a basis for such
 	investigations. For small instances, it generates the incidence vectors of all
-	Pareto-optimal matchings, constructs their convex hull and its
+	Pareto optimal matchings, constructs their convex hull and its
 	$H$-description, and identifies the equations and inequalities violated by
 	fractional points of the relaxation. It can therefore be used to formulate,
-	test, and refine conjectures concerning the dimension, affine hull, facets, and
-	general polyhedral structure of the Pareto-optimal matching polytope.
+	test, and refine conjectures concerning the dimension, affine hull, facets, and general polyhedral structure of the Pareto optimal matching polytope.
 
 \appendix
 
 \chapter{Implementation Details and Usage Guide}
 
-	This project was developed in order to study the polytope of Pareto-optimal matchings in the House Allocation problem. The main goal is to compare two objects. The first one is the true convex hull of all Pareto-optimal matching vectors. The second one is the polytope defined by the linear programming relaxation of the integer programming model. By comparing them, we can find fractional solutions of the relaxation and identify valid inequalities that are missing from the relaxation.
-	
-	The program follows the same general pipeline for every input instance. First, it reads a preference instance from a CSV file. Then it runs the Serial Dictatorship algorithm for all possible orders of the applicants. This gives Pareto-optimal matchings. Since different applicant orders can produce the same matching, duplicate matchings are removed. The remaining unique Pareto-optimal matchings are converted into incidence vectors, called POM vectors. These vectors are then used to construct the convex hull with SageMath. From this convex hull, the program extracts the H-description, namely the equations and inequalities that describe the true Pareto-optimal matching polytope.
-	
+	This project was developed in order to study the polytope of Pareto optimal matchings in the House Allocation problem. The main goal is to compare two objects. The first one is the true convex hull of all Pareto optimal matching vectors. The second one is the polytope defined by the linear programming relaxation of the integer programming model. By comparing them, we can find fractional solutions of the relaxation and identify valid inequalities that are missing from the relaxation.
+
+	The program follows the same pipeline for every input instance. First, it reads a preference instance from a CSV file. Then it runs the Serial Dictatorship algorithm for all possible orders of the applicants. This gives all the Pareto optimal matchings. There can be duplicates (which we remove) because different applicant orders can produce the same matching. The remaining unique Pareto optimal matchings are converted into incidence vectors, called POM vectors. We use these vectors to construct the convex hull with SageMath. From convex hull, the program extracts the H-description.
+
 	After that, the program solves the LP relaxation of the integer programming model. The coalition-free constraints are not added all at once, because there may be exponentially many of them. Instead, they are added by a separation procedure. The program searches for a fractional solution of the relaxation by solving the LP with several random objective functions. If a fractional solution is found, it is compared with the H-description of the true convex hull. The final output shows which equations and inequalities of the true polytope are violated by the fractional relaxation solution.
 	
 	\section{Project Structure}
@@ -2411,11 +2387,11 @@
 	
 	The folder \texttt{data/} contains the input instances. Each instance is a CSV file containing the preference lists of the applicants.
 	
-	The folder \texttt{sd/} contains the implementation of Serial Dictatorship. This part generates Pareto-optimal matchings and writes them in vector form.
+	The folder \texttt{sd/} contains the implementation of Serial Dictatorship. This part generates Pareto optimal matchings and writes them in vector form.
 	
 	The folder \texttt{lp\_relaxation/} contains the implementation of the LP relaxation of the integer programming model. It also contains the separation procedure for the coalition-free constraints.
 	
-	The folder \texttt{polyhedral\_analysis/} contains the code that builds the convex hull of the Pareto-optimal matching vectors and extracts its H-description.
+	The folder \texttt{polyhedral\_analysis/} contains the code that builds the convex hull of the Pareto optimal matching vectors and extracts its H-description.
 	
 	The folder \texttt{results/} contains the output files. For each input instance, a separate folder is created.
 	
@@ -2498,17 +2474,17 @@
 	P(1) = [1,2,4].
 	\]
 	
-	The function \texttt{serial\_dictatorship} considers all permutations of the applicants. For each permutation, the applicants are processed in that order. Each applicant receives the best available house in the applicant's preference list, if such a house exists. If there is no such house, the applicant remains unmatched. This produces one Pareto-optimal matching for each ordering of the applicants.
+	The function \texttt{serial\_dictatorship} considers all permutations of the applicants. For each permutation, the applicants are processed in that order. Each applicant receives the best available house in the applicant's preference list, if such a house exists. If there is no such house, the applicant remains unmatched. This produces one Pareto optimal matching for each ordering of the applicants.
 	
 	Since different permutations may produce the same matching, the function \texttt{get\_unique\_matchings} removes duplicates. The unique matchings are then written to the results folder.
 	
-	The function \texttt{write\_pom\_vectors} converts each unique matching into an incidence vector. For every acceptable pair \((a,h)\), there is a variable \(X_{ah}\). The value is 1 if applicant \(a\) is matched to house \(h\), and 0 otherwise.
+	The function \texttt{write\_pom\_vectors} converts each unique matching into an incidence vector. For every acceptable pair $(a,h)$, there is a variable $X_{ah}$. The value is $1$ if applicant $a$ is matched to house $h$, and 0 otherwise.
 	
 	The same file also computes simple statistics, such as the number of unique matchings, the minimum and maximum matching size, variables that are never used, and variables that are always used.
 	
 	\section{Polyhedral Analysis}
 	
-	The file \texttt{polyhedral\_analysis/ip\_h\_description.py} builds the true Pareto-optimal matching polytope.
+	The file \texttt{polyhedral\_analysis/ip\_h\_description.py} builds the true Pareto optimal matching polytope.
 	
 	The function \texttt{read\_vector\_csv} reads the POM vectors from the file:
 	
@@ -2564,9 +2540,9 @@
 	\sum_{a \in Q(h)} x_{ah} \leq 1.
 	\]
 	
-	The model also contains maximality constraints and trade-in-free constraints. These are part of the original model for Pareto-optimal matchings.
+	The model also contains maximality constraints and trade-in-free constraints. These are part of the original model for Pareto optimal matchings.
 	
-	In the final version of the implementation, the LP relaxation is also strengthened with the prefix-cover inequalities and the safe-holder inequalities introduced in the previous chapter. These inequalities are valid for the Pareto-optimal matching polytope and are added before the separation procedure for coalition-free constraints is applied.
+	In the final version of the implementation, the LP relaxation is also strengthened with the prefix-cover inequalities and the safe-holder inequalities introduced in the previous chapter. These inequalities are valid for the Pareto optimal matching polytope and are added before the separation procedure for coalition-free constraints is applied.
 	
 	The coalition-free constraints are handled differently. They may be exponentially many, so the program does not add all of them at the beginning. Instead, it solves the current relaxation and then searches for a violated coalition constraint. If one is found, it is added to the LP, and the LP is solved again. This is called separation.
 	
@@ -2615,7 +2591,7 @@
 	
 	\paragraph{\texttt{<instance>\_unique\_pareto\_matchings.csv}}
 	
-	This file contains only the unique Pareto-optimal matchings.
+	This file contains only the unique Pareto optimal matchings.
 	
 	The columns are:
 	
@@ -2627,17 +2603,17 @@
 	
 	\paragraph{\texttt{<instance>\_pom\_vectors.csv}}
 	
-	This file contains the incidence vectors of the unique Pareto-optimal matchings.
+	This file contains the incidence vectors of the unique Pareto optimal matchings.
 	
 	Each column corresponds to a variable \(X_{ah}\). For example, the column \texttt{X23} corresponds to the pair \((2,3)\), meaning applicant 2 matched to house 3.
 	
-	Each row corresponds to one unique Pareto-optimal matching. A value of 1 means that the pair is used in that matching. An empty cell means 0.
+	Each row corresponds to one unique Pareto optimal matching. A value of 1 means that the pair is used in that matching. An empty cell means 0.
 	
 	These vectors are the vertices used to construct the convex hull.
 	
 	\paragraph{\texttt{<instance>\_matching\_statistics.txt}}
 	
-	This file contains simple statistics about the unique Pareto-optimal matchings.
+	This file contains simple statistics about the unique Pareto optimal matchings.
 	
 	It includes:
 	
@@ -2654,7 +2630,7 @@
 	
 	\paragraph{\texttt{<instance>\_polyhedral\_analysis.txt}}
 	
-	This file contains the H-description of the true Pareto-optimal matching polytope.
+	This file contains the H-description of the true Pareto optimal matching polytope.
 	
 	It includes:
 	
