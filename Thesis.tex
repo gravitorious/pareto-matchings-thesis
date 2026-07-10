@@ -28,6 +28,7 @@
 %\usepackage{indentfirst}
 \usepackage{fancyhdr}
 \usepackage{makeidx}
+\makeindex
 \usepackage{float}
 \usepackage[nameinlink]{cleveref}
 \usepackage{url}
@@ -168,9 +169,6 @@
 %for reference \begin{lemma}[lemma "name" only if you want]\label{dfs} %\Cref{berge} if you want to refer it. You call function in the same way
 %use \text{} inside equations for words
 
-
-
-
 \begin{document}
 
 \input{frontmatter/frontmatter}
@@ -212,8 +210,31 @@
 \tableofcontents
 
 \clearpage
-\printindex %Linear Programming (LP)\index{Linear Programming} gia na mpei sto eurethrio
+\listoffigures
 
+%\clearpage
+%\printindex %Linear Programming (LP)\index{Linear Programming} gia na mpei sto eurethrio
+
+\chapter*{List of Abbreviations}
+
+\begin{tabular}{ll}
+	BFS            & Breadth-First Search \\
+	CSV            & Comma-Separated Values \\
+	DAG            & Directed Acyclic Graph \\
+	DFS            & Depth-First Search \\
+	GLPK           & GNU Linear Programming Kit \\
+	H-description  & Half-Space Description \\
+	IDE            & Integrated Development Environment \\
+	ILP            & Integer Linear Programming \\
+	IP             & Integer Programming \\
+	LP             & Linear Programming \\
+	NP             & Nondeterministic Polynomial Time \\
+	POM            & Pareto Optimal Matching \\
+	SD             & Serial Dictatorship \\
+	V-description  & Vertex Description \\
+\end{tabular}
+
+\clearpage
 \pagenumbering{arabic}
 
 \chapter{Matching Problems and Algorithms}
