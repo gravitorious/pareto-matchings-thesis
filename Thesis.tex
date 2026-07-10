@@ -173,34 +173,31 @@
 
 \begin{document}
 
-%\input{frontmatter/frontmatter}
+\input{frontmatter/frontmatter}
 
 \chapter*{Preface}
 	
-	Matching theory is one of the central topics in graph theory and combinatorial optimization.
+	Matching theory is a central topic in graph theory and combinatorial optimization. It provides a natural way to model situations where agents, objects, or resources must be paired under specific restrictions, leading to broad applications in computer science, mathematics, economics, and operations research.
 	
-	Matchings appear in a wide range of problems in computer science, mathematics, economics, and operations research. It provides a natural way to model situations in which agents, objects, or resources must be paired under certain restrictions.
+	Consider the case where there are $n$ teachers and we have to decide which schools to assign them to based on some criteria. Criteria may vary; for example, each teacher may have preferences over the available schools, while schools may have specific ranking criteria based on their teaching needs. Similarly, $n$ applicants may have preferences over houses they want to buy. There is only one side with preferences, but we still have two sides we want to match. An example with more than two sides is when we have a set of professors, projects, and students, and our purpose is to assign each project to a professor and then assign students to each project. Here, each assignment is a triplet, and there could be many criteria. Despite the preferences of each side, we may instead be interested in maximizing or minimizing a different criterion. For example, in the teacher assignment problem, we may want to maximize the number of schools that receive a teacher without taking the teachers' preferences into account. These examples illustrate that matching problems arise in many different forms and that the underlying requirements may vary significantly depending on the application.
 	
-	Consider the case where there are $n$ teachers and we have to decide which schools to assign them to based on some criteria. Criteria may vary; for example, each teacher may have preferences over the available schools, while schools may have specific ranking criteria based on their teaching needs. Similarly, $n$ applicants may have preferences over houses they want to buy. There is only one side with preferences, but we still have two sides we want to match. An example with more than two sides is when we have a set of professors, projects, and students, and our purpose is to assign each project to a professor and then assign students to each project. Here, each assignment is a triplet, and there could be many criteria.	
-	
-	The algorithmic study of matchings has played an important role in the development of efficient combinatorial algorithms. Some matching problems admit elegant, strongly polynomial algorithms, while others become computationally difficult even with only small changes to the model.
+	The algorithmic study of matchings has played an important role in the development of combinatorial optimization. While some matching problems admit elegant strongly polynomial algorithms, even small modifications of the underlying model may lead to computationally difficult problems.
 	
 	The profound impact of matching theory on real-world economics and society was notably recognized in $2012$, when Alvin E. Roth and Lloyd S. Shapley were awarded the Nobel Prize in Economic Sciences. Their recognition was rooted in the theory of stable allocations, which originated in the foundational $1962$ work by David Gale and Lloyd Shapley.
 	
-	Linear and integer programming provide another fundamental approach to optimization. The overwhelming majority of problems in Economics, Engineering, and many in Computer Science have linear functions as a basic characteristic. Consequently, Linear Programming has numerous applications across these areas, making it one of the most widely applied branches of Mathematics. It is a relatively new science, born to meet the demands of the Second World War. During the early years of its development, the simplex algorithm dominated. However, in subsequent decades, interior-point and exterior-point algorithms were developed, revolutionizing the landscape. These newer methods are often considered superior, particularly for large-scale optimization problems, as they offer polynomial-time complexity guarantees and can navigate the feasible region to reach the optimal solution much more efficiently in practice.
+	Linear and integer programming provide another fundamental approach to optimization. Many problems in Economics, Engineering, and Computer Science can be modeled exactly or approximately using linear functions. Consequently, Linear Programming has numerous applications across these areas, making it one of the most widely applied branches of Mathematics. It is a relatively new science, born to meet the demands of the Second World War. During the early years of its development, the simplex algorithm dominated. Later, polynomial-time methods, such as the ellipsoid method and interior-point algorithms, were developed, providing important theoretical and practical advances, particularly for large-scale optimization problems.
 	
-	In integer programming, many natural decision variables are restricted to take values of zero or one, representing whether an object is selected, an edge is used, or an assignment is made. However, solving integer programs directly is generally difficult. A common strategy is therefore to relax the integrality restrictions and study the corresponding linear program. When the relaxation has integral optimal solutions, the original discrete problem can be solved through linear programming.
+	In integer programming, many natural decision variables are restricted to take values of zero or one, representing whether an object is selected, an edge is used, or an assignment is made. However, solving integer programs directly is generally difficult. A common strategy is therefore to relax the integrality restrictions and study the corresponding linear program. When the feasible region of the relaxation is integral, an optimal integer solution can be obtained by solving the corresponding linear program.
 	
 	The purpose of this thesis is to study matching problems on bipartite graphs from both of these perspectives. We first present classical algorithmic results for two fundamental problems in matching theory and then study related formulations through linear and integer programming. The final part of the thesis focuses on a Pareto-optimal matching problem in a one-to-one house-allocation model, where the behavior of the linear relaxation is substantially more complicated.
 	
 	Chapter $2$ is devoted to matching problems and algorithms. We begin with the maximum bipartite matching problem. After introducing the basic definitions, we present a classical augmenting-path implementation with running time $O(nm)$, where $n$ denotes the number of vertices and $m$ the number of edges. We then give an implementation of the Hopcroft--Karp algorithm, which improves the running time to $O(\sqrt{n}(n + m))$ by finding many shortest augmenting paths in phases. The chapter continues with the stable marriage problem and the Gale--Shapley algorithm, one of the most influential algorithms in matching theory.
 	
-	A particular emphasis of this chapter is the presentation of the algorithms.
-	The pseudocodes are written in a detailed form, so that their translation into an actual programming language is almost immediate. Moreover, the proofs are adapted to the implementations rather than being presented only at a high conceptual level. This makes the connection between the code, the algorithmic idea and the correctness argument explicit. The goal is not only to state that the algorithms work, but also to make clear why each step is necessary.
+	A particular emphasis of this chapter is the presentation of the algorithms. The pseudocode is written in a detailed form, so that their translation into an actual programming language is almost immediate. Moreover, the proofs are adapted to the implementations rather than being presented only at a high conceptual level. This makes the connection between the code, the algorithmic idea and the correctness argument explicit.
 	
 	Chapter $3$ introduces the polyhedral point of view. We first recall the basic language of linear programming, integer programming, polyhedra, polytopes, and integrality. We then return to the matching problems studied in Chapter 2 and examine them through linear and integer programming formulations. For the maximum bipartite matching problem, the linear relaxation captures the integer structure of the problem, and optimal matching solutions can be obtained through linear programming. A similar phenomenon appears in the stable marriage problem, where the corresponding stable matching polytope has an integral linear description. These examples illustrate how polyhedral structure can explain why certain discrete optimization problems admit efficient linear programming approaches.
 	
-	Chapter $4$ studies a different problem: Pareto-optimal matchings in a one-to-one house allocation model. In this setting, agents have strict preference lists over houses, and the aim is to describe Pareto-optimal matchings. We present an integer programming formulation for this problem and then study its linear relaxation. Unlike the classic examples in Chapter $3$, the relaxation is not generally integral. We demonstrate this by constructing fractional solutions that satisfy the relaxation but do not correspond to convex combinations of Pareto optimal matching vectors.
+	Chapter $4$ studies Pareto-optimal matchings in a one-to-one house allocation model. In this setting, applicants have strict preference lists over houses, and the aim is to describe Pareto-optimal matchings. We present an integer programming formulation for this problem and then study its linear relaxation. Unlike the classic examples in Chapter $3$, the relaxation is not generally integral. We demonstrate this by constructing fractional solutions that satisfy the relaxation but do not correspond to convex combinations of Pareto optimal matching vectors.
 	
 	A further difficulty is that one family of constraints in the formulation can be very large. To handle this, we use a separation approach. So, instead of listing all such constraints in advance, we search for violated constraints only when they are needed. This allows the relaxation to be solved more efficiently in practice and enables computational experiments on small instances.
 	
@@ -2310,9 +2307,62 @@
 	The safe-holder inequalities strengthen the relaxation by enforcing, in a linear way, a condition that is automatic in the integer model. In an integral matching, if $a$ receives $h$ and prefers $g$ to $h$, then $g$ must be assigned to an applicant who does not create a two-applicant coalition with $a$. In the linear relaxation, the original constraints may allow $g$ to be assigned fractionally to unsafe holders. The safe-holder inequalities exclude such fractional configurations.
 	
 	Together, the prefix-cover inequalities and the safe-holder inequalities capture two different implications of Pareto optimality. The prefix-cover inequalities come from maximality and trade-in freeness, while the safe-holder inequalities combine trade-in freeness with coalition freeness. Both families are valid for the Pareto-optimal matching polytope and can be added to the linear relaxation as candidate cutting inequalities.
+	
 
 
 \chapter{Conclusions and Future Work}
+
+	This thesis studied matching problems from two complementary perspectives, the design and analysis of combinatorial algorithms, and the formulation of discrete problems through linear and integer programming.
+	
+	In Chapter $1$, we considered two classical problems of matching theory from an
+	algorithmic perspective. We first studied the maximum bipartite matching
+	problem, beginning with the classical augmenting-path algorithm and then
+	presenting the Hopcroft–Karp algorithm, which achieves a significantly better
+	running time by processing several shortest augmenting paths in each phase.
+	We then examined the stable marriage problem and the Gale–Shapley algorithm.
+	Particular attention was given to the presentation of the algorithms. The
+	pseudocodes were written in a detailed and implementation-oriented form, while
+	the correctness proofs were adapted to the corresponding implementations.
+	This makes the connection between the theoretical argument and the actual
+	execution of each algorithm explicit.
+	
+	In Chapter $2$, we revisited the same problems from the perspective of linear and integer programming. We studied natural integer programming formulations for the maximum bipartite matching and stable marriage problems. In both cases, the corresponding linear relaxations are integral. Consequently, the original discrete problems can be solved through linear programming without explicitly enforcing the binary restrictions on the variables.
+	
+	Chapter $3$ focused on Pareto-optimal matchings in the one-to-one house allocation
+	model. Starting from an integer programming formulation of the problem, we
+	constructed an explicit fractional vertex of its linear relaxation and thereby
+	showed that, unlike the formulations studied in Chapter $3$, the relaxation is not
+	integral. Since the family of coalition-free constraints may be factorial in
+	size, we developed a separation procedure based on an auxiliary directed graph
+	and the Floyd–Warshall algorithm. The resulting procedure has running time
+	$O(|E|^{3})$ time, where $|E|$ is the number of acceptable applicant - house pairs. In particular, this becomes $O(n^{6})$ when there are $n$ applicants and $n$ houses. We also performed computational experiments on several small instances. For each instance, the Pareto-optimal matching vectors were generated and their convex hull was constructed using SageMath. Its linear description was then compared with fractional vertices of the original relaxation. This analysis made it possible to identify relations that are valid for the Pareto-optimal matching polytope but are not enforced by the relaxation. We further showed that $\dim(P_{\mathrm{POM}})\le |E|-|F|$ where $E$ is the set of acceptable applicant–house pairs and $F$ is the set of houses that appear as the first choice of at least one applicant. Finally, we derived and proved the validity of two families of problem-specific inequalities, the prefix-cover inequalities and the safe-holder inequalities. Both families strengthen the relaxation by removing fractional solutions that do not belong to the convex hull of Pareto-optimal matching vectors.
+	
+	Taken together, these results demonstrate a clear difference between the
+	classical matching problems studied in Chapters 2 and 3 and the Pareto-optimal
+	house allocation problem. In the former cases, the combinatorial structure is
+	captured exactly by the corresponding linear relaxations. In the latter case,
+	integrality is lost, and the relaxation contains fractional points that cannot
+	be expressed as convex combinations of Pareto-optimal matching vectors. The
+	separation procedure, the computational experiments, and the additional valid
+	inequalities developed in this thesis provide a first step towards a tighter
+	polyhedral description of this convex hull.
+	
+    The next step is to determine whether the proposed
+	inequalities (or other relevant inequalities), are facet-defining under certain restrictions. Such a study would first require a more
+	complete characterization of the affine hull of the Pareto-optimal matching
+	polytope. In several of the examined instances, its dimension was strictly
+	smaller than the bound $|E|-|F|$, indicating the presence of additional
+	independent affine equalities. Further research could also investigate new
+	families of valid inequalities, develop efficient separation procedures for
+	them, and evaluate their computational effect on larger instances.
+	
+	The computational framework developed in this thesis provides a basis for such
+	investigations. For small instances, it generates the incidence vectors of all
+	Pareto-optimal matchings, constructs their convex hull and its
+	$H$-description, and identifies the equations and inequalities violated by
+	fractional points of the relaxation. It can therefore be used to formulate,
+	test, and refine conjectures concerning the dimension, affine hull, facets, and
+	general polyhedral structure of the Pareto-optimal matching polytope.
 
 \appendix
 
