@@ -1751,10 +1751,34 @@
 	\]
 	whenever applicant $a$ strictly prefers $h'$ to $h$. 
 	
-	A plausible coalition corresponds to a directed cycle in the auxiliary. A small example of a coalition is illustrated in the following figure.
+	A plausible coalition corresponds to a directed cycle in the auxiliary graph. Let $x^*$ be the current solution of the LP relaxation. To separate the coalition-free constraints, we assign to each vertex $(a,h)$ the weight
+	\[
+	w(a,h)=1-x^*_{ah}.
+	\]
+	For a plausible coalition $C$, the corresponding coalition inequality is
+	\[
+	\sum_{(a,h)\in C} x_{ah}\leq |C|-1.
+	\]
+	At the point $x^*$, this inequality is violated if and only if
+	\[
+	\sum_{(a,h)\in C} x^*_{ah}>|C|-1,
+	\]
+	or equivalently,
+	\begin{equation}\label{cycle-condition}
+		\sum_{(a,h)\in C} (1-x^*_{ah})<1.
+	\end{equation}
+	Hence, the separation problem reduces to finding a minimum-weight directed cycle in the auxiliary graph. If the weight of such a cycle is less than $1$, then the corresponding coalition constraint is violated and is added to the relaxation. Otherwise, no coalition-free constraint is violated by the current LP solution.
 	
-	\clearpage
-	\newpage
+	The separation procedure is implemented as a cutting-plane procedure. We first solve the LP relaxation without adding any coalition-free constraints. Using $x^*$, we then construct the auxiliary directed graph described above. The unweighted structure of this graph depends only on the preference lists. However, in each iteration, the vertex weights depend on the current LP solution.
+	
+	Since we will use the Floyd--Warshall algorithm \cite{floyd1962algorithm} and this algorithm applies only to edge-weighted graphs, we convert these vertex weights into edge weights. Assume a directed edge $((a, h), (a^{'},h^{'}))$ and let $u = (a, h)$ and $v = (a^{'},h^{'})$.
+	We then set the edge weight ($w^{*}$) equal to the weight of the head vertex:
+	\[
+	w^{*}(u, v) = w(v).
+	\]
+	With this convention, the weight of a directed cycle is exactly the sum of the weights of its vertices.
+	
+	A small example of a coalition is illustrated in the following figure.
 	
 	\begin{figure}[H]
 		\centering
@@ -1789,37 +1813,6 @@
 	h_1 \succ_{a_4} h_4.
 	\]
 	
-	Let $x^*$ be the current solution of the LP relaxation. To separate the coalition-free constraints, we assign to each vertex $(a,h)$ the weight
-	\[
-	w(a,h)=1-x^*_{ah}.
-	\]
-	For a plausible coalition $C$, the corresponding coalition inequality is
-	\[
-	\sum_{(a,h)\in C} x_{ah}\leq |C|-1.
-	\]
-	At the point $x^*$, this inequality is violated if and only if
-	\[
-	\sum_{(a,h)\in C} x^*_{ah}>|C|-1,
-	\]
-	or equivalently,
-	\begin{equation}\label{cycle-condition}
-		\sum_{(a,h)\in C} (1-x^*_{ah})<1.
-	\end{equation}
-	Hence, the separation problem reduces to finding a minimum-weight directed cycle in the auxiliary graph. If the weight of such a cycle is less than $1$, then the corresponding coalition constraint is violated and is added to the relaxation. Otherwise, no coalition-free constraint is violated by the current LP solution.
-	
-	The separation procedure is implemented as a cutting-plane procedure. We first solve the LP relaxation without adding any coalition-free constraints. Let $x^*$ be the solution obtained from this relaxation.
-	
-	Using $x^*$, we then construct the auxiliary directed graph described above. The unweighted structure of this graph depends only on the preference lists. However, in each iteration, the vertex weights depend on the current LP solution. More precisely, each vertex $(a,h)$ receives weight
-	\[
-	w(a,h)=1-x^*_{ah}.
-	\]
-	Since we will use the Floyd--Warshall algorithm \cite{floyd1962algorithm} and this algorithm applies only to edge-weighted graphs, we convert these vertex weights into edge weights. Assume a directed edge $((a, h), (a^{'},h^{'}))$ and let $u = (a, h)$ and $v = (a^{'},h^{'})$.
-	We then set the edge weight ($w^{*}$) equal to the weight of the head vertex:
-	\[
-	w^{*}(u, v) = w(v).
-	\]
-	With this convention, the weight of a directed cycle is exactly the sum of the weights of its vertices.
-	
 	We then run the Floyd--Warshall algorithm on this weighted directed graph and obtain the all-pairs shortest-path distance matrix $D$. We do not inspect the diagonal entries $D_{u,u}$, since they correspond to the empty path and are equal to zero. Instead, for every directed edge $(u,v)$, we check whether there is a path from $v$ back to $u$. If such a path exists, then the edge $(u,v)$ together with a shortest path from $v$ to $u$ forms a directed cycle. Its weight is
 	\[
 	w^{*}(u,v)+D_{v,u}.
@@ -1835,17 +1828,11 @@
 	The process is repeated until the separation step finds no additional violated coalition-free constraint. At that point, the current LP solution satisfies both the coalition constraints that have already been added explicitly and all remaining coalition constraints that have not been generated. Hence, instead of generating all constraints of $\mathcal C$ in advance, we add only those that are actually violated during the solution process.
 
 	\begin{llemma}
-		The separation problem for the coalition-free constraints can be solved in polynomial time.
-		More precisely, let $n=|A|$ be the number of applicants, let
+		The separation problem for the coalition-free constraints can be solved in polynomial time. More precisely, let $n=|A|$ be the number of applicants and let
 		\[
 		L=\max_{a\in A}|P(a)|
 		\]
-		be the maximum length of a preference list, and let
-		\[
-		r=\sum_{a\in A}|P(a)|
-		\]
-		be the number of acceptable pairs. Then one separation call can be performed in
-		$O(r^3)$ time. In particular, since $r\leq nL$, this is also $O(n^3L^3)$.
+		be the maximum length of a preference list. Then one separation call can be performed in $O(n^3L^3)$ time.
 	\end{llemma}
 	
 	\begin{proof}
@@ -1896,14 +1883,9 @@
 		=
 		O(n^2L^2).
 		\]
-		Also, since the auxiliary graph has $r$ vertices and no parallel edges, we know that
-		\[
-		|E_G|\leq r(r-1)=O(r^2).
-		\]
 		After the graph has been constructed, one separation call consists of the
 		following steps. First, we assign weights to the vertices, which takes $O(r)$
-		time. Then we convert these vertex weights into edge weights, which takes
-		$O(|E_G|)$ time. We then run the Floyd--Warshall algorithm on a graph with
+		time. Then we convert these vertex weights into edge weights, which takes $O(n^2L^2)$. We then run the Floyd--Warshall algorithm on a graph with
 		$r$ vertices, which takes
 		\[
 		O(r^3)
@@ -1912,18 +1894,17 @@
 		\[
 		w^*(u,v)+D_{v,u}.
 		\]
-		This takes $O(|E_G|)$ time.
+		This takes $O(n^2L^2)$ time.
 		
 		Hence, the total running time of one separation call is
 		\[
-		O(r^3+|E_G|)=O(r^3).
+		O(r^3+n^2L^2).
 		\]
 		Since $r\leq nL$, this is also
 		\[
 		O((nL)^3)=O(n^3L^3).
 		\]
-		In the case of complete preference lists with $n$ houses, we have $L=n$ and
-		therefore $r\leq n^2$. In that case, the worst-case running time becomes
+		In the case of complete preference lists with $n$ houses, we have $L=n$. In that case, the worst-case running time becomes
 		\[
 		O(n^6).
 		\]
