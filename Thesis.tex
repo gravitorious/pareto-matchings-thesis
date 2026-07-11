@@ -179,9 +179,9 @@
 	
 	The algorithmic study of matchings has played an important role in the development of combinatorial optimization. While some matching problems admit elegant strongly polynomial algorithms, even small modifications of the underlying model may lead to computationally difficult problems.
 	
-	The big effect of matching theory on real-world economics and society was notably recognized in $2012$, when Alvin E. Roth and Lloyd S. Shapley were awarded the Nobel Prize in Economic Sciences. Their recognition was rooted in the theory of stable allocations, which originated in the foundational $1962$ work by David Gale and Lloyd Shapley.
+	The big effect of matching theory on real-world economics and society was notably recognized in $2012$, when Alvin E. Roth and Lloyd S. Shapley were awarded the Nobel Prize in Economic Sciences. Their recognition was rooted in the theory of stable allocations, which originated in the foundational $1962$ work by David Gale and Lloyd Shapley \cite{Gale01011962}.
 	
-	Many problems in Economics, Engineering, and Computer Science can be modeled exactly or approximately using linear functions. Linear Programming has numerous applications across these areas, making it one of the most widely applied branches of Mathematics. It is a relatively new science, born to meet the demands of the Second World War. During the early years of its development, the simplex algorithm dominated. Later, polynomial-time methods, such as the ellipsoid method and interior-point algorithms, were developed, providing important theoretical and practical advances, particularly for large-scale optimization problems.
+	Many problems in Economics, Engineering, and Computer Science can be modeled exactly or approximately using linear functions. Linear Programming has numerous applications across these areas, making it one of the most widely applied branches of Mathematics. It is a relatively new science, born to meet the demands of the Second World War. During the early years of its development, the simplex algorithm dominated. Later, polynomial-time methods, such as the ellipsoid method and interior-point algorithms, were developed, providing important theoretical and practical advances, particularly for large-scale optimization problems \cite{schrijver2003volA}.
 	
 	In integer programming, many natural decision variables are restricted to take values of zero or one, representing whether an object is selected, an edge is used, or an assignment is made. However, solving integer programs directly is generally difficult. A common strategy is therefore to relax the integrality restrictions and study the corresponding linear program. When the feasible region of the relaxation is integral, an optimal integer solution can be obtained by solving the corresponding linear program.
 	
@@ -1211,7 +1211,7 @@
 	\end{ttheorem}
 	
 	\begin{proof}
-		Let $A$ be the vertex-edge incidence matrix of $G$. Consider the LP relaxation \eqref{mbm-compact-LP-Relaxation} of the maximum matching problem. We have shown that, since $A$ is totally unimodular and the right-hand side vector is integral, the optimal value of this relaxation is equal to the maximum cardinality of a matching in $G$.
+		(Based on \cite[Chapter 8, pp. 146-147]{matousek2007understanding}) Let $A$ be the vertex-edge incidence matrix of $G$. Consider the LP relaxation \eqref{mbm-compact-LP-Relaxation} of the maximum matching problem. We have shown that, since $A$ is totally unimodular and the right-hand side vector is integral, the optimal value of this relaxation is equal to the maximum cardinality of a matching in $G$.
 		
 		The dual of this LP relaxation is
 		\[
@@ -1813,7 +1813,7 @@
 	\[
 	w(a,h)=1-x^*_{ah}.
 	\]
-	Since we use Floyd--Warshall and this algorithm applies only to edge-weighted graphs, we convert these vertex weights into edge weights. Assume a directed edge $((a, h), (a^{'},h^{'}))$ and let $u = (a, h)$ and $v = (a^{'},h^{'})$.
+	Since we will use the Floyd--Warshall algorithm \cite{floyd1962algorithm} and this algorithm applies only to edge-weighted graphs, we convert these vertex weights into edge weights. Assume a directed edge $((a, h), (a^{'},h^{'}))$ and let $u = (a, h)$ and $v = (a^{'},h^{'})$.
 	We then set the edge weight ($w^{*}$) equal to the weight of the head vertex:
 	\[
 	w^{*}(u, v) = w(v).
