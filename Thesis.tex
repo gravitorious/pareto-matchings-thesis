@@ -1920,7 +1920,7 @@
 	
 	We start from a fixed house allocation instance with applicant set $A$, house set $H$, and preference lists $P(a)$ for every applicant $a\in A$. For this instance, we first generate Pareto optimal matchings using the Serial Dictatorship algorithm (code: \eqref{sd-algorithm-code}). More precisely, we consider all possible permutations of the applicants. For each permutation, the applicants are processed one by one according to this order, and each applicant receives the most preferred house that is still available, if such a house exists.
 	
-	By the characterization theorem {\cite[Chapter 6, p. 13-14]{abraham2004pareto}} for Pareto optimal matchings in house allocation, every outcome of Serial Dictatorship is Pareto optimal, and every Pareto optimal matching can be obtained from Serial Dictatorship for some ordering of the applicants. Therefore, by running Serial Dictatorship over all permutations of $A$ and removing duplicate outcomes, we get the set of Pareto optimal matchings of the instance.
+	By the characterization theorem {\cite[Chapter 6, pp. 13-14]{abraham2004pareto}} for Pareto optimal matchings in house allocation, every outcome of Serial Dictatorship is Pareto optimal, and every Pareto optimal matching can be obtained from Serial Dictatorship for some ordering of the applicants. Therefore, by running Serial Dictatorship over all permutations of $A$ and removing duplicate outcomes, we get the set of Pareto optimal matchings of the instance.
 	
 	Each Pareto optimal matching $M$ is represented by its incidence vector $x^M$ as defined in \Cref{def-pareto}.
 	
@@ -1954,7 +1954,7 @@
 	\[
 	y_h=\sum_{a\in Q(h)}x_{ah}.
 	\]
-	Thus $y_h$ represents whether the house $h$ is assigned. Also, for $a\in A$ and $h\in P(a)$, we define
+	Thus $y_{h}$ represents whether the house $h$ is assigned. Also, for $a\in A$ and $h\in P(a)$, we define
 	\[
 	B_a(h)=\{g\in P(a):g\succ_{a} h\},
 	\]
@@ -2137,7 +2137,7 @@
 		The inequality holds in both cases. Since it holds for every POM vector, it is valid for their convex hull.
 	\end{proof}
 	
-	We call these inequalities \emph{prefix-cover inequalities}. They say that, for every applicant $a$ and every acceptable house $h$, either the house $h$ must be assigned to some applicant, or $a$ must be assigned to a house that appears before $h$ in the preference list of $a$. When $h$ is the first choice of $a$, the set $B_a(h)$ is empty, and the inequality reduces exactly to the first-choice house covering inequality. 
+	We call these inequalities \emph{prefix-cover inequalities}. We say that, for every applicant $a$ and every acceptable house $h$, either the house $h$ must be assigned to some applicant, or $a$ must be assigned to a house that appears before $h$ in the preference list of $a$. When $h$ is the first choice of $a$, the set $B_a(h)$ is empty, and the inequality reduces exactly to the first-choice house covering inequality. 
 	
 	\paragraph{Cutting off a Fractional Vertex.} Consider now the basic relaxation. As previously shown, the vector \eqref{first-fractional-solution} was a fractional vertex of the relaxation. This fractional solution is cut off by the prefix-cover inequality corresponding to the house $h_3$. 
 	Indeed, $h_3$ is the first choice of both $a_3$ and $a_4$. 
