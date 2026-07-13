@@ -197,7 +197,7 @@
 	
 	We show that a family of constraints in the formulation can be very large. To handle this, we use a separation approach. So, instead of listing all such constraints in advance, we search for violated constraints only when they are needed. This allows the relaxation to be solved more efficiently in practice and enables computational experiments on small instances.
 	
-	One of the main focuses is to compare the linear relaxation with the actual convex hull of Pareto optimal matching vectors. We construct some small instances, we enumerate Pareto optimal matchings, compute the corresponding convex hull, and derive its linear description. With this, we are able to identify which inequalities are valid for the true Pareto optimal matching polytope but are not enforced by the original relaxation. From these experiments, we prove two families of additional valid inequalities: prefix-cover inequalities and safe-holder inequalities. These constraints strengthen the relaxation and specifically the first one gives us an upper bound for the dimension of Pareto optimal matching polytope.
+	One of the main focuses is to compare the linear relaxation with the actual convex hull of Pareto optimal matching vectors. We construct some small instances, we enumerate Pareto optimal matchings, compute the corresponding convex hull, and derive its linear description. With this, we are able to identify which inequalities are valid for the true Pareto optimal matching polytope but are not enforced by the original relaxation. From these experiments, we prove two families of additional valid inequalities: prefix-cover inequalities and safe-holder inequalities. These constraints strengthen the relaxation and specifically the first one gives us an upper bound for the dimension of Pareto optimal matching polytope. Finally, for a cyclic parametric family of house allocation instances, we derive a new family of cycle-break inequalities and prove that they are facet-defining for the corresponding Pareto optimal matching polytope. Although this result concerns only a specific family, it illustrates a possible approach for further polyhedral analysis.
 	
 	The prerequisites for this thesis are typically covered in an undergraduate curriculum, such as graph theory, algorithms, computational complexity, and linear algebra. Basic knowledge of these fields is enough to follow the content of this thesis.
 	
@@ -929,9 +929,12 @@
 	= n
 	$.
 	
-	An inequality $a^Tx \leq b$ is called \emph{valid} for $P$ if it is satisfied by every point of $P$, that is, if $a^Tx \leq b$ for all $x \in P$. The set
+	An inequality $a^Tx \leq b$ is called \emph{valid} for $P$ if it is satisfied by every point of $P$, that is, if $a^Tx \leq b$ for all $x \in P$. A point $x\in P$ is said to be \emph{tight} for the valid inequality
+	$a^Tx\leq b$ if it satisfies the inequality with equality, that is, if
+	$a^Tx=b$. The set
 	$F = \{x \in P : a^Tx = b\}$
-	is called the \emph{face} of $P$ induced by this valid inequality.
+	is called the \emph{face} of $P$ induced by this valid inequality. A face $F$ of $P$ is called a \emph{proper face} if
+	$F\ne\varnothing$ and $F\ne P$.
 	A face $F$ of $P$ is called a \emph{facet} if $\operatorname{dim}(F) = \operatorname{dim}(P) - 1.$
 	In this case, we say that the inequality $a^Tx \leq b$ is \emph{facet-defining} for $P$. Equivalently, if $d = \operatorname{dim}(P)$ and the inequality is not satisfied with equality by every point of $P$, then it is facet-defining if and only if its equality set contains $d$ affinely independent points of $P$.
 	
@@ -2731,7 +2734,7 @@
 		$
 		2n-1.
 		$
-		Consequently, the cycle-break inequality defines a facet of
+		As a result, the cycle-break inequality defines a facet of
 		$P_{\mathrm{POM}}(\mathcal{I}_n)$.
 	\end{proof}
 	
@@ -2806,18 +2809,16 @@
 	
 	In Chapter $2$, we revisited the same problems but now using linear and integer programming. We studied the standard integer programming formulations for the maximum bipartite matching and stable marriage problems. In both cases, the corresponding linear relaxations are integral. Hence, the original discrete problems can be solved through linear programming without explicitly enforcing the binary restrictions on the variables.
 	
-	Chapter $3$ focused on Pareto optimal matchings in the one-to-one house allocation model. Starting from an integer programming formulation of the problem, we constructed an explicit fractional vertex of its linear relaxation and thereby showed that, unlike the formulations studied in Chapter $3$, the relaxation is not integral. Since the family of coalition-free constraints may be factorial in size, we developed a separation procedure based on an auxiliary directed graph and the Floyd–Warshall algorithm. The resulting procedure has running time $O(|E|^{3})$, where $|E|$ is the number of acceptable applicant - house pairs. In particular, this becomes $O(n^{6})$ when there are $n$ applicants and $n$ houses. We also performed computational experiments on several small instances. For each instance, the Pareto optimal matching vectors were generated and their convex hull was constructed using SageMath. Its linear description was then compared with fractional vertices of the original relaxation. This analysis made it possible to identify relations that are valid for the Pareto optimal matching polytope but are not enforced by the relaxation. We further showed that $\dim(P_{\mathrm{POM}})\le |E|-|F|$ where $E$ is the set of acceptable applicant–house pairs and $F$ is the set of houses that appear as the first choice of at least one applicant. Finally, we derived and proved the validity of two families of problem-specific inequalities, the prefix-cover inequalities and the safe-holder inequalities. Both families strengthen the relaxation by removing fractional solutions that do not belong to the convex hull of Pareto optimal matching vectors.
+	Chapter $3$ focused on Pareto optimal matchings in the one-to-one house allocation model. Starting from an integer programming formulation of the problem, we constructed an explicit fractional vertex of its linear relaxation and thereby showed that, unlike the formulations studied in the preceding chapter, the relaxation is not integral. Since the family of coalition-free constraints may be factorial in size, we developed a separation procedure based on an auxiliary directed graph and the Floyd–Warshall algorithm. The resulting procedure has running time $O(n^{3}L^{3})$, where $n$ is the number of applicants and $L$ is the maximum length of a preference list. In particular, this becomes $O(n^{6})$ when there are $n$ applicants and $n$ houses. We also performed computational experiments on several small instances. For each instance, the Pareto optimal matching vectors were generated and their convex hull was constructed using SageMath. Its linear description was then compared with fractional vertices of the original relaxation. This analysis made it possible to identify relations that are valid for the Pareto optimal matching polytope but are not enforced by the relaxation. We further showed that $\dim(P_{\mathrm{POM}})\le |E|-|F|$ where $E$ is the set of acceptable applicant–house pairs and $F$ is the set of houses that appear as the first choice of at least one applicant. Finally, we derived and proved the validity of two families of problem-specific inequalities, the prefix-cover inequalities and the safe-holder inequalities. Both families strengthen the relaxation by removing fractional solutions that do not belong to the convex hull of Pareto optimal matching vectors.
+	
+	Finally, we studied the facial structure of the Pareto optimal matching polytope for a cyclic parametric family of house allocation instances. For this family, we introduced a family of cycle-break inequalities and proved that each of these inequalities is \emph{facet-defining}. Of course this facet result concerns a specific structured family and does not provide a general facet description of the Pareto optimal matching polytope for arbitrary house allocation instances. Extending this approach to broader classes of instances would require substantially more work.
 	
 	From the above results, we see that some integer programming formulations have integral linear relaxations, and therefore an integral optimal solution can be obtained by solving the corresponding linear program. In other cases, integrality is lost, and the relaxation contains fractional vertices that cannot be expressed as convex combinations of the incidence vectors of feasible integer solutions. The separation procedure, the computational experiments, and the additional valid inequalities developed in this thesis provide a first step towards a tighter polyhedral description of the Pareto optimal matching polytope.
 	
-	The next step is to determine whether the proposed
-	inequalities (or other relevant inequalities), are facet-defining under certain restrictions. Such a study would first require a more
-	complete characterization of the affine hull of the Pareto optimal matching
-	polytope. In several of the examined instances, its dimension was strictly
+	An important direction for future work is to determine whether the prefix-cover inequalities, the safe-holder inequalities, or other relevant inequalities are facet-defining under suitable conditions. It would also be interesting to investigate whether the cycle-break inequalities can be extended beyond the cyclic family considered in this thesis, or whether analogous inequalities arise from other structures. Such a study would require a more complete characterization of the affine hull of the Pareto optimal matching polytope. In several of the examined instances, its dimension was strictly
 	smaller than the bound $|E|-|F|$, demonstrating the existence of additional
 	independent affine equalities. Further research could also investigate new
-	families of valid inequalities, develop efficient separation procedures for
-	them, and evaluate their computational effect on larger instances.
+	families of valid inequalities and evaluate their computational effect on larger instances.
 	
 	The computational framework developed in this thesis provides a basis for such
 	investigations. For small instances, it generates the incidence vectors of all
