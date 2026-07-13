@@ -346,7 +346,10 @@
 	Then, we can prove the following lemma.
 	
 	\begin{llemma}\label{initial-call-dfs-augm}
-    	Every initial call to \Cref{DfsAugmentingPath} from \Cref{max-bm1} takes a free vertex as parameter.	
+    	Every initial call to \Cref{DfsAugmentingPath} from \
+    	
+    	
+    	{max-bm1} takes a free vertex as parameter.	
 	\end{llemma}
 	\begin{proof}
 		This is obviously true in the first iteration. Assume that we are at iteration $i$, and that the statement holds for all previous iterations. Let $v$ be the vertex from which we are about to initially call \Cref{DfsAugmentingPath}. If $v$ is free, then we are done. If it is not, $v$ must have become matched during some previous iteration. However, by \Cref{remarkaugm}, in each iteration the only vertex of $V_1$ that can become matched is the vertex from which \Cref{DfsAugmentingPath} was initially called. Since \Cref{DfsAugmentingPath} has never been initially called from $v$ before iteration $i$, the vertex $v$ could not have become matched earlier.
@@ -2208,17 +2211,17 @@
 	is not Pareto optimal, because the two applicants can exchange houses and both improve.
 	
 	Consider the fractional point
-	\[
+	$
 	x_{11}=x_{12}=x_{21}=x_{22}=\frac{1}{2}.
-	\]
+	$
 	This point satisfies the assignment constraints. It also satisfies the coalition-free inequality corresponding to the two-applicant coalition $\{(a_1,h_2),(a_2,h_1)\}$, because
-	\[
+	$
 	x_{12}+x_{21}
 	=
 	\frac{1}{2}+\frac{1}{2}
 	=
 	1.
-	\]
+	$
 	Thus the coalition inequality is tight, but not violated.
 	
 	However, this fractional point is not in the convex hull of POM vectors, since the only Pareto optimal matching is $M$. The safe-holder inequality identifies this issue. Take
@@ -2230,17 +2233,13 @@
 	g=h_1.
 	\]
 	applicant $a_1$ prefers $h_1$ to $h_2$. The only other applicant who can hold $h_1$ is $a_2$. But $a_2$ prefers $h_2$ to $h_1$. Therefore, $a_2$ is not a safe holder of $h_1$ with respect to the assignment $(a_1,h_2)$. Hence
-	\[
+	$
 	S(a_1,h_2,h_1)=\varnothing.
-	\]
+	$
 	The safe-holder inequality becomes
-	\[
-	x_{12}\le 0.
-	\]
+	$x_{12}\le 0.$
 	The fractional point violates this inequality, since
-	\[
-	x_{12}=\frac{1}{2}.
-	\]
+	$x_{12}=\frac{1}{2}.$
 	Thus, the safe-holder inequality cuts off a fractional solution that is allowed by the original relaxation.
 	
 	\begin{pprop}
@@ -2262,42 +2261,42 @@
 		\]
 		
 		If
-		\[
+		$
 		x_{ah}=0,
-		\]
+		$
 		then the inequality is immediate.
 		
 		Suppose now that
-		\[
+		$
 		x_{ah}=1.
-		\]
+		$
 		Thus, in $M$, applicant $a$ is assigned to $h$. Since $g\in B_a(h)$, we have
-		\[
+		$
 		g\succ_{a} h.
-		\]
+		$
 		If $g$ were unmatched, applicant $a$ could leave $h$ and take $g$. This would contradict trade-in freeness. Therefore, $g$ must be assigned in $M$.
 		
 		Let $b$ be the applicant assigned to $g$. Since $a$ is already assigned to $h$, we have $b\ne a$. Therefore,
-		\[
+		$
 		b\in Q(g)\setminus\{a\}.
-		\]
+		$
 		
 		We claim that $b\in S(a,h,g)$. Suppose not. Then $h\in P(b)$ and
-		\[
+		$
 		h\succ_b g.
-		\]
+		$
 		But then $a$ and $b$ form a two-applicant coalition: applicant $a$, currently assigned to $h$, prefers $g$, while applicant $b$, currently assigned to $g$, prefers $h$. This contradicts coalition freeness.
 		
 		Therefore, the holder $b$ of $g$ must belong to $S(a,h,g)$. Hence
-		\[
+		$
 		\sum_{b'\in S(a,h,g)}x_{b'g}=1.
-		\]
+		$
 		Since $x_{ah}=1$, we get
-		\[
+		$
 		x_{ah}
 		\le
 		\sum_{b'\in S(a,h,g)}x_{b'g}.
-		\]
+		$
 		
 		Thus, the inequality holds for every Pareto optimal matching vector, and therefore it is valid for the Pareto optimal matching polytope.
 	\end{proof}
@@ -2305,6 +2304,494 @@
 	The safe-holder inequalities strengthen the relaxation by enforcing, in a linear way, a condition that is automatic in the integer model. In an integral matching, if $a$ receives $h$ and prefers $g$ to $h$, then $g$ must be assigned to an applicant who does not create a two-applicant coalition with $a$. In the linear relaxation, the original constraints may allow $g$ to be assigned fractionally to unsafe holders. The safe-holder inequalities exclude such fractional configurations.
 	
 	Together, the prefix-cover inequalities and the safe-holder inequalities capture two different implications of Pareto optimality. The prefix-cover inequalities come from maximality and trade-in freeness, while the safe-holder inequalities combine trade-in freeness with coalition freeness. Both families are valid for the Pareto optimal matching polytope and can be added to the linear relaxation as candidate cutting inequalities.
+	
+	
+	\subsection{Facet-defining inequalities for a cyclic family}
+	
+	The inequalities introduced in the previous sections are valid for arbitrary house allocation instances. We now study the facial structure of the Pareto optimal matching polytope for a simple parametric family of instances. For this family, we identify a new class of valid inequalities and prove that they define facets of the corresponding polytope.
+	
+	\paragraph{The cyclic family of instances.}
+	Fix an integer $n\ge 3$. Consider the set of houses
+	\[
+	H=\{h_1,\ldots,h_n\}
+	\]
+	and the set of applicants
+	\[
+	A=\{a_1,\ldots,a_n,b_1,\ldots,b_n\}.
+	\]
+	where indices are taken modulo $n$. The preference lists are
+	\[
+	P(a_i)=\langle h_{i+1},h_i\rangle,
+	\quad i=1,\ldots,n,
+	\]
+	and
+	\[
+	P(b_i)=\langle h_i\rangle,
+	\quad i=1,\ldots,n.
+	\]
+	We denote this instance by $\mathcal{I}_n$.
+	
+	Thus, every applicant $a_i$ finds exactly two houses acceptable. The first choice of $a_i$ is $h_{i+1}$, while the second choice is $h_i$. Every applicant $b_i$ finds only the house $h_i$ acceptable. The acceptable pairs involving the applicants $a_i$ form an even cycle, while each applicant $b_i$ is adjacent only to $h_i$.
+	
+	For convenience, we introduce the following notation:
+	\[
+	s_i=x_{a_i h_i},
+	\quad
+	t_i=x_{a_i h_{i+1}},
+	\quad
+	r_i=x_{b_i h_i},
+	\quad i=1,\ldots,n.
+	\]
+	Therefore, $s_i$ represents the assignment of applicant $a_i$ to the second choice $h_i$, $t_i$ represents the assignment of $a_i$ to the first choice $h_{i+1}$, and $r_i$ represents the assignment of $b_i$ to the only acceptable house $h_i$.
+	
+	There are exactly $3n$ acceptable pairs in $\mathcal{I}_n$. Moreover, every house $h_i$ is the first and only choice of applicant $b_i$. Obviously, every house must be assigned in every POM vector. Indeed, if $h_i$ were unmatched, then $b_i$ would also be unmatched, and the pair $(b_i,h_i)$ could be added to the matching, contradicting maximality.
+	
+	It follows that every POM vector satisfies
+	\begin{equation}\label{eq:cyclic-house-assignment}
+		s_i+t_{i-1}+r_i=1,
+		\quad i=1,\ldots,n.
+	\end{equation}
+	These $n$ equalities are linearly independent, since each of them contains exactly the variables associated with one house.
+	
+	Now we will try to describe the structure of the POM vectors of $\mathcal{I}_n$. Consider the undirected graph $G_{n}$ with vertex set
+	\[
+	V(G_{n})=\{s_1,\ldots,s_n,t_1,\ldots,t_n\},
+	\]
+	and edge set
+	\[
+	E(G_{n})
+	=
+	\bigl\{\{s_i,t_i\}:i=1,\ldots,n\bigr\}
+	\cup
+	\bigl\{\{t_i,s_{i+1}\}:i=1,\ldots,n\bigr\}.
+	\]
+	The edge $\{s_i,t_i\}$ represents the fact that applicant $a_i$ cannot receive both $h_i$ and $h_{i+1}$. Similarly, the edge $\{t_i,s_{i+1}\}$ represents the fact that the assignments corresponding to $t_i$ and $s_{i+1}$ both use the house $h_{i+1}$.
+	
+	Therefore, $G_{n}$ is the undirected cycle on the $2n$ vertices
+	\[
+	s_1,t_1,s_2,t_2,\ldots,s_n,t_n,
+	\]
+	appearing in the cyclic order
+	\[
+	s_1-t_1-s_2-t_2-\cdots-s_n-t_n-s_1.
+	\]
+	
+	\paragraph{Characterization of the POM vectors.}
+	The following proposition gives an exact description of the Pareto optimal matchings of $\mathcal{I}_n$.
+
+	\begin{pprop}
+		Let $x$ be an incident vector of $\mathcal{I}_n$ $\left( x\in\{0,1\}^{3n} \right)$. Then $x$ is a POM vector of
+		$\mathcal{I}_n$ if and only if the following conditions hold:
+		\begin{enumerate}
+			\item The set
+			$
+			S(x)
+			=
+			\{s_i:s_i=1\}
+			\cup
+			\{t_i:t_i=1\}
+			$
+			is an independent set of $G_n$.
+			
+			\item
+			$
+			S(x)\ne\{s_1,\ldots,s_n\}.
+			$
+			
+			\item For every $i=1,\ldots,n$,
+			$
+			r_i=1-s_i-t_{i-1},
+			$
+			where the indices are taken modulo $n$.
+		\end{enumerate}
+	\end{pprop}
+	
+	\begin{proof}
+		Let $M$ be a Pareto optimal matching of $\mathcal{I}_n$ and $x\in\{0,1\}^{3n}$ be a binary vector indexed by the acceptable pairs of $\mathcal{I}_n$. As observed above, every house $h_i$ must be assigned in $M$. Therefore,
+		$s_i+t_{i-1}+r_i=1, i=1,\ldots,n.$
+		
+		Since $M$ is a matching, applicant $a_i$ cannot be assigned simultaneously to $h_i$ and $h_{i+1}$. Hence
+		\[
+		s_i+t_i\le 1.
+		\]
+		Moreover, the variables $t_i$ and $s_{i+1}$ correspond to two assignments involving the same house $h_{i+1}$. Thus,
+		\[
+		t_i+s_{i+1}\le 1.
+		\]
+		It follows that the set of variables $s_i,t_i$ that are equal to one is a independent set of $G_{n}$.
+		
+		This independent set cannot be $S^{*}$. Indeed, if
+		$s_1=\cdots=s_n=1$, then every applicant $a_i$ is assigned to $h_i$ but strictly prefers $h_{i+1}$. Since $h_{i+1}$ is assigned to $a_{i+1}$, the applicants $a_1,a_2,\ldots,a_n$ form a coalition. This contradicts the Pareto optimality of $M$.
+		
+		For the converse direction, let $S$ be a independent set of $G_{n}$ such that $S\ne S^{*}$. Set the variables $s_i,t_i$ according to the incidence vector of $S$, and define $r_i=1-s_i-t_{i-1}.$ Because $s_i$ and $t_{i-1}$ are adjacent in $G_{n}$, they cannot both be equal to one. Therefore, $r_i\in\{0,1\}.$ The inequalities
+		$s_i+t_i\le 1$ ensure that every applicant $a_i$ is assigned to at most one house and from $r_i=1-s_i-t_{i-1}$ that every house $h_i$ is assigned exactly once. Hence the resulting vector is the incidence vector of a matching that assigns every house.
+		
+		Since every house is assigned, the matching is maximal. It is also trade-in free, because there is no unmatched house to which an applicant could move.
+		
+		It remains to show that the matching is coalition free. An applicant $b_i$ cannot participate in a coalition, since $h_i$ is the only acceptable house of $b_i$. Similarly, if $t_i=1$, then applicant $a_i$ receives the first choice $h_{i+1}$ and therefore cannot strictly improve.
+		
+		Consequently, the only applicants who can participate in a coalition are those for which $s_i=1$. Suppose that $s_i=1$. Then $a_i$ is assigned to $h_i$ and strictly prefers $h_{i+1}$. Since
+		$
+		s_i+t_i\le 1,
+		$
+		we have $t_i=0$. Using the equality for the house $h_{i+1}$, we obtain
+		$
+		s_{i+1}+t_i+r_{i+1}=1,
+		$
+		and hence
+		$
+		s_{i+1}+r_{i+1}=1.
+		$
+		
+		If $s_{i+1}=1$, then $h_{i+1}$ is assigned to $a_{i+1}$, and a possible coalition can continue from $a_i$ to $a_{i+1}$. If $s_{i+1}=0$, then $r_{i+1}=1$, so $h_{i+1}$ is assigned to $b_{i+1}$. In this case the sequence cannot continue, since $b_{i+1}$ does not prefer any other house.
+		
+		Therefore, a sequence of applicants who can cyclically improve can continue from $a_i$ to $a_{i+1}$ only when $s_{i+1}=1$. Such a sequence forms a directed cycle only if
+		\[
+		s_1=\cdots=s_n=1.
+		\]
+		However, this is exactly the independent set $S^{*}$, which has been excluded. Hence the matching is coalition free.
+		
+		The resulting matching is maximal, trade-in free, and coalition free, so it is Pareto optimal.
+	\end{proof}
+	
+	\paragraph{Dimension.}
+	We can now determine the dimension of the Pareto optimal matching polytope of $\mathcal{I}_n$.
+	
+	\begin{pprop}
+		For every $n\ge 3$,
+		\[
+		\dim\bigl(P_{\mathrm{POM}}(\mathcal{I}_n)\bigr)=2n.
+		\]
+	\end{pprop}
+	
+	\begin{proof}
+		The instance $\mathcal{I}_n$ has $3n$ acceptable pairs. Because every POM vector satisfies the $n$ linearly independent equalities
+		$s_i+t_{i-1}+r_i=1, i=1,\ldots,n$
+		we get
+		\[
+		\dim\bigl(P_{\mathrm{POM}}(\mathcal{I}_n)\bigr)
+		\le 3n-n
+		=2n.
+		\]
+		
+		We prove the reverse inequality by constructing $2n+1$ affinely independent POM vectors. For a variable $q$, let $e_q$ denote the corresponding unit vector in $\mathbb{R}^{3n}$. First, consider the POM vector
+		\[
+		x^{0}=\sum_{k=1}^{n}e_{r_k}.
+		\]
+		This is the incidence vector of the matching in which every applicant $b_k$ is assigned to $h_k$.
+		
+		For every $i=1,\ldots,n$, define
+		\[
+		x^{s_i}=x^{0}+e_{s_i}-e_{r_i}.
+		\]
+		This is the incidence vector of the matching in which $a_i$ is assigned to $h_i$, while every $b_k$ with $k\ne i$ is assigned to $h_k$.
+		
+		Similarly, define
+		\[
+		x^{t_i}=x^{0}+e_{t_i}-e_{r_{i+1}}.
+		\]
+		This is the incidence vector of the matching in which $a_i$ is assigned to the first choice $h_{i+1}$, while every $b_k$ with $k\ne i+1$ is assigned to $h_k$.
+		
+		By the previous proposition, all these vectors are POM vectors. To prove affine independence, it is enough to show that the $2n$ vectors
+		\[
+		x^{s_i}-x^{0}=e_{s_i}-e_{r_i},
+		\quad i=1,\ldots,n,
+		\]
+		and
+		\[
+		x^{t_i}-x^{0}=e_{t_i}-e_{r_{i+1}},
+		\quad i=1,\ldots,n,
+		\]
+		are linearly independent.
+		
+		Suppose that
+		\[
+		\sum_{i=1}^{n}\alpha_i
+		\bigl(e_{s_i}-e_{r_i}\bigr)
+		+
+		\sum_{i=1}^{n}\beta_i
+		\bigl(e_{t_i}-e_{r_{i+1}}\bigr)
+		=0.
+		\]
+		For each $i$, the coordinate $s_i$ appears only in the vector
+		$e_{s_i}-e_{r_i}.$
+		Therefore, $\alpha_i=0$ for every $i$. Similarly, the coordinate $t_i$ appears only in
+		$e_{t_i}-e_{r_{i+1}},$
+		and hence $\beta_i=0$ for every $i$.
+		
+		Thus, the $2n$ difference vectors are linearly independent, and the $2n+1$ POM vectors
+		\[
+		x^{0},
+		\quad
+		x^{s_1},\ldots,x^{s_n},
+		\quad
+		x^{t_1},\ldots,x^{t_n}
+		\]
+		are affinely independent. Therefore,
+		\[
+		\dim\bigl(P_{\mathrm{POM}}(\mathcal{I}_n)\bigr)\ge 2n.
+		\]
+		Combining the two inequalities gives
+		\[
+		\dim\bigl(P_{\mathrm{POM}}(\mathcal{I}_n)\bigr)=2n.
+		\]
+	\end{proof}
+	
+	\paragraph{Cycle-break inequalities.}
+	The cyclic structure of $\mathcal{I}_n$ gives rise to the following inequalities:
+	\begin{equation}\label{eq:cycle-break-inequality}
+		t_j+\sum_{i=1}^{n}r_i\ge 1,
+		\qquad j=1,\ldots,n.
+	\end{equation}
+	We call these inequalities \emph{cycle-break inequalities}.
+	
+	The interpretation is the following. In a Pareto optimal matching, either applicant $a_j$ must receive the first choice $h_{j+1}$, or at least one house must be assigned to a backup applicant $b_i$. If neither event occurs, then every $a_i$ receives the second choice $h_i$, and the applicants form a cyclic coalition.
+	
+	Summing the affine equalities
+	\[
+	s_i+t_{i-1}+r_i=1
+	\]
+	over all $i$ gives
+	\begin{equation}\label{eq:cyclic-affine-sum}
+		\sum_{i=1}^{n}s_i
+		+
+		\sum_{i=1}^{n}t_i
+		+
+		\sum_{i=1}^{n}r_i
+		=n.
+	\end{equation}
+	Therefore, on the affine hull of $P_{\mathrm{POM}}(\mathcal{I}_n)$, the cycle-break inequality corresponding to $j$ is equivalent to
+	\begin{equation}\label{eq:equivalent-cycle-break-inequality}
+		\sum_{i=1}^{n}s_i
+		+
+		\sum_{\substack{i=1\\i\ne j}}^{n}t_i
+		\le n-1.
+	\end{equation}
+	Thus, the cycle-break inequality can also be viewed as a lifting of the coalition inequality associated with the cyclic assignment $\{s_1,\ldots,s_n\}.$
+	
+	\begin{ttheorem}
+		For every $n\ge 3$ and every $j\in\{1,\ldots,n\}$, the cycle-break inequality
+		\[
+		t_j+\sum_{i=1}^{n}r_i\ge 1
+		\]
+		defines a facet of $P_{\mathrm{POM}}(\mathcal{I}_n)$.
+	\end{ttheorem}
+	
+	\begin{proof}
+		We first prove validity. Let $M$ be a Pareto optimal matching of $\mathcal{I}_n$, and let $x$ be its incidence vector.
+		
+		If $r_i=1$ for at least one $i$, then
+		$
+		t_j+\sum_{i=1}^{n}r_i\ge 1
+		$
+		holds immediately.
+		
+		Suppose now that
+		$
+		r_i=0,
+		i=1,\ldots,n.
+		$
+		Since every house is assigned, all $n$ houses must then be assigned to the $n$ applicants $a_1,\ldots,a_n$. Consequently, every applicant $a_i$ is matched.
+		
+		Suppose, for contradiction, that $t_j=0$. Since $a_j$ is matched and the only acceptable houses of $a_j$ are $h_j$ and $h_{j+1}$, we must have
+		$
+		s_j=1.
+		$
+		Using the equality for the house $h_{j+1}$, we obtain
+		$
+		s_{j+1}+t_j+r_{j+1}=1.
+		$
+		Since $t_j=r_{j+1}=0$, this gives
+		$
+		s_{j+1}=1.
+		$
+		Repeating the same argument cyclically gives
+		$
+		s_1=\cdots=s_n=1.
+		$
+		However, it is easy to see that this assignment contains the coalition
+		$
+		a_1,a_2,\ldots,a_n,
+		$
+		and therefore it is not Pareto optimal. This is a contradiction. Hence $t_j=1$, and the cycle-break inequality is valid.
+		
+		We next prove that the inequality defines a facet. By the previous proposition,
+		$
+		\dim\bigl(P_{\mathrm{POM}}(\mathcal{I}_n)\bigr)=2n.
+		$
+		Therefore, it is enough to construct $2n$ affinely independent POM vectors that satisfy the cycle-break inequality with equality. Fix an inequality $j$. We define the following matchings.
+		
+		For every $k=1,\ldots,n$, define the matching
+		\begin{equation}
+			R^k
+			=
+			\{(a_\ell,h_\ell):\ell\ne k\}
+			\cup
+			\{(b_k,h_k)\}.
+		\end{equation}
+		In this matching, all applicants $a_\ell$ except $a_k$ receive their second choice, while $b_k$ receives $h_k$.
+		
+		For every $i\in\{1,\ldots,n\}$, define
+		\begin{equation}
+			T^i
+			=
+			\{(a_\ell,h_\ell):\ell\notin\{i,i+1\}\}
+			\cup
+			\{(a_i,h_{i+1}),(b_i,h_i)\}.
+		\end{equation}
+		In this matching, $a_i$ receives the first choice $h_{i+1}$,
+		$b_i$ receives $h_i$, applicant $a_{i+1}$ is unmatched, and every
+		applicant $a_\ell$ with $\ell\notin\{i,i+1\}$ receives $h_\ell$.
+		
+		For the fixed index $j$, we use the $n-1$ matchings $T^i, \forall i\ne j$.
+		Indeed, if $i\ne j$, then $t_j=0$ and $r_i=1$ in $T^i$, so
+		\[
+		t_j+\sum_{k=1}^{n}r_k=1.
+		\]
+		Thus, $T^i$ satisfies the cycle-break inequality corresponding to $j$
+		with equality. The matching $T^j$ is not used, since it has
+		$t_j=r_j=1$ and therefore does not satisfy the inequality with equality.
+		
+		Finally, define
+		\begin{equation}
+			Z = \{(a_i,h_{i+1}):i=1,\ldots,n\}.
+		\end{equation}
+		In $Z$, every applicant $a_i$ receives the first choice.
+		
+		By the characterization of the POM vectors, all the matchings
+		$R^1,\ldots,R^n, T^i, \forall i\ne j, Z$ are Pareto optimal.
+		
+		They also satisfy the cycle-break inequality with equality. Indeed, in $R^k$, we have
+		$
+		t_j=0,
+		\sum_{i=1}^{n}r_i=1.
+		$
+		In $T^i$, where $i\ne j$, we also have
+		$
+		t_j=0,
+		\sum_{k=1}^{n}r_k=1.
+		$
+		Finally, in $Z$ we have
+		$
+		t_j=1,
+		\sum_{i=1}^{n}r_i=0.
+		$
+		
+		There are $n+(n-1)+1=2n$ such POM vectors. It remains to prove that they are affinely independent.
+		
+		Let $x^{R^k}$, $x^{T^i}$, and $x^Z$ denote their incidence vectors. Suppose that
+		\begin{equation}\label{eq:affine-dependence-cycle-break}
+			\sum_{k=1}^{n}\lambda_k x^{R^k}
+			+
+			\sum_{\substack{i=1\\i\ne j}}^{n}\mu_i x^{T^i}
+			+
+			\nu x^Z
+			=0,
+		\end{equation}
+		where
+		\begin{equation}\label{eq:affine-coefficient-sum-cycle-break}
+			\sum_{k=1}^{n}\lambda_k
+			+
+			\sum_{\substack{i=1\\i\ne j}}^{n}\mu_i
+			+
+			\nu
+			=0.
+		\end{equation}
+		
+		Consider $t_j$. Among all the vectors appearing in \eqref{eq:affine-dependence-cycle-break}, only $x^Z$ has value one in this coordinate (as described before). Therefore, $\nu=0.$
+		
+		Next, fix some $i\ne j$ and consider $t_i$. The only vectors with value one in this coordinate are $x^{T^i}$ and $x^Z$. Hence
+		$
+		\mu_i+\nu=0.
+		$
+		Since $\nu=0$, we obtain
+		$
+		\mu_i=0,
+		i\ne j.
+		$
+		
+		Equation \eqref{eq:affine-coefficient-sum-cycle-break} now gives
+		$
+		\sum_{k=1}^{n}\lambda_k=0.
+		$
+		
+		Finally, fix $k\in\{1,\ldots,n\}$ and consider the coordinate $r_k$. Among the vectors $x^{R^1},\ldots,x^{R^n}$, only $x^{R^k}$ has value one in the coordinate $r_k$. Therefore,
+		$\lambda_k=0.$
+		Since this holds for every $k\in\{1,\ldots,n\}$, all coefficients $\lambda_k$ are zero.
+		
+
+		
+		Thus all coefficients in the affine dependence are zero, and the $2n$ POM vectors are affinely independent. Hence the face induced by the cycle-break inequality has dimension at least
+		$2n-1.$
+		The inequality is not an affine equality for the polytope. For example, for the POM vector $x^0$ in which every $b_i$ receives $h_i$, we have
+		$
+		t_j+\sum_{i=1}^{n}r_i=n>1.
+		$
+		Therefore, the induced face is a proper face and has dimension exactly
+		$
+		2n-1.
+		$
+		Consequently, the cycle-break inequality defines a facet of
+		$P_{\mathrm{POM}}(\mathcal{I}_n)$.
+	\end{proof}
+	
+	\paragraph{Cutting off a fractional point.}
+	We finally show that the cycle-break inequalities are not implied by the original relaxation together with the prefix-cover and safe-holder inequalities.
+	
+	Consider the fractional point $\bar{x}$ given by
+	\begin{equation}\label{eq:cyclic-fractional-point}
+		\bar{s}_i=\frac{1}{2},
+		\qquad
+		\bar{t}_i=\frac{1}{2},
+		\qquad
+		\bar{r}_i=0,
+		\qquad i=1,\ldots,n.
+	\end{equation}
+	The applicant matching constraints are satisfied, since $\bar{s}_i+\bar{t}_i=1.$ The house matching constraints are also satisfied with equality: $\bar{s}_i+\bar{t}_{i-1}+\bar{r}_i = \frac{1}{2}+\frac{1}{2}+0 = 1.$
+	
+	The maximality constraints are satisfied. Every applicant $a_i$ is fully matched, while, for applicant $b_i$, the house $h_i$ is fully assigned to other applicants.
+	
+	The only nontrivial trade-in constraint for $a_i$ corresponds to the first-choice house $h_{i+1}$. Its left-hand side is $1-\bar{s}_i = \frac{1}{2} \ge 0.$ All remaining trade-in constraints are also satisfied.
+	
+	The unique coalition inequality is $\sum_{i=1}^{n}s_i\le n-1.$ At $\bar{x}$, its left-hand side is $\sum_{i=1}^{n}\bar{s}_i = \frac{n}{2} \le n-1,$ where the last inequality follows from $n\ge 3$.
+	
+	Every house is fully assigned at $\bar{x}$, so all prefix-cover inequalities are satisfied. Moreover, each safe-holder inequality becomes $\bar{s}_i \le \bar{s}_{i+1}+\bar{r}_{i+1},$ which is satisfied with equality, since $\frac{1}{2} = \frac{1}{2}+0.$
+	
+	However, for every $j=1,\ldots,n$, the corresponding cycle-break inequality is violated: $\bar{t}_j+\sum_{i=1}^{n}\bar{r}_i = \frac{1}{2} < 1.$ Therefore, the cycle-break inequalities strictly strengthen the relaxation obtained by adding the prefix-cover and safe-holder inequalities.
+	
+	\paragraph{A small example.}
+	For $n=3$, the preference lists are
+	\[
+	P(a_1)=\langle h_2,h_1\rangle,
+	\qquad
+	P(a_2)=\langle h_3,h_2\rangle,
+	\qquad
+	P(a_3)=\langle h_1,h_3\rangle,
+	\]
+	and
+	\[
+	P(b_i)=\langle h_i\rangle,
+	\qquad i=1,2,3.
+	\]
+	The corresponding Pareto optimal matching polytope has dimension
+	\[
+	\dim\bigl(P_{\mathrm{POM}}(\mathcal{I}_3)\bigr)=6.
+	\]
+	For example, the cycle-break inequality corresponding to $j=3$ is
+	\[
+	x_{a_3h_1}
+	+
+	x_{b_1h_1}
+	+
+	x_{b_2h_2}
+	+
+	x_{b_3h_3}
+	\ge 1.
+	\]
+	By the previous theorem, this inequality defines a facet of
+	$P_{\mathrm{POM}}(\mathcal{I}_3)$.
+	
+	We get the same inequality (as $X_{31} + X_{41} + X_{52} + X_{63} \ge 1$) for this example from the polyhedral analysis in our project.
 
 \chapter{Conclusions and Future Work}
 
@@ -2321,10 +2808,7 @@
 	
 	Chapter $3$ focused on Pareto optimal matchings in the one-to-one house allocation model. Starting from an integer programming formulation of the problem, we constructed an explicit fractional vertex of its linear relaxation and thereby showed that, unlike the formulations studied in Chapter $3$, the relaxation is not integral. Since the family of coalition-free constraints may be factorial in size, we developed a separation procedure based on an auxiliary directed graph and the Floyd–Warshall algorithm. The resulting procedure has running time $O(|E|^{3})$, where $|E|$ is the number of acceptable applicant - house pairs. In particular, this becomes $O(n^{6})$ when there are $n$ applicants and $n$ houses. We also performed computational experiments on several small instances. For each instance, the Pareto optimal matching vectors were generated and their convex hull was constructed using SageMath. Its linear description was then compared with fractional vertices of the original relaxation. This analysis made it possible to identify relations that are valid for the Pareto optimal matching polytope but are not enforced by the relaxation. We further showed that $\dim(P_{\mathrm{POM}})\le |E|-|F|$ where $E$ is the set of acceptable applicant–house pairs and $F$ is the set of houses that appear as the first choice of at least one applicant. Finally, we derived and proved the validity of two families of problem-specific inequalities, the prefix-cover inequalities and the safe-holder inequalities. Both families strengthen the relaxation by removing fractional solutions that do not belong to the convex hull of Pareto optimal matching vectors.
 	
-	
-	
 	From the above results, we see that some integer programming formulations have integral linear relaxations, and therefore an integral optimal solution can be obtained by solving the corresponding linear program. In other cases, integrality is lost, and the relaxation contains fractional vertices that cannot be expressed as convex combinations of the incidence vectors of feasible integer solutions. The separation procedure, the computational experiments, and the additional valid inequalities developed in this thesis provide a first step towards a tighter polyhedral description of the Pareto optimal matching polytope.
-	
 	
 	The next step is to determine whether the proposed
 	inequalities (or other relevant inequalities), are facet-defining under certain restrictions. Such a study would first require a more
