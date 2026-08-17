@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this repository or the associated research in academic work, please cite the thesis below."
+
+authors:
+  - family-names: "Mavrogeneiadis"
+    given-names: "Nikolas"
+
+title: "Source code and materials for the thesis: Matchings with and without preferences, Pareto matchings: problems, structural and polyhedral analysis and algorithmic solution methods"
+type: software
+
+preferred-citation:
+  type: thesis
+  authors:
+    - family-names: "Mavrogeneiadis"
+      given-names: "Nikolas"
+  title: "Matchings with and without preferences, Pareto matchings: problems, structural and polyhedral analysis and algorithmic solution methods"
+  thesis-type: "Integrated Master's thesis"
+  department: "Department of Informatics and Computer Engineering"
+  institution:
+    name: "University of West Attica"
+  year: 2026
+  url: "https://polynoe.lib.uniwa.gr/xmlui/handle/11400/13037"

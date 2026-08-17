@@ -1,0 +1,22 @@
+# Licensing
+
+Copyright (c) 2026 Nikolas Mavrogeneiadis
+
+Unless otherwise indicated, the thesis and associated academic material in this repository, including the LaTeX source files, thesis text, author-created figures, and presentation material, are licensed under the:
+
+**Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License (CC BY-NC-ND 4.0)**
+
+The full license terms are available at:
+
+https://creativecommons.org/licenses/by-nc-nd/4.0/
+
+## Source Code
+
+The source code contained in the `code/` directory is **not** licensed under CC BY-NC-ND 4.0.
+
+It is licensed separately under the **MIT License**. See `code/LICENSE` for the applicable terms.
+
+## Third-Party Material
+
+This repository may contain or reference material created by third parties. Such material is not covered by the licenses above unless explicitly stated otherwise. All rights in third-party material remain with their respective copyright holders.
+

@@ -140,11 +140,7 @@ def find_fractional_vertex(A, H, P):
         if Q[h]: lp.add_constraint(sum(x[a, h] for a in Q[h]) <= 1)
 
     #============================================================
-    #first-choice-houses constraint - added later
-    #first_choice_houses = sorted({P[a][0] for a in A if P.get(a)})
-    #for h in first_choice_houses:
-    #lp.add_constraint(sum(x[a, h] for a in Q[h]) >= 1)
-    #prefix-cover constraint - added later, generalization of first-choice-houses constraint
+    #prefix-cover constraint, generalization of first-choice-houses constraint
     for a in A:
         for i, h in enumerate(P.get(a, [])):
             better_houses = P[a][:i]
@@ -156,7 +152,7 @@ def find_fractional_vertex(A, H, P):
     # #============================================================
     #
     # #============================================================
-    # #safe-holder implication cuts
+    # #safe-holder constraint
     for a in A:
         prefs = P.get(a, [])
         for i, h in enumerate(prefs):

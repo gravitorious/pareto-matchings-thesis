@@ -538,7 +538,7 @@
 	
 	The figure below illustrates a possible instance of a phase of the layered network.
 		
-	\begin{}[H]
+	\begin{figure}[H]
 		\centering
 		\begin{tikzpicture}[
 			v1node/.style={circle, draw=blue!70, fill=blue!5, very thick, minimum size=10mm, font=\Large},
@@ -1786,7 +1786,7 @@
 	
 	A small example of a coalition is illustrated in the following figure.
 	
-	\begin{}[H]
+	\begin{figure}[H]
 		\centering
 		\begin{tikzpicture}[
 			cnode/.style={circle, draw=black, thin, minimum size=1.6cm, font=\normalsize},
@@ -2214,17 +2214,9 @@
 	is not Pareto optimal, because the two applicants can exchange houses and both improve.
 	
 	Consider the fractional point
-	$
-	x_{11}=x_{12}=x_{21}=x_{22}=\frac{1}{2}.
-	$
+	$x_{11}=x_{12}=x_{21}=x_{22}=\frac{1}{2}.$
 	This point satisfies the assignment constraints. It also satisfies the coalition-free inequality corresponding to the two-applicant coalition $\{(a_1,h_2),(a_2,h_1)\}$, because
-	$
-	x_{12}+x_{21}
-	=
-	\frac{1}{2}+\frac{1}{2}
-	=
-	1.
-	$
+	$x_{12}+x_{21}=\frac{1}{2}+\frac{1}{2}=1.$
 	Thus the coalition inequality is tight, but not violated.
 	
 	However, this fractional point is not in the convex hull of POM vectors, since the only Pareto optimal matching is $M$. The safe-holder inequality identifies this issue. Take
@@ -2236,9 +2228,7 @@
 	g=h_1.
 	\]
 	applicant $a_1$ prefers $h_1$ to $h_2$. The only other applicant who can hold $h_1$ is $a_2$. But $a_2$ prefers $h_2$ to $h_1$. Therefore, $a_2$ is not a safe holder of $h_1$ with respect to the assignment $(a_1,h_2)$. Hence
-	$
-	S(a_1,h_2,h_1)=\varnothing.
-	$
+	$S(a_1,h_2,h_1)=\varnothing.$
 	The safe-holder inequality becomes
 	$x_{12}\le 0.$
 	The fractional point violates this inequality, since
@@ -2264,19 +2254,13 @@
 		\]
 		
 		If
-		$
-		x_{ah}=0,
-		$
+		$x_{ah}=0,$
 		then the inequality is immediate.
 		
 		Suppose now that
-		$
-		x_{ah}=1.
-		$
+		$x_{ah}=1.$
 		Thus, in $M$, applicant $a$ is assigned to $h$. Since $g\in B_a(h)$, we have
-		$
-		g\succ_{a} h.
-		$
+		$g\succ_{a} h.$
 		If $g$ were unmatched, applicant $a$ could leave $h$ and take $g$. This would contradict trade-in freeness. Therefore, $g$ must be assigned in $M$.
 		
 		Let $b$ be the applicant assigned to $g$. Since $a$ is already assigned to $h$, we have $b\ne a$. Therefore,
@@ -2387,24 +2371,14 @@
 		$\mathcal{I}_n$ if and only if the following conditions hold:
 		\begin{enumerate}
 			\item The set
-			$
-			S(x)
-			=
-			\{s_i:s_i=1\}
-			\cup
-			\{t_i:t_i=1\}
-			$
+			$S(x) = \{s_i:s_i=1\} \cup \{t_i:t_i=1\}$
 			is an independent set of $G_n$.
 			
 			\item
-			$
-			S(x)\ne\{s_1,\ldots,s_n\}.
-			$
+			$S(x)\ne\{s_1,\ldots,s_n\}.	$
 			
 			\item For every $i=1,\ldots,n$,
-			$
-			r_i=1-s_i-t_{i-1},
-			$
+			$r_i=1-s_i-t_{i-1},$
 			where the indices are taken modulo $n$.
 		\end{enumerate}
 	\end{pprop}
@@ -2423,6 +2397,7 @@
 		\]
 		It follows that the set of variables $s_i,t_i$ that are equal to one is a independent set of $G_{n}$.
 		
+		
 		This independent set cannot be $S^{*}$. Indeed, if
 		$s_1=\cdots=s_n=1$, then every applicant $a_i$ is assigned to $h_i$ but strictly prefers $h_{i+1}$. Since $h_{i+1}$ is assigned to $a_{i+1}$, the applicants $a_1,a_2,\ldots,a_n$ form a coalition. This contradicts the Pareto optimality of $M$.
 		
@@ -2434,17 +2409,11 @@
 		It remains to show that the matching is coalition free. An applicant $b_i$ cannot participate in a coalition, since $h_i$ is the only acceptable house of $b_i$. Similarly, if $t_i=1$, then applicant $a_i$ receives the first choice $h_{i+1}$ and therefore cannot strictly improve.
 		
 		Consequently, the only applicants who can participate in a coalition are those for which $s_i=1$. Suppose that $s_i=1$. Then $a_i$ is assigned to $h_i$ and strictly prefers $h_{i+1}$. Since
-		$
-		s_i+t_i\le 1,
-		$
+		$s_i+t_i\le 1,$
 		we have $t_i=0$. Using the equality for the house $h_{i+1}$, we obtain
-		$
-		s_{i+1}+t_i+r_{i+1}=1,
-		$
+		$s_{i+1}+t_i+r_{i+1}=1,$
 		and hence
-		$
-		s_{i+1}+r_{i+1}=1.
-		$
+		$s_{i+1}+r_{i+1}=1.$
 		
 		If $s_{i+1}=1$, then $h_{i+1}$ is assigned to $a_{i+1}$, and a possible coalition can continue from $a_i$ to $a_{i+1}$. If $s_{i+1}=0$, then $r_{i+1}=1$, so $h_{i+1}$ is assigned to $b_{i+1}$. In this case the sequence cannot continue, since $b_{i+1}$ does not prefer any other house.
 		
@@ -2584,44 +2553,27 @@
 		We first prove validity. Let $M$ be a Pareto optimal matching of $\mathcal{I}_n$, and let $x$ be its incidence vector.
 		
 		If $r_i=1$ for at least one $i$, then
-		$
-		t_j+\sum_{i=1}^{n}r_i\ge 1
-		$
+		$t_j+\sum_{i=1}^{n}r_i\ge 1$
 		holds immediately.
 		
 		Suppose now that
-		$
-		r_i=0,
-		i=1,\ldots,n.
-		$
+		$r_i=0,i=1,\ldots,n.$
 		Since every house is assigned, all $n$ houses must then be assigned to the $n$ applicants $a_1,\ldots,a_n$. Consequently, every applicant $a_i$ is matched.
 		
 		Suppose, for contradiction, that $t_j=0$. Since $a_j$ is matched and the only acceptable houses of $a_j$ are $h_j$ and $h_{j+1}$, we must have
-		$
-		s_j=1.
-		$
+		$s_j=1.$
 		Using the equality for the house $h_{j+1}$, we obtain
-		$
-		s_{j+1}+t_j+r_{j+1}=1.
-		$
+		$s_{j+1}+t_j+r_{j+1}=1.$
 		Since $t_j=r_{j+1}=0$, this gives
-		$
-		s_{j+1}=1.
-		$
+		$s_{j+1}=1.$
 		Repeating the same argument cyclically gives
-		$
-		s_1=\cdots=s_n=1.
-		$
+		$s_1=\cdots=s_n=1.$
 		However, it is easy to see that this assignment contains the coalition
-		$
-		a_1,a_2,\ldots,a_n,
-		$
+		$a_1,a_2,\ldots,a_n,$
 		and therefore it is not Pareto optimal. This is a contradiction. Hence $t_j=1$, and the cycle-break inequality is valid.
 		
 		We next prove that the inequality defines a facet. By the previous proposition,
-		$
-		\dim\bigl(P_{\mathrm{POM}}(\mathcal{I}_n)\bigr)=2n.
-		$
+		$\dim\bigl(P_{\mathrm{POM}}(\mathcal{I}_n)\bigr)=2n.$
 		Therefore, it is enough to construct $2n$ affinely independent POM vectors that satisfy the cycle-break inequality with equality. Fix an inequality $j$. We define the following matchings.
 		
 		For every $k=1,\ldots,n$, define the matching
@@ -2665,20 +2617,11 @@
 		$R^1,\ldots,R^n, T^i, \forall i\ne j, Z$ are Pareto optimal.
 		
 		They also satisfy the cycle-break inequality with equality. Indeed, in $R^k$, we have
-		$
-		t_j=0,
-		\sum_{i=1}^{n}r_i=1.
-		$
+		$t_j=0,\sum_{i=1}^{n}r_i=1.$
 		In $T^i$, where $i\ne j$, we also have
-		$
-		t_j=0,
-		\sum_{k=1}^{n}r_k=1.
-		$
+		$t_j=0,\sum_{k=1}^{n}r_k=1.$
 		Finally, in $Z$ we have
-		$
-		t_j=1,
-		\sum_{i=1}^{n}r_i=0.
-		$
+		$t_j=1,\sum_{i=1}^{n}r_i=0.$
 		
 		There are $n+(n-1)+1=2n$ such POM vectors. It remains to prove that they are affinely independent.
 		
@@ -2704,19 +2647,12 @@
 		Consider $t_j$. Among all the vectors appearing in \eqref{eq:affine-dependence-cycle-break}, only $x^Z$ has value one in this coordinate (as described before). Therefore, $\nu=0.$
 		
 		Next, fix some $i\ne j$ and consider $t_i$. The only vectors with value one in this coordinate are $x^{T^i}$ and $x^Z$. Hence
-		$
-		\mu_i+\nu=0.
-		$
+		$\mu_i+\nu=0.$
 		Since $\nu=0$, we obtain
-		$
-		\mu_i=0,
-		i\ne j.
-		$
+		$\mu_i=0,i\ne j.$
 		
 		Equation \eqref{eq:affine-coefficient-sum-cycle-break} now gives
-		$
-		\sum_{k=1}^{n}\lambda_k=0.
-		$
+		$\sum_{k=1}^{n}\lambda_k=0.$
 		
 		Finally, fix $k\in\{1,\ldots,n\}$ and consider the coordinate $r_k$. Among the vectors $x^{R^1},\ldots,x^{R^n}$, only $x^{R^k}$ has value one in the coordinate $r_k$. Therefore,
 		$\lambda_k=0.$
