@@ -1,4 +1,4 @@
-README - Nikolas Mavrogeneiadis
+Nikolas Mavrogeneiadis
 Code to study Pareto-optimal matchings in the House Allocation problem.
 
 The main idea is the following:
@@ -16,16 +16,16 @@ data/
     Contains the input instances (preference lists).
 sd/
     sd_alg.py
-    Implementation of Serial Dictatorship.
+    Implementation of Serial Dictatorship (O(n!)).
     Produces all Pareto-optimal matchings and their vector form.
 lp_relaxation/
     lp_relaxation_separation.py
     Solves the LP relaxation of the IP formulation.
-    Coalition constraints are added via separation (not all at once).
+    Coalition constraints are added via (polynomial) separation (not all at once).
 polyhedral_analysis/
     ip_h_description.py
     builds the convex hull of the POM vectors using Sage.
-    Outputs dimension, equations and inequalities.
+    Outputs statistics like dimension, equations and inequalities.
 results/
     For each instance, a folder is created with all outputs.
 main.py
